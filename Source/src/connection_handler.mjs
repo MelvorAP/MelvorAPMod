@@ -1,10 +1,12 @@
-import { ITEMS_HANDLING_FLAGS } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
+import { Client, ITEMS_HANDLING_FLAGS } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
+
+const client = new Client();
 
 // Set up the connection information.
 export const connectionInfo = {
   hostname: "archipelago.gg", // Replace with the actual AP server hostname.
   port: 0, // Replace with the actual AP server port.
-  game: "The Wind Waker", // Replace with the game name for this player.
+  game: "Melvor Idle", // Replace with the game name for this player.
   name: "Player1", // Replace with the player slot name.
   password: "",
   version: {
@@ -66,6 +68,19 @@ export function setConnectionInfo(ctx){
   connectionInfo.port = Number(apConnectionInfo.get('ap-port'));
   connectionInfo.password = apConnectionInfo.get('ap-password');
   connectionInfo.name = apConnectionInfo.get('ap-slotname')
+}
 
-  console.log(connectionInfo);
+export function ConnectToAP(ctx){
+  console.log("Trying to connect to " + connectionInfo.hostname + ":" + String(connectionInfo.port));
+
+  client
+  .connect(connectionInfo)
+  .then(() => {
+    console.log("Connected to the server as player " + connectionInfo.name);
+    console.log("Exp Gain: " + client.data.slotData.exp_gain);
+  })
+  .catch((error) => {
+    console.error("Failed to connect:", error);
+    // Handle the connection error.
+  });
 }
