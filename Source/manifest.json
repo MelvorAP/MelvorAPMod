@@ -1,0 +1,5 @@
+{
+  "namespace": "archipelago",
+  "icon": "assets/icon.png",
+  "setup": "src/setup.mjs"
+}
