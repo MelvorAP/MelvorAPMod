@@ -1,6 +1,9 @@
-import { Client, ITEMS_HANDLING_FLAGS } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
+import { Client, ITEMS_HANDLING_FLAGS, SERVER_PACKET_TYPE, CLIENT_STATUS  } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
 
 const client = new Client();
+
+let itemHandler = null;
+let resourceManager = null;
 
 // Set up the connection information.
 export const connectionInfo = {
@@ -16,6 +19,40 @@ export const connectionInfo = {
   },
   items_handling: ITEMS_HANDLING_FLAGS.REMOTE_ALL
 };
+
+export function setup(ctx, iHandler, rManager){
+  itemHandler = iHandler;
+  resourceManager = rManager;
+
+  client.addListener(SERVER_PACKET_TYPE.CONNECTED, (packet, message) => {
+    console.log("Connected to server: ", packet);
+  });
+  client.addListener(SERVER_PACKET_TYPE.RECEIVED_ITEMS, (packet, message) => {
+    if (packet.index == 0) {
+      console.log("Sync package");
+    }
+    else{
+      for (let i=  0; i < packet.items.length; i++) {
+        let item = packet.items[i]
+        
+        if (itemHandler.recieveItem(item.item, false))
+        {
+          let message = "";
+          let itemName = client.items.name(connectionInfo.game, item.item);
+
+          if(client.data.slot == item.player){
+            message = "Found " + itemName + "!"; 
+          }
+          else{
+            message = "Recieved " + itemName + " from "+ client.players.name(item.player) + "!"; 
+          }
+          
+          game.notifications.createInfoNotification(item.item, message, resourceManager.apLogo, 0)
+        }
+      }
+    }
+  });
+}
 
 export function setupSettings(ctx){
     const apConnection = ctx.settings.section('Connection');
@@ -51,14 +88,6 @@ export function setupSettings(ctx){
       hint: 'Password of the AP room',
       default: ""
     });
-  
-    const sidebarApStatus = sidebar.category('AP', {
-      before: "Combat",
-      ignoreToggle: true 
-    }, (greetings) => 
-      {
-      greetings.item('Not Connected');
-    });
 }
 
 export function setConnectionInfo(ctx){
@@ -67,17 +96,20 @@ export function setConnectionInfo(ctx){
   connectionInfo.hostname = apConnectionInfo.get('ap-hostname');
   connectionInfo.port = Number(apConnectionInfo.get('ap-port'));
   connectionInfo.password = apConnectionInfo.get('ap-password');
-  connectionInfo.name = apConnectionInfo.get('ap-slotname')
+  connectionInfo.name = apConnectionInfo.get('ap-slotname');
 }
 
-export function ConnectToAP(ctx){
+export function connectToAP(ctx, statsHandler){
   console.log("Trying to connect to " + connectionInfo.hostname + ":" + String(connectionInfo.port));
 
   client
   .connect(connectionInfo)
   .then(() => {
     console.log("Connected to the server as player " + connectionInfo.name);
-    console.log("Exp Gain: " + client.data.slotData.exp_gain);
+
+    statsHandler.setSlotData(ctx, client.data.slotData);
+
+    client.updateStatus(CLIENT_STATUS.PLAYING);
   })
   .catch((error) => {
     console.error("Failed to connect:", error);
