@@ -23,11 +23,33 @@ export function lockSkills(){
     const skills = game.skills.registeredObjects;
     const iterator = skills.values();
 
-    game.skills.registeredObjects.values().next().value;
-
     for(let i = 0; i < skills.size; i++){
         let skill = iterator.next().value;
+
         skill.setUnlock(false);
+        
+        console.log("Locking skill", skill._localID);
+
+        if(!skill.actions)
+        {
+            console.log("Skill", skill._localID, "does not have actions.");
+            continue;
+        }
+
+        let namespaceIterator = skill.actions.namespaceMaps.values();
+
+        for(let j = 0; j < skill.actions.namespaceMaps.size; j++){
+            let namespace = namespaceIterator.next().value;
+            let actionIterator = namespace.values();
+
+            for(let k = 0; k < namespace.size; k++){
+                let action = actionIterator.next().value;
+                action.level = 9999;
+                
+                //TODO custom stuff for Thieving, Farming, Agility, Woodcutting and Alt Magic
+                console.log("Locking action", action._localID);
+            }
+        }
     }
 }
 

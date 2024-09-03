@@ -20,6 +20,8 @@ export async function setup(ctx) {
 
     await ctx.itemHandler.setup(ctx);
     ctx.connectionHandler.setup(ctx);
+
+    ctx.itemHandler.lockSkills();
 	})
 
   ctx.onInterfaceReady(ctx => {
@@ -27,11 +29,18 @@ export async function setup(ctx) {
       return;
     }
 
-    ctx.itemHandler.lockSkills();
     ctx.itemHandler.loadUnlockedSkills();
   
     ctx.connectionHandler.setConnectionInfo(ctx);
     ctx.connectionHandler.connectToAP(ctx);
+
+    game.combat.on('monsterKilled', function (e) {console.log("Monster killed:", e)})
+    game.combat.on('dungeonCompleted', function (e) {console.log("Dungeon completed:", e)})
+    game.combat.on('strongholdCompleted', function (e) {console.log("Dungeon completed:", e)})
+    game.combat.on('abyssDepthCompleted', function (e) {console.log("Abyss completed:", e)})
+
+    game.astrology.on('levelChanged', function (e) {console.log(e.skill, "leveled up from", e.oldLevel, " to ", e.newLevel)})
+    game.astrology.on('masteryLevelChanged', function (e) {console.log(e.action, "leveled up from", e.oldLevel, " to ", e.newLevel)})
   });
 
   //dumpVals();

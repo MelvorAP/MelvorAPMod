@@ -40,7 +40,7 @@ melvorD:Prayer
 melvorD:Slayer
 melvorD:Woodcutting
 melvorD:Fishing
-melvorD:Fire Making
+melvorD:Firemaking
 melvorD:Cooking
 melvorD:Mining
 melvorD:Smithing
@@ -48,7 +48,7 @@ melvorD:Thieving
 melvorD:Farming
 melvorD:Fletching
 melvorD:Crafting
-melvorD:Rune Crafting
+melvorD:Runecrafting
 melvorD:Herblore
 melvorD:Agility
 melvorD:Summoning
@@ -129,7 +129,7 @@ melvorD:Prayer
 melvorD:Slayer
 melvorD:Woodcutting
 melvorD:Fishing
-melvorD:Fire Making
+melvorD:Firemaking
 melvorD:Cooking
 melvorD:Mining
 melvorD:Smithing
@@ -137,7 +137,7 @@ melvorD:Thieving
 melvorD:Farming
 melvorD:Fletching
 melvorD:Crafting
-melvorD:Rune Crafting
+melvorD:Runecrafting
 melvorD:Herblore
 melvorD:Agility
 melvorD:Summoning
