@@ -1,19 +1,37 @@
 let items = null;
-let skillHandler = null;
-
 let characterStorage = null;
 
-const ApItemSavePrefix = "ApItem_"
+const skillSavePrefix = "Skill_"
 
-export async function setup(ctx, sHandler){
-    skillHandler = sHandler;
+export let lastRecievedItemIndex = -1;
+
+export async function setup(ctx){
     characterStorage = ctx.characterStorage;
 
     items = await ctx.loadModule('src/data/items.mjs');
     items.setup();
+
+    lastRecievedItemIndex = characterStorage.getItem("AP_itemIndex") ?? -1;
 }
 
-export function loadSaveItems(){
+export function updateItemIndex(newIndex){
+    lastRecievedItemIndex = newIndex;
+    characterStorage.setItem("AP_itemIndex", newIndex)
+}
+
+export function lockSkills(){
+    const skills = game.skills.registeredObjects;
+    const iterator = skills.values();
+
+    game.skills.registeredObjects.values().next().value;
+
+    for(let i = 0; i < skills.size; i++){
+        let skill = iterator.next().value;
+        skill.setUnlock(false);
+    }
+}
+
+export function loadUnlockedSkills(){
     const iterator = items.itemDict.entries();
 
     for(let i = 0; i < items.itemDict.size; i++){
@@ -22,72 +40,37 @@ export function loadSaveItems(){
         const itemId = v[0];
         const itemName = v[1];
 
-        const saveCount = characterStorage.getItem(ApItemSavePrefix + itemName)
+        const saveCount = characterStorage.getItem(skillSavePrefix + itemName)
 
         if(saveCount){
             for(let i = 0; i < saveCount; i++){
-                recieveItem(itemId, true);
+                receiveItem(itemId);
             }
         }
     }
 }
 
-function SaveItem(itemName){
-    const saveName = ApItemSavePrefix + itemName;
-    const existingValue = characterStorage.getItem(saveName)
+export function receiveItem(id){
+    const itemName = items.itemDict.get(id);
 
-    if(existingValue){
-        const newVal = existingValue + 1;
-
-        characterStorage.setItem(saveName, newVal);
-        console.log("Increased save item ", saveName, " to ", newVal);
+    if(items.skillArr.find(x => x == itemName)){
+        unlockSkill(itemName);
+    }
+    else if(items.petArr.find(x => x == itemName)){
+        unlockPet(itemName);
     }
     else{
-      characterStorage.setItem(saveName, 1);
-      console.log("New save item ", saveName);
+        console.error("Unimplemented item: " + itemName);
+        return false;
     }
-  }
-
-export function recieveItem(id, skipSaveToFile){
-    const itemName = items.itemDict.get(id);
-    let saveToFile = false;
-
-    switch(itemName) {
-        case "melvorD:Attack":
-        case "melvorD:Strength":
-        case "melvorD:Defence":
-        case "melvorD:Hitpoints":
-        case "melvorD:Ranged":
-        case "melvorD:Magic":
-        case "melvorD:Prayer":
-        case "melvorD:Slayer":
-        case "melvorD:Woodcutting":
-        case "melvorD:Fishing":
-        case "melvorD:Firemaking":
-        case "melvorD:Cooking":
-        case "melvorD:Mining":
-        case "melvorD:Smithing":
-        case "melvorD:Thieving":
-        case "melvorD:Farming":
-        case "melvorD:Fletching":
-        case "melvorD:Crafting":
-        case "melvorD:Runecraft":
-        case "melvorD:Herblore":
-        case "melvorD:Agility":
-        case "melvorD:Summoning":
-        case "melvorD:Astrology":
-        case "melvorD:Township":
-            skillHandler.unlockSkill(itemName);
-            saveToFile = true;
-          break;
-        default:
-            console.error("Unimplemented item: " + itemName);
-            return false;
-      } 
-
-      if(!skipSaveToFile && saveToFile){
-        SaveItem(itemName);
-      }
-
       return true;
   }
+  
+function unlockSkill(skillName){
+    game.skills.getObjectByID(skillName).setUnlock(true);
+    characterStorage.setItem(skillSavePrefix + skillName, 1);
+}
+
+function unlockPet(petName){
+    game.petManager.unlockPetByID(petName)
+}

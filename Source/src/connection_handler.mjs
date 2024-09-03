@@ -2,13 +2,12 @@ import { Client, ITEMS_HANDLING_FLAGS, SERVER_PACKET_TYPE, CLIENT_STATUS  } from
 
 const client = new Client();
 
-let itemHandler = null;
-let resourceManager = null;
+let context;
 
 // Set up the connection information.
 export const connectionInfo = {
   hostname: "archipelago.gg", // Replace with the actual AP server hostname.
-  port: 0, // Replace with the actual AP server port.
+  port: 1, // Replace with the actual AP server port.
   game: "Melvor Idle", // Replace with the game name for this player.
   name: "Player1", // Replace with the player slot name.
   password: "",
@@ -20,35 +19,38 @@ export const connectionInfo = {
   items_handling: ITEMS_HANDLING_FLAGS.REMOTE_ALL
 };
 
-export function setup(ctx, iHandler, rManager){
-  itemHandler = iHandler;
-  resourceManager = rManager;
+export function setup(ctx){
+  context = ctx;
 
   client.addListener(SERVER_PACKET_TYPE.CONNECTED, (packet, message) => {
     console.log("Connected to server: ", packet);
   });
   client.addListener(SERVER_PACKET_TYPE.RECEIVED_ITEMS, (packet, message) => {
     if (packet.index == 0) {
-      console.log("Sync package");
+      //Sync package
+
+      let lastRecievedItemIndex = context.itemHandler.lastRecievedItemIndex;
+
+      console.log("packet ", packet);
+      console.log("lastRecievedItemIndex ", lastRecievedItemIndex);
+
+      if(lastRecievedItemIndex == -1){
+        lastRecievedItemIndex = 0;
+      }
+
+      for(let i = lastRecievedItemIndex; i < packet.items.length; i++){
+        let item = packet.items[i]
+
+        handleReceivedItem(item.item, item.player);
+      }
+
+      context.itemHandler.updateItemIndex(packet.items.length);
     }
     else{
-      for (let i=  0; i < packet.items.length; i++) {
+      for (let i = 0; i < packet.items.length; i++) {
         let item = packet.items[i]
-        
-        if (itemHandler.recieveItem(item.item, false))
-        {
-          let message = "";
-          let itemName = client.items.name(connectionInfo.game, item.item);
 
-          if(client.data.slot == item.player){
-            message = "Found " + itemName + "!"; 
-          }
-          else{
-            message = "Recieved " + itemName + " from "+ client.players.name(item.player) + "!"; 
-          }
-          
-          game.notifications.createInfoNotification(item.item, message, resourceManager.apLogo, 0)
-        }
+        handleReceivedItem(item.item, item.player);
       }
     }
   });
@@ -69,8 +71,10 @@ export function setupSettings(ctx){
       type: 'number',
       name: 'ap-port',
       label: 'Port',
-      hint: 'Port of the AP world.',
-      default: 0
+      hint: 'Port of the AP world',
+      default: 1,
+      min: 1,
+      max: 65535
     });
   
     apConnection.add({
@@ -99,7 +103,7 @@ export function setConnectionInfo(ctx){
   connectionInfo.name = apConnectionInfo.get('ap-slotname');
 }
 
-export function connectToAP(ctx, statsHandler){
+export function connectToAP(ctx){
   console.log("Trying to connect to " + connectionInfo.hostname + ":" + String(connectionInfo.port));
 
   client
@@ -107,7 +111,7 @@ export function connectToAP(ctx, statsHandler){
   .then(() => {
     console.log("Connected to the server as player " + connectionInfo.name);
 
-    statsHandler.setSlotData(ctx, client.data.slotData);
+    ctx.statsHandler.setSlotData(ctx, client.data.slotData);
 
     client.updateStatus(CLIENT_STATUS.PLAYING);
   })
@@ -115,4 +119,21 @@ export function connectToAP(ctx, statsHandler){
     console.error("Failed to connect:", error);
     // Handle the connection error.
   });
+}
+
+function handleReceivedItem(id, player){
+  if (context.itemHandler.receiveItem(id))
+    {
+      let message = "";
+      let itemName = client.items.name(connectionInfo.game, id);
+
+      if(client.data.slot == player){
+        message = "Found " + itemName + "!"; 
+      }
+      else{
+        message = "Recieved " + itemName + " from "+ client.players.name(player) + "!"; 
+      }
+      
+      game.notifications.createInfoNotification(id, message, context.resourceManager.apLogo, 0)
+    }
 }

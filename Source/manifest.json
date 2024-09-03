@@ -1,5 +1,9 @@
 {
   "namespace": "archipelago",
   "icon": "assets/icon.png",
-  "setup": "src/setup.mjs"
+  "setup": "src/setup.mjs",
+  "load": [
+    "css/style.css",
+		"data/gamemode.json"
+	]
 }

@@ -1,0 +1,35 @@
+{
+	"$schema": "https://melvoridle.com/assets/schema/gameData.json",
+	"namespace": "archipelago",
+	"data": {
+		"gamemodes": [
+			{
+				"id": "apGameMode",
+				"name": "Archipelago",
+				"media": "assets/icon.png",
+				"rules": [
+					"All skills will be locked and will be unlocked by finding them.",
+					"Combat settings will be set by the AP world."
+				],
+				"textClass": "",
+				"btnClass": "btn-gamemode-ap",
+				"isPermaDeath": false,
+				"combatTriangle": "Standard",
+				"isEvent": false,
+				"endDate": 0,
+				"hitpointMultiplier": 10,
+				"hasRegen": true,
+				"capNonCombatSkillLevels": false,
+				"startingPage": "melvorD:Bank",
+				"startingItems": [],
+				"allowSkillUnlock": false,
+				"skillUnlockCost": [],
+				"hasTutorial": false,
+				"startingSkills": [],
+				"playerModifiers": {},
+				"enemyModifiers": {},
+				"description": "Game mode that will connect to an AP world to unlock skills and other unlocks. You can safely play other gamemodes."
+			}
+		]
+	}
+}

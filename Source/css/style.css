@@ -1,0 +1,23 @@
+body.darkMode.superDark .btn-gamemode-ap {
+    color: #fff;
+    background-color: #6d3a61;
+    border-color: #472640;
+}
+
+.btn-gamemode-ap {
+    color: #fff;
+    background-color: #6d3a61;
+    border-color: #472640;
+}
+
+@media(min-width: 1250px) {
+    .col-xl-25-perc {
+        -ms-flex:0 0 25%;
+        flex: 0 0 25%;
+        max-width: 25%
+    }
+}
+
+body.darkMode .bg-co-progress-bar,.bg-co-progress-bar {
+    background-color: #32CD30!important
+}
