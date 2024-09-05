@@ -1,8 +1,10 @@
-import { Client, ITEMS_HANDLING_FLAGS, SERVER_PACKET_TYPE, CLIENT_STATUS  } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
+import { Client, ITEMS_HANDLING_FLAGS, SERVER_PACKET_TYPE, CLIENT_STATUS, CLIENT_PACKET_TYPE } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
 
 const client = new Client();
 
-let context;
+let itemHandler = null;
+let notificationHandler = null;
+let slotdataHandler = null;
 
 // Set up the connection information.
 export const connectionInfo = {
@@ -20,19 +22,71 @@ export const connectionInfo = {
 };
 
 export function setup(ctx){
-  context = ctx;
+  itemHandler = ctx.itemHandler;
+  notificationHandler = ctx.notificationHandler;
+  slotdataHandler = ctx.slotdataHandler;
 
-  client.addListener(SERVER_PACKET_TYPE.CONNECTED, (packet, message) => {
-    console.log("Connected to server: ", packet);
+  client.addListener(SERVER_PACKET_TYPE.PRINT_JSON, (packet, message) => handleMessages(packet));
+  client.addListener(SERVER_PACKET_TYPE.RECEIVED_ITEMS, (packet, message) => handleItems(packet));
+  client.addListener(SERVER_PACKET_TYPE.DEATH_LINK, (packet, message) => handleDeathLink(packet));
+}
+
+export function setConnectionInfo(ctx){
+  const apConnectionInfo = ctx.settings.section("Connection")
+
+  connectionInfo.hostname = apConnectionInfo.get("ap-hostname");
+  connectionInfo.port = Number(apConnectionInfo.get("ap-port"));
+  connectionInfo.password = apConnectionInfo.get("ap-password");
+  connectionInfo.name = apConnectionInfo.get("ap-slotname");
+}
+
+export function connectToAP(ctx){
+  notificationHandler.SendApNotification(-1, "Trying to connect to AP World.", false, true);
+
+  client
+  .connect(connectionInfo)
+  .then(() => {
+    notificationHandler.SendApNotification(-1, "Connected to AP World as player " + connectionInfo.name + "!", true, true);
+
+    slotdataHandler.setSlotData(client.data.slotData);
+
+    client.updateStatus(CLIENT_STATUS.PLAYING);
+  })
+  .catch((error) => {
+    console.error("Failed to connect:", error);
+    notificationHandler.SendErrorNotification(-1, "Failed to connect to AP World!", true);
   });
-  client.addListener(SERVER_PACKET_TYPE.RECEIVED_ITEMS, (packet, message) => {
+}
+
+function handleMessages(packet){
+  console.log("Received JSON", packet);
+  
+  switch(packet.type){
+    case "Chat":
+    case "ServerChat":
+      notificationHandler.SendApNotification(-1, packet.data[0].text, false, true);
+      break;
+      case "Join":
+        const text = packet.data[0].text.split(".")[0];
+        const playerName = text.split(" ")[0];
+
+        if(GetCurrentPlayerName() != playerName){
+          notificationHandler.SendApNotification(-1, text, false, true);
+        }
+        break;
+    case "Tutorial":
+      //Do nothing
+      break;
+    default:
+      console.log("Unhandled message type");
+  }
+}
+
+function handleItems(packet){
     if (packet.index == 0) {
       //Sync package
 
-      let lastRecievedItemIndex = context.itemHandler.lastRecievedItemIndex;
-
-      console.log("packet ", packet);
-      console.log("lastRecievedItemIndex ", lastRecievedItemIndex);
+      let lastRecievedItemIndex = itemHandler.lastRecievedItemIndex;
 
       if(lastRecievedItemIndex == -1){
         lastRecievedItemIndex = 0;
@@ -44,7 +98,7 @@ export function setup(ctx){
         handleReceivedItem(item.item, item.player);
       }
 
-      context.itemHandler.updateItemIndex(packet.items.length);
+      itemHandler.updateItemIndex(packet.items.length);
     }
     else{
       for (let i = 0; i < packet.items.length; i++) {
@@ -53,87 +107,33 @@ export function setup(ctx){
         handleReceivedItem(item.item, item.player);
       }
     }
-  });
-}
-
-export function setupSettings(ctx){
-    const apConnection = ctx.settings.section('Connection');
-
-    apConnection.add({
-      type: 'text',
-      name: 'ap-hostname',
-      label: 'Host name',
-      hint: 'Host name of the AP world, for example archipelago.gg',
-      default: "archipelago.gg"
-    });
-
-    apConnection.add({
-      type: 'number',
-      name: 'ap-port',
-      label: 'Port',
-      hint: 'Port of the AP world',
-      default: 1,
-      min: 1,
-      max: 65535
-    });
-  
-    apConnection.add({
-      type: 'text',
-      name: 'ap-slotname',
-      label: 'Slot name',
-      hint: 'Slot name of the player, for example Player1',
-      default: "Player1"
-    });
-  
-    apConnection.add({
-      type: 'text',
-      name: 'ap-password',
-      label: 'Password',
-      hint: 'Password of the AP room',
-      default: ""
-    });
-}
-
-export function setConnectionInfo(ctx){
-  const apConnectionInfo = ctx.settings.section('Connection')
-
-  connectionInfo.hostname = apConnectionInfo.get('ap-hostname');
-  connectionInfo.port = Number(apConnectionInfo.get('ap-port'));
-  connectionInfo.password = apConnectionInfo.get('ap-password');
-  connectionInfo.name = apConnectionInfo.get('ap-slotname');
-}
-
-export function connectToAP(ctx){
-  console.log("Trying to connect to " + connectionInfo.hostname + ":" + String(connectionInfo.port));
-
-  client
-  .connect(connectionInfo)
-  .then(() => {
-    console.log("Connected to the server as player " + connectionInfo.name);
-
-    ctx.statsHandler.setSlotData(ctx, client.data.slotData);
-
-    client.updateStatus(CLIENT_STATUS.PLAYING);
-  })
-  .catch((error) => {
-    console.error("Failed to connect:", error);
-    // Handle the connection error.
-  });
 }
 
 function handleReceivedItem(id, player){
-  if (context.itemHandler.receiveItem(id))
+  if (itemHandler.receiveItem(id))
     {
       let message = "";
       let itemName = client.items.name(connectionInfo.game, id);
 
-      if(client.data.slot == player){
+      if(GetCurrentPlayerId() == player){
         message = "Found " + itemName + "!"; 
       }
       else{
         message = "Recieved " + itemName + " from "+ client.players.name(player) + "!"; 
       }
       
-      game.notifications.createInfoNotification(id, message, context.resourceManager.apLogo, 0)
+      notificationHandler.SendApNotification(id, message, true, true);
     }
+}
+
+function handleDeathLink(packet){
+  game.combat.player.hitpoints = 0;
+}
+
+function GetCurrentPlayerId(){
+  return client.data.slot;
+}
+
+function GetCurrentPlayerName(){
+  return client.players.name(GetCurrentPlayerId());
 }
