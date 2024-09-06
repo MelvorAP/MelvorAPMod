@@ -89,7 +89,8 @@ export const allItems = [
   "melvorD:RipperTheReindeer",
   "melvorD:FestiveCoolRock",
   "melvorD:FestiveChio"
-
+  "melvorD:JerryTheGiraffe",
+  "melvorD:PrestonThePlatypus",
 ]
 
 export const skills = [
@@ -141,8 +142,6 @@ export const pets = [
   "melvorD:Ayyden",
   "melvorD:ArcticYeti",
   "melvorD:Mac",
-  "melvorD:JerryTheGiraffe",
-  "melvorD:PrestonThePlatypus",
   "melvorF:Snek",
   "melvorF:Quill",
   "melvorF:Caaarrrlll",
@@ -185,6 +184,11 @@ export const eventPets= [
   "melvorD:RipperTheReindeer",
   "melvorD:FestiveCoolRock",
   "melvorD:FestiveChio"
+]
+
+export const goblinRaidPets= [
+  "melvorD:JerryTheGiraffe",
+  "melvorD:PrestonThePlatypus",
 ]
 
 export const demoItems= [
