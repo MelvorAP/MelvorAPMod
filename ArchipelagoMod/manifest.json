@@ -1,0 +1,4 @@
+{
+  "namespace": "archipelago",
+  "setup": "src/setup.mjs"
+}

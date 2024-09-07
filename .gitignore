@@ -17,4 +17,10 @@
 .history
 .ionide
 
-/Source/Source.zip
+/ArchipelagoMod/node_modules
+/ArchipelagoMod/packed
+/ArchipelagoMod/dist
+/ArchipelagoMod/output
+/ArchipelagoMod/package-lock.json
+
+/OLDSource/
