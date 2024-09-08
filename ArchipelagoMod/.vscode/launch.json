@@ -5,14 +5,14 @@
             "name": "Launch Melvor",
             "type": "nwjs",
             "request": "launch",
-            "runtimeExecutable": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Melvor Idle\\Melvor Idle.exe",
-            "webRoot": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Melvor Idle",
+            "runtimeExecutable": "D:/Games/Steam/steamapps/common/Melvor Idle/Melvor Idle.exe",
+            "webRoot": "D:/Games/Steam/steamapps/common/Melvor Idle/package.nw",
             "runtimeArgs": [
                 "${workspaceRoot}",
                 "--remote-debugging-port=9222"
             ],
             "sourceMaps": true,
-            "nwjsVersion": "0.54.0",
+            "nwjsVersion": "0.91.0",
             "port": 9222
         }
     ]

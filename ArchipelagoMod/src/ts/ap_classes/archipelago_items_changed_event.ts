@@ -1,5 +1,7 @@
 class ArchipelagoItemsChangedEvent extends GameEvent {
-    constructor(itemId) {
+    itemId: string;
+    
+    constructor(itemId : string) {
       super ();
       this.itemId = itemId;
     }

@@ -44,6 +44,14 @@ export class SettingsManager{
       default: ""
     } as SettingConfig);
 
+    settings.push({
+      type: "switch",
+      name: "ap-auto-connect",
+      label: "Auto connect",
+      hint: "Automatically connect to the room when character is loaded.",
+      default: false
+    } as SettingConfig);
+
       this.apConnectionSection.add(settings);
   }
 }

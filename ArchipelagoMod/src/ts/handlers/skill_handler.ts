@@ -1,4 +1,3 @@
-import { ArchipelagoRequirement } from "src/ap_classes/archipelago_requirement.mjs";
 import { Items } from "../data/items";
 
 let skillSavePrefix = "AP_skill_";
@@ -37,15 +36,15 @@ export class SkillHandler{
         game.skills.allObjects.forEach(skill => {
             skill.setUnlock(false);
             
-            console.log("Locking skill", skill.id);
+            //console.log("Locking skill", skill.id);
 
             if(skill instanceof SkillWithMastery){
                 skill.sortedMasteryActions.forEach(action => {
-                    this.lockAction(skill.id, action);
+                    this.lockAction(skill.id, action as BasicSkillRecipe);
                 })
             }
             else{
-                console.log(`${skill.name} does not have any actions.`);
+                //console.log(`${skill.name} does not have any actions.`);
             }
         })
     }
@@ -54,7 +53,8 @@ export class SkillHandler{
         let data : ApRequirementData = {
             type: "ArchipelagoUnlock", 
             itemId: action.id, 
-            itemType: skillId,
+            itemType: "",
+            iteskillTypemType: skillId,
             isProgressive: false,
             countNeeded: 1,
             items: this.items,
@@ -64,13 +64,15 @@ export class SkillHandler{
         
         switch(skillId){
             case "melvorD:Woodcutting":
+                data.itemType = "tree";
                 // @ts-ignore
                 game.woodcutting.modifyData({trees: [{id: action.id, requirements: {add: [ data ]}}]})
                 // @ts-ignore
                 woodcuttingMenu.treeMenus.get(action).setTree(action, game.woodcutting);
-                woodcuttingMenu.updateTreeUnlocks();
+                // @ts-ignore
+                woodcuttingMenu.updateTreeUnlocks(game);
             default:
-                console.log(`Unknown action type ${action.id}.`);
+                //console.log(`Unknown action type ${action.id}.`);
             }
     }
 
@@ -103,7 +105,7 @@ export class SkillHandler{
         return this.characterStorage.getItem(actionSavePrefix + actionID) >= 1;
     }
 
-    getProgressiveSkillCount(skillID : string) : boolean{
+    getProgressiveSkillCount(skillID : string) : number{
         return this.characterStorage.getItem(skillSavePrefix + skillID) ?? 0;
     }
 }

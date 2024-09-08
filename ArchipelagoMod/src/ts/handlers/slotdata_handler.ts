@@ -88,8 +88,7 @@ export class SlotdataHandler{
     let modifier = null;
 
     if(this.modifiers.has(skill)){
-      // @ts-ignore
-      modifier = this.modifiers[skill];
+      modifier = this.modifiers.get(skill);
       modifier.value = gain;
     }
     else{

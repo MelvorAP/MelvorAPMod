@@ -6,6 +6,7 @@ import { SettingsManager } from "../settings_manager";
 import { ItemHandler } from "./item_handler";
 import { NotificationHandler } from "./notification_handler";
 import { SlotdataHandler } from "./slotdata_handler";
+import ModService from "../mod_service";
 
 export interface Version {
   major: Number, 
@@ -25,6 +26,9 @@ export interface ConnectionInfo{
 }
 
 export class ConnectionHandler{
+  public isConnected : boolean;
+  public modService : ModService;
+
   private connectionInfo : ConnectionInfo = {} as ConnectionInfo;
 
   private itemHandler : ItemHandler;
@@ -34,7 +38,11 @@ export class ConnectionHandler{
 
   private client : Client;
 
-  constructor(itemHandler: ItemHandler, notificationHandler: NotificationHandler, slotdataHandler: SlotdataHandler, settingsManager : SettingsManager){
+  constructor(modService : ModService, itemHandler: ItemHandler, notificationHandler: NotificationHandler, slotdataHandler: SlotdataHandler, settingsManager : SettingsManager){
+    this.modService = modService;
+    
+    this.isConnected = false;
+    
     this.connectionInfo = {
       hostname: "archipelago.gg",
       port: 1,
@@ -60,6 +68,7 @@ export class ConnectionHandler{
     this.client.addListener(SERVER_PACKET_TYPE.PRINT_JSON, (packet : any, _message : string) => this.handleMessages(packet));
     this.client.addListener(SERVER_PACKET_TYPE.RECEIVED_ITEMS, (packet : any, _message: string) => this.handleItems(packet));
     this.client.addListener(SERVER_PACKET_TYPE.DEATH_LINK, (packet : any, _message: string) => this.handleDeathLink(packet));
+    this.client.addListener(SERVER_PACKET_TYPE.DISCONNECTED, (packet : any, _message: string) => this.diconnected());
   }
 
   public setConnectionInfo(){
@@ -69,6 +78,10 @@ export class ConnectionHandler{
     this.connectionInfo.port = Number(apConnectionInfo.get("ap-port"));
     this.connectionInfo.password = String(apConnectionInfo.get("ap-password"));
     this.connectionInfo.name = String(apConnectionInfo.get("ap-slotname"));
+
+    if(Boolean(apConnectionInfo.get("ap-auto-connect"))){
+      this.connectToAP();
+    }
   }
 
   connectToAP(){
@@ -77,16 +90,23 @@ export class ConnectionHandler{
     this.client
     .connect(this.connectionInfo)
     .then(() => {
-      this.notificationHandler.sendApNotification(-1, "Connected to AP World as player " + this.connectionInfo.name + "!", true, true);
-
       this.slotdataHandler.setSlotData(this.client.data.slotData);
 
+      this.notificationHandler.sendApNotification(-1, "Connected to AP World as player " + this.connectionInfo.name + "!", true, true);
       this.client.updateStatus(CLIENT_STATUS.PLAYING);
+
+      this.isConnected = true;
+      this.modService.onConnected();
     })
     .catch((error : any) => {
       console.error("Failed to connect:", error);
       this.notificationHandler.sendErrorNotification(-1, "Failed to connect to AP World!", true);
     });
+  }
+
+  disconnect(){
+    this.client.disconnect();
+    this.diconnected();
   }
 
   handleMessages(packet : any){
@@ -159,6 +179,10 @@ export class ConnectionHandler{
 
   handleDeathLink(packet : any){
     game.combat.player.hitpoints = 0;
+  }
+
+  diconnected(){
+    this.modService.onDisconnect();
   }
 
   GetCurrentPlayerId(){
