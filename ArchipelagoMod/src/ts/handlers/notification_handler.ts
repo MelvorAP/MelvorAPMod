@@ -1,19 +1,20 @@
 export class NotificationHandler{
+    private icon : string;
+    private iconLarge : string;
 
-    apLogoPath : string;
-
-    constructor(ctx : ModContext){
-        this.apLogoPath = ctx.getResourceUrl("assets/icon.png");
+    constructor(icon : string, iconLarge : string){
+        this.icon = icon;
+        this.iconLarge = iconLarge;
     }
 
     sendApNotification(id: number, message : string, isSuccess : boolean, addToLog : boolean){
         if(isSuccess){
             // @ts-ignore
-            game.notifications.createSuccessNotification(id, message, this.apLogoPath, 0)
+            game.notifications.createSuccessNotification(id, message, this.icon, 0)
         }
         else{
             // @ts-ignore
-            game.notifications.createInfoNotification(id, message, this.apLogoPath, 0)
+            game.notifications.createInfoNotification(id, message, this.icon, 0)
         }
 
 
@@ -37,7 +38,7 @@ export class NotificationHandler{
             html: `<span class="text-dark">${ 
                 message
             }</span>`,
-            imageUrl: this.apLogoPath,
+            imageUrl: this.iconLarge,
             imageWidth: 64,
             imageHeight: 64,
             imageAlt: "Archipelago Logo",

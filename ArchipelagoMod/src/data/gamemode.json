@@ -6,7 +6,7 @@
 			{
 				"id": "apGameMode",
 				"name": "Archipelago",
-				"media": "assets/icon.png",
+				"media": "img/iconLarge.png",
 				"rules": [
 					"All skills will be locked and will be unlocked by finding them.",
 					"Combat settings will be set by the AP world."

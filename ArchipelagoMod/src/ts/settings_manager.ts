@@ -30,10 +30,10 @@ export class SettingsManager{
 
     settings.push({
       type: "text",
-      name: "ap-hostname",
-      label: "Host name",
-      hint: "Host name of the AP world, for example archipelago.gg",
-      default: "archipelago.gg"
+      name: "ap-slotname",
+      label: "Slot name",
+      hint: "Slot name of the player, for example Player1",
+      default: "Player1"
     } as SettingConfig)
 
     settings.push({

@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "target": "es2017",
+    "target": "es2016",
     "lib": [
       "es6",
       "DOM"
@@ -9,7 +8,7 @@
     "allowUmdGlobalAccess": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "outDir": "./output",
+    "outDir": "./build",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,

@@ -1,16 +1,11 @@
-const { loadModule } = mod.getContext(import.meta);
-
-const { ArchipelagoRequirement } = await loadModule( "src/ap_classes/archipelago_requirement.mjs");
-const { ArchipelagoItemsChangedEvent } = await loadModule("src/ap_classes/archipelago_items_changed_event.mjs");
-
-const { Items } = await loadModule( "src/data/items.js");
-
-const { ConnectionHandler } = await loadModule( "src/handlers/connection_handler.js");
-const { ItemHandler } = await loadModule( "src/handlers/item_handler.js");
-const { NotificationHandler } = await loadModule( "src/handlers/notification_handler.js");
-const { SettingsManager } = await loadModule( "src/handlers/settings_manager.js");
-const { SkillHandler } = await loadModule( "src/handlers/skill_handler.js");
-const { SlotdataHandler } = await loadModule( "src/handlers/slotdata_handler.js");
+import { ArchipelagoRequirement } from "../ap_classes/archipelago_requirement.mjs";
+import { ConnectionHandler } from "./handlers/connection_handler";
+import { Items } from "./data/items";
+import { ItemHandler } from "./handlers/item_handler";
+import { NotificationHandler } from "./handlers/notification_handler";
+import { SkillHandler } from "./handlers/skill_handler";
+import { SlotdataHandler } from "./handlers/slotdata_handler";
+import { SettingsManager } from "./settings_manager";
 
 export interface IModServiceData {
   icon_url: string;
@@ -95,15 +90,16 @@ export default class ModService {
     this.slotdataHandler = new SlotdataHandler();
 
     this.items = new Items();
-    this.skillHandler = new SkillHandler(this.items, ctx.characterStorage, this.#data.icon_url_large);
-    this.itemHandler = new ItemHandler(this.skillHandler, ctx.characterStorage);
+    this.skillHandler = new SkillHandler(this.items, this.#data.icon_url_large);
+    this.itemHandler = new ItemHandler(this.skillHandler);
   
-    this.notificationHandler = new NotificationHandler(ctx);
+    this.notificationHandler = new NotificationHandler(this.#data.icon_url, this.#data.icon_url_large);
     this.settingsManager = new SettingsManager(ctx);
     this.connectionHandler = new ConnectionHandler(this.itemHandler, this.notificationHandler, this.slotdataHandler, this.settingsManager);
   }
 
   #sidebar_init(cfg: ModServiceConfig) {
+    this.#log(this.#data.icon_url);
     if (cfg.create_sidebar) {
       this.#log("Creating sidebar...");
       const self = this;
@@ -144,11 +140,16 @@ export default class ModService {
     })
   
     ctx.onCharacterLoaded(async ctx => {
-      service.isArchipelagoGameMode = game.currentGamemode.id == "apGameMode";
+      service.isArchipelagoGameMode = game.currentGamemode.id == "archipelago:apGameMode";
+
+      service.#log("Gamemode is", game.currentGamemode.id);
   
       if(!service.isArchipelagoGameMode){
         return;
       }
+
+      service.skillHandler.setCharacterStorage(ctx.characterStorage);
+      service.itemHandler.setCharacterStorage(ctx.characterStorage);
   
       service.skillHandler.lockSkills();
     })
@@ -175,7 +176,7 @@ export default class ModService {
       //game.astrology.on("levelChanged", function (e) {console.log(e.skill, "leveled up from", e.oldLevel, " to ", e.newLevel)})
       //game.astrology.on("masteryLevelChanged", function (e) {console.log(e.action, "leveled up from", e.oldLevel, " to ", e.newLevel)})
   
-      //ctx.notificationHandler.showApModal("", "");
+      service.notificationHandler.showApModal("", "");
       //ctx.notificationHandler.showSkillModal("TITLE", "MESSAGE", "attack");
   
       //game.woodcutting.modifyData({trees: [{id: "melvorD:Normal", requirements: {add: [{type: "ArchipelagoUnlock", itemId: "melvorD:Normal", itemType: "melvorD:Woodcutting"}]}}]})
@@ -184,12 +185,12 @@ export default class ModService {
 
       //game.woodcutting.renderQueue.treeUnlocks = true;
       
-      game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent("melvorD:Normal"));
+      //game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent("melvorD:Normal"));
     });
   }
 
   addApUnlock(data : any) {
     if(data.type == "ArchipelagoUnlock")
-      return new ArchipelagoRequirement(data, game, this.skillHandler, this.#data.icon_url);
+      return new ArchipelagoRequirement(data, game);
   };
 }

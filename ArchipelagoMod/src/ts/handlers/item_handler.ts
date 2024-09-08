@@ -1,7 +1,5 @@
-const { loadModule } = mod.getContext(import.meta);
-
-const { Items } = await loadModule("src/ts/data/items.js");
-const { SkillHandler } = await loadModule("src/ts/data/skill_handler.js");
+import { Items } from "../data/items";
+import { SkillHandler } from "./skill_handler";
 
 export class ItemHandler{
     lastRecievedItemIndex : number = -1;
@@ -11,14 +9,18 @@ export class ItemHandler{
     private skillHandler : SkillHandler;
     private characterStorage : ModStorage;
 
-    constructor(skillHandler: SkillHandler, characterStorage : ModStorage){
+    constructor(skillHandler: SkillHandler){
         this.items = new Items();
 
         this.skillHandler = skillHandler;
 
+        this.characterStorage = {} as ModStorage; 
+    }
+
+    setCharacterStorage(characterStorage : ModStorage){
         this.characterStorage = characterStorage;
 
-        this.lastRecievedItemIndex = characterStorage.getItem("AP_itemIndex") ?? -1;
+        this.lastRecievedItemIndex = this.characterStorage.getItem("AP_itemIndex") ?? -1;
     }
 
     updateItemIndex(newIndex : number){

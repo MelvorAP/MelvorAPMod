@@ -22,11 +22,15 @@ export class SkillHandler{
     
     private apIcon : string;
 
-    constructor(items : Items, characterStorage : ModStorage, apIcon : string){
+    constructor(items : Items, apIcon : string){
         this.items = items;
-        this.characterStorage = characterStorage;
+        this.characterStorage = {} as ModStorage;
 
         this.apIcon = apIcon;
+    }
+
+    setCharacterStorage(characterStorage : ModStorage){
+        this.characterStorage = characterStorage;
     }
 
     lockSkills(){
@@ -37,7 +41,7 @@ export class SkillHandler{
 
             if(skill instanceof SkillWithMastery){
                 skill.sortedMasteryActions.forEach(action => {
-                    this.lockAction(skill.id, action as BasicSkillRecipe);
+                    this.lockAction(skill.id, action);
                 })
             }
             else{
@@ -71,22 +75,19 @@ export class SkillHandler{
     }
 
     loadUnlockedSkills(){
-        const iterator = this.items.itemDict.entries();
+        game.skills.allObjects.forEach(skill => {
+            skill.setUnlock(false);
+            
+            console.log("Unlocking skill", skill.id);
 
-        for(let i = 0; i < this.items.itemDict.size; i++){
-            const v = iterator.next().value;
+            const saveCount = this.characterStorage.getItem(skillSavePrefix + skill.id)
 
-            const itemId = v[0];
-            const itemName = v[1];
-
-            const saveCount = this.characterStorage.getItem(skillSavePrefix + itemName)
-
-            if(saveCount){
+            if(saveCount >= 1){
                 for(let i = 0; i < saveCount; i++){
-                    this.unlockSkill(itemName);
+                    this.unlockSkill(skill.id);
                 }
             }
-        }
+        })
     }
     
     unlockSkill(skillName : string){

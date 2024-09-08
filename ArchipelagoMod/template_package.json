@@ -1,9 +1,8 @@
 {
-  "name": "archipelago_gamemode",
-  "version": "1.2.0",
-  "description": "Gamemode used connect to AP worlds.",
+  "name": "",
+  "version": "0.1.0",
+  "description": "Created with create-melvor-mod.",
   "main": "setup.ts",
-  "bin": "./scripts/create_melvor_mod.mjs",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,33 +10,21 @@
     "zip": "node scripts/zip.cjs",
     "build": "webpack && node scripts/zip.cjs"
   },
-  "keywords": [
-    "melvor",
-    "melvoridle"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ChanceToZoinks/create-melvor-mod"
-  },
-  "author": "the_real_hagne",
+  "keywords": ["melvor", "melvoridle"],
+  "author": "",
   "license": "ISC",
-  "dependencies": {
-    "chalk": "^5.2.0",
-    "commander": "^10.0.0"
-  },
+  "private": true,
   "devDependencies": {
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
     "archiver": "^5.3.1",
-    "commander": "^10.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
     "del": "^7.0.0",
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "jq": "^1.7.2",
     "melvor-types": "github:ChanceToZoinks/melvor-types",
     "prettier": "^2.8.3",
     "style-loader": "^3.3.1",

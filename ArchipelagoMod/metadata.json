@@ -1,6 +1,6 @@
 {
-  "mod": "Create your mod on mod.io and find the mod id and put it here",
+  "mod": 4311000,
   "game": 2869,
-  "zipfile": "This is autofilled by zip.cjs",
-  "version": "This is autofilled by zip.cjs"
+  "zipfile": "archipelago_gamemode.1725792421702.zip",
+  "version": "1.2.0"
 }

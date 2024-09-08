@@ -2,6 +2,7 @@
 import { Client, ITEMS_HANDLING_FLAGS, SERVER_PACKET_TYPE, CLIENT_STATUS, CLIENT_PACKET_TYPE } from "https://unpkg.com/archipelago.js@1.0.0/dist/archipelago.js";
 
 import { SettingsManager } from "../settings_manager";
+
 import { ItemHandler } from "./item_handler";
 import { NotificationHandler } from "./notification_handler";
 import { SlotdataHandler } from "./slotdata_handler";
@@ -53,14 +54,16 @@ export class ConnectionHandler{
     this.slotdataHandler = slotdataHandler;
     this.settingsManager = settingsManager;
 
+    this.client = new Client();
+
 
     this.client.addListener(SERVER_PACKET_TYPE.PRINT_JSON, (packet : any, _message : string) => this.handleMessages(packet));
     this.client.addListener(SERVER_PACKET_TYPE.RECEIVED_ITEMS, (packet : any, _message: string) => this.handleItems(packet));
     this.client.addListener(SERVER_PACKET_TYPE.DEATH_LINK, (packet : any, _message: string) => this.handleDeathLink(packet));
   }
 
-  public setConnectionInfo(settingsManager : SettingsManager){
-    var apConnectionInfo = settingsManager.apConnectionSection;
+  public setConnectionInfo(){
+    var apConnectionInfo = this.settingsManager.apConnectionSection;
 
     this.connectionInfo.hostname = String(apConnectionInfo.get("ap-hostname"));
     this.connectionInfo.port = Number(apConnectionInfo.get("ap-port"));
