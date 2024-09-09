@@ -1,4 +1,4 @@
-class ArchipelagoItemsChangedEvent extends GameEvent {
+export class ArchipelagoItemsChangedEvent extends GameEvent {
     itemId: string;
     
     constructor(itemId : string) {

@@ -2,6 +2,21 @@ export class Items{
   private startID = 20201120;
 
   itemDict = new Map(); 
+  
+  constructor(){
+    for (let i = 0; i < this.allItems.length; i++) {
+        let id = this.startID + i;
+        let name = this.allItems[i];
+
+        this.itemDict.set(id, name);
+
+        console.log("Item ", name , "is at ID ", id)
+      }
+      
+    console.log("Found ", String(this.itemDict.size), " AP items.");
+
+    console.log(this.itemDict.get(this.startID));
+  }
 
   allItems = [
     "melvorD:Attack",
@@ -28,6 +43,21 @@ export class Items{
     "melvorD:Summoning",
     "melvorD:Astrology",
     "melvorD:Township",
+    "Progressive Woodcutting",
+    "Progressive Fishing",
+    "Progressive Firemaking",
+    "Progressive Cooking",
+    "Progressive Mining",
+    "Progressive Smithing",
+    "Progressive Thieving",
+    "Progressive Farming",
+    "Progressive Fletching",
+    "Progressive Crafting",
+    "Progressive Runecrafting",
+    "Progressive Herblore",
+    "Progressive Agility",
+    "Progressive Summoning",
+    "Progressive Astrology",
     "melvorD:Beavis",
     "melvorD:PuddingDuckie",
     "melvorD:Pyro",
@@ -121,6 +151,34 @@ export class Items{
     "melvorD:Township",
   ]
 
+  progressiveSkills = new Map([
+    [20201144, "melvorD:Woodcutting"],
+    [20201145, "melvorD:Fishing"],
+    [20201146, "melvorD:Firemaking"],
+    [20201147, "melvorD:Cooking"],
+    [20201148, "melvorD:Mining"],
+    [20201149, "melvorD:Smithing"],
+    [20201150, "melvorD:Thieving"],
+    [20201151, "melvorD:Farming"],
+    [20201152, "melvorD:Fletching"],
+    [20201153, "melvorD:Crafting"],
+    [20201154, "melvorD:Runecrafting"],
+    [20201155, "melvorD:Herblore"],
+    [20201156, "melvorD:Agility"],
+    [20201157, "melvorD:Summoning"],
+    [20201158, "melvorD:Astrology"]
+  ])
+
+  skillActions = new Map([
+    ["melvorD:Woodcutting", [
+      "melvorD:Normal",
+      "melvorD:Oak",
+      "melvorD:Willow",
+      "melvorD:Teak",
+      "melvorD:Maple"
+    ]]
+  ])
+
   pets = [
     "melvorD:Beavis",
     "melvorD:PuddingDuckie",
@@ -203,27 +261,13 @@ export class Items{
     "melvorD:Cooking",
     "melvorD:Mining",
     "melvorD:Smithing",
-    "melvorD:Farming"
-  ]
-
-  skillActions= [
+    "melvorD:Farming",
     "Progressive Woodcutting",
-    "melvorD:Normal"
+    "Progressive Fishing",
+    "Progressive Firemaking",
+    "Progressive Cooking",
+    "Progressive Mining",
+    "Progressive Smithing",
+    "Progressive Farming"
   ]
-
-  setup(){
-    for (let i = 0; i < allItems.length; i++) {
-        let id = this.startID + i;
-        let name = this.allItems[i]
-
-        this.itemDict.set(id, name);
-
-        console.log("Item ", name , "is at ID ", id)
-      }
-      
-    console.log("Found ", String(this.itemDict.size), " AP items.")
-    console.log("Found ", String(this.skills.length), " skills.")
-    console.log("Found ", String(this.pets.length + this.eventPets.length), " pets.")
-  }
-    
 }

@@ -1,3 +1,14 @@
+export enum VictoryCondition {
+  NONE = -1,
+  MAX_LEVEL = 0
+}
+
+export interface ApSettings {
+  progressiveSkills: boolean,
+  removeSkillActionLevels: boolean,
+  victoryCondition: VictoryCondition,
+};
+
 export interface GamemodeSettings {
   itemDoubling: boolean,
   preservation: boolean,
@@ -15,12 +26,20 @@ export interface PlayerStats {
 };
 
 export class SlotdataHandler{
+  apSettings: ApSettings = {} as ApSettings;
   gamemodeSettings : GamemodeSettings = {} as GamemodeSettings;
   playerStats : PlayerStats = {} as PlayerStats;
 
   modifiers : Map<string, any> = new Map();
 
+
   constructor(){
+    this.apSettings = {
+      progressiveSkills: true,
+      removeSkillActionLevels: true,
+      victoryCondition: VictoryCondition.NONE,
+    }
+
     this.gamemodeSettings = {
       itemDoubling: false,
       preservation: false,
@@ -39,23 +58,24 @@ export class SlotdataHandler{
   }
 
   setSlotData(slotData : any){  
-      this.gamemodeSettings.itemDoubling = !slotData.item_doubling;
-      this.gamemodeSettings.preservation = !slotData.preservation;
+    this.apSettings.progressiveSkills = slotData.progressive_skills;
+    this.apSettings.removeSkillActionLevels = slotData.remove_skill_action_levels;
+    this.apSettings.victoryCondition = slotData.victory_condition;
 
-      this.gamemodeSettings.isPermaDeath = slotData.is_perma_death;
-      this.gamemodeSettings.hasRegen = slotData.has_regen;
+    this.gamemodeSettings.itemDoubling = slotData.item_doubling;
+    this.gamemodeSettings.preservation = slotData.preservation;
+    this.gamemodeSettings.isPermaDeath = slotData.is_perma_death;
+    this.gamemodeSettings.hasRegen = slotData.has_regen;
 
-      this.playerStats.expGain = slotData.exp_gain;
-      this.playerStats.masteryGain = slotData.mastery_gain;
-        
-      this.playerStats.currencyGain = slotData.currency_gain;
-      this.playerStats.slayerCoinGain = slotData.slayer_gain;
-        
-      this.playerStats.maxMasteryPoolCap = slotData.max_mastery_pool_cap;
-      this.playerStats.bankSpaceIncrease = slotData.bank_space_increase;
+    this.playerStats.expGain = slotData.exp_gain;
+    this.playerStats.masteryGain = slotData.mastery_gain;    
+    this.playerStats.currencyGain = slotData.currency_gain;
+    this.playerStats.slayerCoinGain = slotData.slayer_gain;
+    this.playerStats.maxMasteryPoolCap = slotData.max_mastery_pool_cap;
+    this.playerStats.bankSpaceIncrease = slotData.bank_space_increase;
 
-      this.updateGamemode();
-      this.updateModifiers();
+    this.updateGamemode();
+    this.updateModifiers();
   }
 
   updateGamemode(){
@@ -79,11 +99,6 @@ export class SlotdataHandler{
   }
 
   setModifier(skill : string, gain : number, modifierName : string, allowEnemy : boolean){
-    if(!gain){
-      console.warn(skill, "slotData is NAN!");
-      return;
-    }
-
     // @ts-ignore
     let modifier = null;
 

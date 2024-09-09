@@ -1,21 +1,22 @@
 import { Items } from "../data/items";
 import { NotificationHandler } from "../handlers/notification_handler";
-import { SkillHandler } from "../handlers/skill_handler";
+import { ActionHandler } from "../handlers/skills/action_handler";
+import { SkillHandler } from "../handlers/skills/skill_handler";
 
 // @ts-ignore
 export class ArchipelagoRequirement extends GameRequirement {
     type: string;
     itemId: string;
     itemType: string;
-    skillType: string;
+    skillId: string;
     isProgressive: boolean;
     countNeeded: number;
     iconUrl: string;
 
     items: Items;
     skillHandler: SkillHandler;
+    actionHandler: ActionHandler;
     notificationHandler: NotificationHandler;
-
 
   constructor(data : any, game : Game) {
     super (game);
@@ -23,7 +24,7 @@ export class ArchipelagoRequirement extends GameRequirement {
     this.type = 'ArchipelagoUnlock';
     this.itemId = data.itemId;
     this.itemType = data.itemType;
-    this.skillType = data.skillType;
+    this.skillId = data.skillId;
 
     this.isProgressive = data.isProgressive;
     this.countNeeded = data.countNeeded;
@@ -32,23 +33,22 @@ export class ArchipelagoRequirement extends GameRequirement {
 
     this.items = data.items;
     this.skillHandler = data.skillHandler;
+    this.actionHandler = data.actionHandler;
     this.notificationHandler = data.notificationHandler;
   }
 
   isMet() {
-    console.log("Checking requirements")
-    if(this.items.skillActions.includes(this.itemId)){
-      if(this.isProgressive){
-        console.log("Is progresive")
-        return this.skillHandler.getProgressiveSkillCount(this.itemId) >= this.countNeeded;
-      }
-      else{
-        console.log("Is not progresive")
-        return this.skillHandler.isActionUnlocked(this.itemId);
-      }
+    if(this.items.skills.includes(this.skillId) && this.isProgressive){
+      let unlocked = this.skillHandler.getProgressiveSkillCount(this.skillId) >= this.countNeeded;
+      //console.log("Is progresive and unlocked:",unlocked);
+      return unlocked;
+    }
+    else if (this.items.skillActions.get(this.skillId)?.includes(this.itemId) && !this.isProgressive){
+      //console.log("Is not progresive and unlocked:")
+      return this.actionHandler.isActionUnlocked(this.itemId);
     }
     else{
-      console.warn("Unknown type for requirement", this.itemId);
+      console.warn("Unknown type for requirement of", this.itemId);
     }
 
     return false;
@@ -63,6 +63,9 @@ export class ArchipelagoRequirement extends GameRequirement {
     return (e : any) => {
       if (e.itemId === this.itemId){
         callback(e);
+      }
+      else{
+        console.log();
       }
     };
   }
@@ -81,12 +84,6 @@ export class ArchipelagoRequirement extends GameRequirement {
 
   getNodes(imageClass : any) {
     // @ts-ignore
-    let t = templateStringWithNodes('Find this ${itemType} in the ${apImage}AP world to unlock it.', { apImage: this.createImage(this.iconUrl, imageClass) }, {itemType: this.itemType}, false);
-    return t;
-
-    // @ts-ignore
-    //return [`Unlock this ${this.itemType} in the ${this.createImage(this.iconUrl, imageClass)}AP world to unlock it.`];
-
-    //return [`<p>Unlock this ${this.itemType} in the <img src="${this.iconUrl}" alt="Archipelago"AP world to unlock it.</p>`];
+    return templateStringWithNodes('Find this ${itemType} in the ${apImage}AP world to unlock it.', { apImage: this.createImage(this.iconUrl, imageClass) }, {itemType: this.itemType}, false);
   }
 }

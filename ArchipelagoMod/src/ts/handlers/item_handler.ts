@@ -1,5 +1,7 @@
+import { ArchipelagoItemsChangedEvent } from "../ap_classes/archipelago_items_changed_event";
 import { Items } from "../data/items";
-import { SkillHandler } from "./skill_handler";
+import { SkillHandler } from "./skills/skill_handler";
+import { SlotdataHandler } from "./slotdata_handler";
 
 export class ItemHandler{
     lastRecievedItemIndex : number = -1;
@@ -7,12 +9,15 @@ export class ItemHandler{
     items : Items;
 
     private skillHandler : SkillHandler;
+    private slotdataHandler : SlotdataHandler;
+
     private characterStorage : ModStorage;
 
-    constructor(skillHandler: SkillHandler){
-        this.items = new Items();
+    constructor(items : Items, skillHandler: SkillHandler, slotdataHandler : SlotdataHandler){
+        this.items = items;
 
         this.skillHandler = skillHandler;
+        this.slotdataHandler = slotdataHandler;
 
         this.characterStorage = {} as ModStorage; 
     }
@@ -24,21 +29,29 @@ export class ItemHandler{
     }
 
     updateItemIndex(newIndex : number){
-        this.lastRecievedItemIndex = newIndex;
         this.characterStorage.setItem("AP_itemIndex", newIndex)
+
+        console.log("New recieved item index is", newIndex);
     }
 
-    receiveItem(id : Number){
-        const itemName = this.items.itemDict.get(id);
-
-        if(this.items.skills.find(x => x == itemName)){
-            this.skillHandler.unlockSkill(itemName);
+    receiveItem(id : number){
+        const itemID = this.items.itemDict.get(id);
+        console.log("recieve item",id, itemID)
+        
+        if(this.items.skills.find(x => x == itemID) && !this.slotdataHandler.apSettings.progressiveSkills){
+            this.skillHandler.progressSkill(itemID);
         }
-        else if(this.items.pets.find(x => x == itemName)){
-            this.unlockPet(itemName);
+        else if(this.items.progressiveSkills.has(id) && this.slotdataHandler.apSettings.progressiveSkills){
+            let skillName : string = this.items.progressiveSkills.get(id) ?? "";
+            this.skillHandler.progressSkill(skillName);
+            // @ts-ignore
+            game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent(skillName));
+        }
+        else if(this.items.pets.find(x => x == itemID)){
+            this.unlockPet(itemID);
         }
         else{
-            console.error("Unimplemented item: " + itemName);
+            console.error("Unimplemented item: ", id, itemID);
             return false;
         }
         return true;

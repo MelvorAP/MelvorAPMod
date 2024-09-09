@@ -1,4 +1,11 @@
-/* Your styles here */
-.mod-template__logo-img {
-  width: 100%;
+body.darkMode.superDark .btn-gamemode-ap {
+  color: #fff;
+  background-color: #6d3a61;
+  border-color: #472640;
+}
+
+.btn-gamemode-ap {
+  color: #fff;
+  background-color: #6d3a61;
+  border-color: #472640;
 }

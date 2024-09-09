@@ -34,11 +34,10 @@ export class ConnectionHandler{
   private itemHandler : ItemHandler;
   private notificationHandler : NotificationHandler;
   private slotdataHandler : SlotdataHandler;
-  private settingsManager : SettingsManager;
 
   private client : Client;
 
-  constructor(modService : ModService, itemHandler: ItemHandler, notificationHandler: NotificationHandler, slotdataHandler: SlotdataHandler, settingsManager : SettingsManager){
+  constructor(modService : ModService, itemHandler: ItemHandler, notificationHandler: NotificationHandler, slotdataHandler: SlotdataHandler){
     this.modService = modService;
     
     this.isConnected = false;
@@ -60,10 +59,8 @@ export class ConnectionHandler{
     this.itemHandler = itemHandler;
     this.notificationHandler = notificationHandler;
     this.slotdataHandler = slotdataHandler;
-    this.settingsManager = settingsManager;
 
     this.client = new Client();
-
 
     this.client.addListener(SERVER_PACKET_TYPE.PRINT_JSON, (packet : any, _message : string) => this.handleMessages(packet));
     this.client.addListener(SERVER_PACKET_TYPE.RECEIVED_ITEMS, (packet : any, _message: string) => this.handleItems(packet));
@@ -71,19 +68,14 @@ export class ConnectionHandler{
     this.client.addListener(SERVER_PACKET_TYPE.DISCONNECTED, (packet : any, _message: string) => this.diconnected());
   }
 
-  public setConnectionInfo(){
-    var apConnectionInfo = this.settingsManager.apConnectionSection;
+  public setConnectionInfo(settingsManager : SettingsManager){
+    var apConnectionInfo = settingsManager.apConnectionSection;
 
     this.connectionInfo.hostname = String(apConnectionInfo.get("ap-hostname"));
     this.connectionInfo.port = Number(apConnectionInfo.get("ap-port"));
     this.connectionInfo.password = String(apConnectionInfo.get("ap-password"));
     this.connectionInfo.name = String(apConnectionInfo.get("ap-slotname"));
-
-    if(Boolean(apConnectionInfo.get("ap-auto-connect"))){
-      this.connectToAP();
-    }
   }
-
   connectToAP(){
     this.notificationHandler.sendApNotification(-1, "Trying to connect to AP World.", false, true);
 
@@ -110,7 +102,7 @@ export class ConnectionHandler{
   }
 
   handleMessages(packet : any){
-    console.log("Received JSON", packet);
+    //console.log("Received JSON", packet);
     
     switch(packet.type){
       case "Chat":
@@ -129,7 +121,7 @@ export class ConnectionHandler{
         //Do nothing
         break;
       default:
-        console.log("Unhandled message type");
+        console.warn("Unhandled message type", packet);
     }
   }
 
@@ -144,18 +136,19 @@ export class ConnectionHandler{
         }
 
         for(let i = lastRecievedItemIndex; i < packet.items.length; i++){
-          //let item = packet.items[i]
+          let item = packet.items[i];
 
-          //this.handleReceivedItem(item.item, item.player);
+          this.handleReceivedItem(item.item, item.player);
         }
 
         this.itemHandler.updateItemIndex(packet.items.length);
       }
       else{
         for (let i = 0; i < packet.items.length; i++) {
-          let item = packet.items[i]
+          let item = packet.items[i];
 
           this.handleReceivedItem(item.item, item.player);
+          this.itemHandler.updateItemIndex(this.itemHandler.lastRecievedItemIndex + 1);
         }
       }
   }

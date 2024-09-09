@@ -2,10 +2,11 @@ import { ConnectionHandler } from "./handlers/connection_handler";
 import { Items } from "./data/items";
 import { ItemHandler } from "./handlers/item_handler";
 import { NotificationHandler } from "./handlers/notification_handler";
-import { SkillHandler } from "./handlers/skill_handler";
+import { SkillHandler } from "./handlers/skills/skill_handler";
 import { SlotdataHandler } from "./handlers/slotdata_handler";
 import { SettingsManager } from "./settings_manager";
 import { ArchipelagoRequirement } from "./ap_classes/archipelago_requirement";
+import { ActionHandler } from "./handlers/skills/action_handler";
 
 export interface IModServiceData {
   icon_url: string;
@@ -68,6 +69,7 @@ export default class ModService {
   slotdataHandler: SlotdataHandler;
   itemHandler: ItemHandler;
   skillHandler: SkillHandler;
+  actionHandler : ActionHandler;
 
   settingsManager: SettingsManager;
   bar?: SidebarCategoryWrapper;
@@ -83,12 +85,13 @@ export default class ModService {
     this.slotdataHandler = new SlotdataHandler();
 
     this.items = new Items();
-    this.skillHandler = new SkillHandler(this.items, this.#data.icon_url);
-    this.itemHandler = new ItemHandler(this.skillHandler);
+    this.skillHandler = new SkillHandler(this.items);
+    this.actionHandler = new ActionHandler(this.items, this.#data.icon_url);
+    this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler);
   
     this.notificationHandler = new NotificationHandler(this.#data.icon_url, this.#data.icon_url_large);
-    this.settingsManager = new SettingsManager(ctx);
-    this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler, this.settingsManager);
+    this.settingsManager = new SettingsManager();
+    this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
   }
 
   setSideBar(categoryName : string, itemName : string){
@@ -108,6 +111,7 @@ export default class ModService {
             icon: this.#data.icon_url,
           onClick() {
             if(itemName == "Disconnected"){
+              self.connectionHandler.setConnectionInfo(self.settingsManager);
               self.connectionHandler.connectToAP();
             }
             else{
@@ -121,6 +125,10 @@ export default class ModService {
 
   public onConnected(){
     this.setSideBar(this.#data.sidebar_category_name ?? "", "Connected");
+
+    if(this.slotdataHandler.apSettings.removeSkillActionLevels){
+      this.actionHandler.setLevelsToLowest();
+    }
   }
 
   public onDisconnect(){
@@ -135,6 +143,8 @@ export default class ModService {
     service.#ctx.onModsLoaded(ctx => {
       // @ts-ignore
       ctx.patch(Game, "getRequirementFromData").after(function (_requirement, data) {return service.addApUnlock(data)});
+
+      service.settingsManager.setup(ctx);
     })
   
     ctx.onCharacterLoaded(async ctx => {
@@ -147,9 +157,10 @@ export default class ModService {
       }
 
       service.skillHandler.setCharacterStorage(ctx.characterStorage);
+      service.actionHandler.setCharacterStorage(ctx.characterStorage);
       service.itemHandler.setCharacterStorage(ctx.characterStorage);
   
-      service.skillHandler.lockSkills();
+      service.skillHandler.lockSkills(service.actionHandler);
     })
   
     service.#ctx.onInterfaceReady(ctx  => {
@@ -163,7 +174,11 @@ export default class ModService {
   
       service.skillHandler.loadUnlockedSkills();
     
-      service.connectionHandler.setConnectionInfo();
+      service.connectionHandler.setConnectionInfo(service.settingsManager);
+
+      if(Boolean(service.settingsManager.apConnectionSection.get("ap-auto-connect"))){
+        service.connectionHandler.connectToAP();
+      }
   
       //game.combat.on("monsterKilled", function (e) {console.log("Monster killed:", e)})
       //game.combat.on("dungeonCompleted", function (e) {console.log("Dungeon completed:", e)})
@@ -173,7 +188,7 @@ export default class ModService {
       //game.astrology.on("levelChanged", function (e) {console.log(e.skill, "leveled up from", e.oldLevel, " to ", e.newLevel)})
       //game.astrology.on("masteryLevelChanged", function (e) {console.log(e.action, "leveled up from", e.oldLevel, " to ", e.newLevel)})
   
-      service.notificationHandler.showApModal("", "");
+      //service.notificationHandler.showApModal("", "");
       //ctx.notificationHandler.showSkillModal("TITLE", "MESSAGE", "attack");
   
       //game.woodcutting.modifyData({trees: [{id: "melvorD:Normal", requirements: {add: [{type: "ArchipelagoUnlock", itemId: "melvorD:Normal", itemType: "melvorD:Woodcutting"}]}}]})
@@ -182,7 +197,7 @@ export default class ModService {
 
       //game.woodcutting.renderQueue.treeUnlocks = true;
       
-      //game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent("melvorD:Normal"));
+      //game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent("melvorD:WoodCutting"));
     });
   }
 

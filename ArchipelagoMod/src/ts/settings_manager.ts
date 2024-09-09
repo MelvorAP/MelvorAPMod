@@ -7,7 +7,10 @@ export interface SettingsSection {
 export class SettingsManager{
   apConnectionSection : SettingsSection = {} as SettingsSection;
 
-  constructor(ctx: ModContext){
+  constructor(){
+  }
+
+  setup(ctx: ModContext){
     this.apConnectionSection = ctx.settings.section("Connection");
 
     var settings : SettingConfig[] = [];
@@ -16,16 +19,16 @@ export class SettingsManager{
       type: "text",
       name: "ap-hostname",
       label: "Host name",
-      hint: "Host name of the AP world, for example archipelago.gg",
+      hint: "Host name of the AP world server, for example archipelago.gg",
       default: "archipelago.gg"
     } as SettingConfig)
 
     settings.push({
       type: "number",
       name: "ap-port",
-      label: "Host name",
-      hint: "Host name of the AP world, for example archipelago.gg",
-      default: "archipelago.gg"
+      label: "Port",
+      hint: "Port of the AP world server",
+      default: 1
     } as SettingConfig)
 
     settings.push({
@@ -48,7 +51,7 @@ export class SettingsManager{
       type: "switch",
       name: "ap-auto-connect",
       label: "Auto connect",
-      hint: "Automatically connect to the room when character is loaded.",
+      hint: "Automatically connect to the room when character is loaded",
       default: false
     } as SettingConfig);
 
