@@ -35,9 +35,9 @@ export class NotificationHandler{
     showApModal(title : string, message : string){
         addModalToQueue({
             title: title,
-            html: `<span class="text-dark">${ 
+            html: `<h5 class="font-w400 text-combat-smoke font-size-sm">${ 
                 message
-            }</span>`,
+            }</h5>`,
             imageUrl: this.iconLarge,
             imageWidth: 64,
             imageHeight: 64,
@@ -45,12 +45,16 @@ export class NotificationHandler{
         });
     }
 
-    showSkillModal(title : string, message : string, skill : string){
+    showSkillModal(title : string, message : string, skill : string, images : string[]){
+        for(let i = 0; i < images.length; i++){
+            message = message.replace("${" + i + "}" , `<img class="skill-icon-xs mr-1" src="${images[i]}">`)
+        }
+
         addModalToQueue({
             title: title,
-            html: `<span class="text-dark">${ 
+            html: `<h5 class="font-w400 text-combat-smoke font-size-sm">${ 
                 message
-            }</span>`,
+            }</h5>`,
             imageUrl: `assets/media/skills/${skill}/${skill}.png`,
             imageWidth: 64,
             imageHeight: 64,

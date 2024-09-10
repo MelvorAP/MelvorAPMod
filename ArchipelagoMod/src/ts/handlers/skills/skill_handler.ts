@@ -66,4 +66,11 @@ export class SkillHandler{
     getProgressiveSkillCount(skillID : string) : number{
         return this.characterStorage.getItem(skillSavePrefix + skillID) ?? 0;
     }
+
+    hasAnyCombat(){
+        return this.characterStorage.getItem(skillSavePrefix + "melvorD:Attack") ||
+            this.characterStorage.getItem(skillSavePrefix + "melvorD:Strength") ||
+            this.characterStorage.getItem(skillSavePrefix + "melvorD:Ranged") ||
+            this.characterStorage.getItem(skillSavePrefix + "melvorD:Magic");
+    }
 }

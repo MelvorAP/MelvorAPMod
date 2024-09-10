@@ -144,6 +144,29 @@ export default class ModService {
       // @ts-ignore
       ctx.patch(Game, "getRequirementFromData").after(function (_requirement, data) {return service.addApUnlock(data)});
 
+      // @ts-ignore
+      ctx.patch(SidebarItem, 'click').replace(function(o) {
+        console.log("test");
+        // @ts-ignore
+        if (this.id === 'melvorD:Combat' && service.isArchipelagoGameMode && ! service.skillHandler.hasAnyCombat()){
+          service.notificationHandler.showSkillModal(
+            "You don't have any combat skill", 
+            'You need to unlock ${0}Attack, ${1}Strength, ${2}Ranged or<br>${3}Magic to do combat.', 
+            "combat",
+            [
+              "https://cdn2-main.melvor.net/assets/media/skills/combat/attack.png",
+              "https://cdn2-main.melvor.net/assets/media/skills/combat/strength.png",
+              "https://cdn2-main.melvor.net/assets/media/skills/ranged/ranged.png",
+              "https://cdn2-main.melvor.net/assets/media/skills/magic/magic.png",
+            ]
+          );
+          return;
+        }
+        else{
+          o();
+        }
+      });
+
       service.settingsManager.setup(ctx);
     })
   
