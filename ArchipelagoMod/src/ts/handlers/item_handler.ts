@@ -46,6 +46,8 @@ export class ItemHandler{
             this.skillHandler.progressSkill(skillName);
             // @ts-ignore
             game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent(skillName));
+
+            this.refreshMenus();
         }
         else if(this.items.pets.find(x => x == itemID)){
             this.unlockPet(itemID);
@@ -59,5 +61,9 @@ export class ItemHandler{
 
     unlockPet(petName : string){
         game.petManager.unlockPetByID(petName)
+    }
+
+    refreshMenus(){
+        game.woodcutting.renderQueue.treeUnlocks = true;
     }
 }

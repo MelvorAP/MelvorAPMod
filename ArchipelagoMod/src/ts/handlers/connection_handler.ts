@@ -126,6 +126,7 @@ export class ConnectionHandler{
   }
 
   handleItems(packet : any){
+      console.log("Getting new items. Old item index is ", this.itemHandler.lastRecievedItemIndex);
       if (packet.index == 0) {
         //Sync package
 
@@ -144,12 +145,19 @@ export class ConnectionHandler{
         this.itemHandler.updateItemIndex(packet.items.length);
       }
       else{
+        let lastRecievedItemIndex = this.itemHandler.lastRecievedItemIndex;
+
+        if(lastRecievedItemIndex == -1){
+          lastRecievedItemIndex = 0;
+        }
+
         for (let i = 0; i < packet.items.length; i++) {
           let item = packet.items[i];
 
           this.handleReceivedItem(item.item, item.player);
-          this.itemHandler.updateItemIndex(this.itemHandler.lastRecievedItemIndex + 1);
         }
+
+        this.itemHandler.updateItemIndex(lastRecievedItemIndex + packet.items.length + 1);
       }
   }
 
