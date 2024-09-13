@@ -21,7 +21,12 @@
 /ArchipelagoMod/packed
 /ArchipelagoMod/dist
 /ArchipelagoMod/output
+/ArchipelagoMod/build/
 /ArchipelagoMod/package-lock.json
 
-/OLDSource/
-/ArchipelagoMod/build/
+/DataDumper/node_modules
+/DataDumper/packed
+/DataDumper/dist
+/DataDumper/output
+/DataDumper/build/
+/DataDumper/package-lock.json

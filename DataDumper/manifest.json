@@ -1,0 +1,4 @@
+{
+  "namespace": "data_dumper",
+  "setup": "setup.mjs"
+}
