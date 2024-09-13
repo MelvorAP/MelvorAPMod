@@ -59,6 +59,10 @@ export class Dumper{
         monster.lootTable.sortedDropsArray.forEach(loot => {
           message += `\t\t\t"${loot.item.name}",\n`
         })
+
+        if(monster.bones){
+            message += `\t\t\t"${monster.bones.item.name}",\n`
+        }
   
         message += `\t\t],\n`
         message += `\t\tnamespace = GameNameSpace.${this.getNameSpaceEnum(area.namespace)},\n`
@@ -92,6 +96,10 @@ export class Dumper{
         monster.lootTable.sortedDropsArray.forEach(loot => {
           message += `\t\t\t"${loot.item.name}",\n`
         })
+
+        if(monster.bones){
+            message += `\t\t\t"${monster.bones.item.name}",\n`
+        }
   
         message += `\t\t],\n`
         message += `\t\tnamespace = GameNameSpace.${this.getNameSpaceEnum(area.namespace)},\n`
