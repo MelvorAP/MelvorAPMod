@@ -41,8 +41,8 @@ export class ItemHandler{
         if(this.items.skills.find(x => x == itemID) && !this.slotdataHandler.apSettings.progressiveSkills){
             this.skillHandler.progressSkill(itemID);
         }
-        else if(this.items.progressiveSkills.has(id) && this.slotdataHandler.apSettings.progressiveSkills){
-            let skillName : string = this.items.progressiveSkills.get(id) ?? "";
+        else if(this.items.progressive_skills.has(id) && this.slotdataHandler.apSettings.progressiveSkills){
+            let skillName : string = this.items.progressive_skills.get(id) ?? "";
             this.skillHandler.progressSkill(skillName);
             // @ts-ignore
             game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent(skillName));

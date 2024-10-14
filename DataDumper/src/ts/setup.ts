@@ -7,16 +7,6 @@ import { Dumper } from "./dumper";
 let Icon : any;
 let LargeIcon : any;
 
-let baseSkillActions = new Map([
-	["melvorD:Woodcutting", [
-		"melvorD:Normal",
-      "melvorD:Oak",
-      "melvorD:Willow",
-      "melvorD:Teak",
-      "melvorD:Maple"
-    ]]
-  ])
-
 export async function setup(ctx: ModContext) {
   Icon = ctx.getResourceUrl(IconPath);
   LargeIcon = ctx.getResourceUrl(LargeIconPath);

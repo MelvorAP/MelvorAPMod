@@ -4,9 +4,9 @@ export class Items{
   itemDict = new Map(); 
   
   constructor(){
-    for (let i = 0; i < this.allItems.length; i++) {
+    for (let i = 0; i < this.all_items.length; i++) {
         let id = this.startID + i;
-        let name = this.allItems[i];
+        let name = this.all_items[i];
 
         this.itemDict.set(id, name);
 
@@ -18,239 +18,7 @@ export class Items{
     console.log(this.itemDict.get(this.startID));
   }
 
-  allItems = [
-    "melvorD:Attack",
-    "melvorD:Strength",
-    "melvorD:Defence",
-    "melvorD:Hitpoints",
-    "melvorD:Ranged",
-    "melvorD:Magic",
-    "melvorD:Prayer",
-    "melvorD:Slayer",
-    "melvorD:Woodcutting",
-    "melvorD:Fishing",
-    "melvorD:Firemaking",
-    "melvorD:Cooking",
-    "melvorD:Mining",
-    "melvorD:Smithing",
-    "melvorD:Thieving",
-    "melvorD:Farming",
-    "melvorD:Fletching",
-    "melvorD:Crafting",
-    "melvorD:Runecrafting",
-    "melvorD:Herblore",
-    "melvorD:Agility",
-    "melvorD:Summoning",
-    "melvorD:Astrology",
-    "melvorD:Township",
-    "Progressive Woodcutting",
-    "Progressive Fishing",
-    "Progressive Firemaking",
-    "Progressive Cooking",
-    "Progressive Mining",
-    "Progressive Smithing",
-    "Progressive Thieving",
-    "Progressive Farming",
-    "Progressive Fletching",
-    "Progressive Crafting",
-    "Progressive Runecrafting",
-    "Progressive Herblore",
-    "Progressive Agility",
-    "Progressive Summoning",
-    "Progressive Astrology",
-    "melvorD:Beavis",
-    "melvorD:PuddingDuckie",
-    "melvorD:Pyro",
-    "melvorD:Cris",
-    "melvorD:CoolRock",
-    "melvorD:PuffTheBabyDragon",
-    "melvorD:LarryTheLonelyLizard",
-    "melvorD:Bruce",
-    "melvorD:LilRon",
-    "melvorD:Leonardo",
-    "melvorD:FinnTheCat",
-    "melvorD:GoldenGolbin",
-    "melvorD:Ty",
-    "melvorD:Chick",
-    "melvorD:Zarrah",
-    "melvorD:Chio",
-    "melvorD:BouncingBob",
-    "melvorD:Rosey",
-    "melvorD:Ayyden",
-    "melvorD:ArcticYeti",
-    "melvorD:Mac",
-    "melvorD:JerryTheGiraffe",
-    "melvorD:PrestonThePlatypus",
-    "melvorF:Snek",
-    "melvorF:Quill",
-    "melvorF:Caaarrrlll",
-    "melvorF:Gunter",
-    "melvorF:Gronk",
-    "melvorF:Marahute",
-    "melvorF:Salem",
-    "melvorF:Monkey",
-    "melvorF:Asura",
-    "melvorF:Peri",
-    "melvorF:Otto",
-    "melvorF:JellyJim",
-    "melvorF:Harley",
-    "melvorF:Singe",
-    "melvorF:Aquarias",
-    "melvorF:Norman",
-    "melvorF:Erran",
-    "melvorF:Ren",
-    "melvorF:Pablo",
-    "melvorF:Sam",
-    "melvorF:TimTheWolf",
-    "melvorF:Mark",
-    "melvorF:Bone",
-    "melvorF:Astro",
-    "melvorF:B",
-    "melvorF:Marcy",
-    "melvorF:Roger",
-    "melvorF:Ace",
-    "melvorF:Layla",
-    "melvorF:MisterFuzzbutt",
-    "melvorF:OctaviusLepidus",
-    "melvorF:Saki",
-    "melvorF:UndeadStronghold",
-    "melvorF:MagicStronghold",
-    "melvorF:DragonStronghold",
-    "melvorF:GodStronghold",
-    "melvorD:RipperTheReindeer",
-    "melvorD:FestiveCoolRock",
-    "melvorD:FestiveChio",
-    "melvorD:JerryTheGiraffe",
-    "melvorD:PrestonThePlatypus",
-  ]
-
-  skills = [
-    "melvorD:Attack",
-    "melvorD:Strength",
-    "melvorD:Defence",
-    "melvorD:Hitpoints",
-    "melvorD:Ranged",
-    "melvorD:Magic",
-    "melvorD:Prayer",
-    "melvorD:Slayer",
-    "melvorD:Woodcutting",
-    "melvorD:Fishing",
-    "melvorD:Firemaking",
-    "melvorD:Cooking",
-    "melvorD:Mining",
-    "melvorD:Smithing",
-    "melvorD:Thieving",
-    "melvorD:Farming",
-    "melvorD:Fletching",
-    "melvorD:Crafting",
-    "melvorD:Runecrafting",
-    "melvorD:Herblore",
-    "melvorD:Agility",
-    "melvorD:Summoning",
-    "melvorD:Astrology",
-    "melvorD:Township",
-  ]
-
-  progressiveSkills = new Map([
-    [20201144, "melvorD:Woodcutting"],
-    [20201145, "melvorD:Fishing"],
-    [20201146, "melvorD:Firemaking"],
-    [20201147, "melvorD:Cooking"],
-    [20201148, "melvorD:Mining"],
-    [20201149, "melvorD:Smithing"],
-    [20201150, "melvorD:Thieving"],
-    [20201151, "melvorD:Farming"],
-    [20201152, "melvorD:Fletching"],
-    [20201153, "melvorD:Crafting"],
-    [20201154, "melvorD:Runecrafting"],
-    [20201155, "melvorD:Herblore"],
-    [20201156, "melvorD:Agility"],
-    [20201157, "melvorD:Summoning"],
-    [20201158, "melvorD:Astrology"]
-  ])
-
-  skillActions = new Map([
-    ["melvorD:Woodcutting", [
-      "melvorD:Normal",
-      "melvorD:Oak",
-      "melvorD:Willow",
-      "melvorD:Teak",
-      "melvorD:Maple"
-    ]]
-  ])
-
-  pets = [
-    "melvorD:Beavis",
-    "melvorD:PuddingDuckie",
-    "melvorD:Pyro",
-    "melvorD:Cris",
-    "melvorD:CoolRock",
-    "melvorD:PuffTheBabyDragon",
-    "melvorD:LarryTheLonelyLizard",
-    "melvorD:Bruce",
-    "melvorD:LilRon",
-    "melvorD:Leonardo",
-    "melvorD:FinnTheCat",
-    "melvorD:GoldenGolbin",
-    "melvorD:Ty",
-    "melvorD:Chick",
-    "melvorD:Zarrah",
-    "melvorD:Chio",
-    "melvorD:BouncingBob",
-    "melvorD:Rosey",
-    "melvorD:Ayyden",
-    "melvorD:ArcticYeti",
-    "melvorD:Mac",
-    "melvorF:Snek",
-    "melvorF:Quill",
-    "melvorF:Caaarrrlll",
-    "melvorF:Gunter",
-    "melvorF:Gronk",
-    "melvorF:Marahute",
-    "melvorF:Salem",
-    "melvorF:Monkey",
-    "melvorF:Asura",
-    "melvorF:Peri",
-    "melvorF:Otto",
-    "melvorF:JellyJim",
-    "melvorF:Harley",
-    "melvorF:Singe",
-    "melvorF:Aquarias",
-    "melvorF:Norman",
-    "melvorF:Erran",
-    "melvorF:Ren",
-    "melvorF:Pablo",
-    "melvorF:Sam",
-    "melvorF:TimTheWolf",
-    "melvorF:Mark",
-    "melvorF:Bone",
-    "melvorF:Astro",
-    "melvorF:B",
-    "melvorF:Marcy",
-    "melvorF:Roger",
-    "melvorF:Ace",
-    "melvorF:Layla",
-    "melvorF:MisterFuzzbutt",
-    "melvorF:OctaviusLepidus",
-    "melvorF:Saki",
-    "melvorF:UndeadStronghold",
-    "melvorF:MagicStronghold",
-    "melvorF:DragonStronghold",
-    "melvorF:GodStronghold"
-  ]
-
-  eventPets= [
-    "melvorD:RipperTheReindeer",
-    "melvorD:FestiveCoolRock",
-    "melvorD:FestiveChio"
-  ]
-
-  goblinRaidPets= [
-    "melvorD:JerryTheGiraffe",
-    "melvorD:PrestonThePlatypus",
-  ]
-
-  demoItems= [
+  demo_skill_unlocks = [
     "melvorD:Attack",
     "melvorD:Strength",
     "melvorD:Defence",
@@ -261,7 +29,10 @@ export class Items{
     "melvorD:Cooking",
     "melvorD:Mining",
     "melvorD:Smithing",
-    "melvorD:Farming",
+    "melvorD:Farming"
+]
+
+  demo_progressive_skill_unlocks = [
     "Progressive Woodcutting",
     "Progressive Fishing",
     "Progressive Firemaking",
@@ -270,4 +41,82 @@ export class Items{
     "Progressive Smithing",
     "Progressive Farming"
   ]
+
+  demo_pets = [
+    "melvorD:Beavis",
+    "melvorD:PuddingDuckie",
+    "melvorD:Pyro",
+    "melvorD:Cris",
+    "melvorD:CoolRock",
+    "melvorD:PuffTheBabyDragon",
+    "melvorD:LarryTheLonelyLizard",
+    "melvorD:Bruce",
+    "melvorD:LilRon",
+    "melvorD:Leonardo",
+    "melvorD:FinnTheCat",
+    "melvorD:GoldenGolbin",
+    "melvorD:Ty",
+    "melvorD:Chick",
+    "melvorD:Zarrah",
+    "melvorD:Chio",
+    "melvorD:BouncingBob",
+    "melvorD:Rosey",
+    "melvorD:Ayyden",
+    "melvorD:ArcticYeti",
+    "melvorD:Mac"
+  ]
+
+  demo_event_pets = [
+    //Event only, just cosmetic
+    "melvorD:RipperTheReindeer",
+    //Event only, just cosmetic
+    "melvorD:FestiveCoolRock",
+    //Event only, just cosmetic
+    "melvorD:FestiveChio"
+  ]
+
+  demo_goblin_raid_pets = [
+    //Golbin Raid Shop
+    "melvorD:JerryTheGiraffe",
+    //Golbin Raid Shop
+    "melvorD:PrestonThePlatypus",
+  ]
+
+  all_items = [
+    ...this.demo_skill_unlocks,
+    ...this.demo_progressive_skill_unlocks,
+    ...this.demo_pets,
+    ...this.demo_event_pets,
+    ...this.demo_goblin_raid_pets
+  ]
+
+  skills = [
+    ...this.demo_skill_unlocks,
+  ]
+
+  pets = [
+    ...this.demo_pets,
+    ...this.demo_event_pets,
+    ...this.demo_goblin_raid_pets
+  ]
+
+  progressive_skills = new Map([
+    [20201130, "melvorD:Woodcutting"],
+    [20201131, "melvorD:Fishing"],
+    [20201132, "melvorD:Firemaking"],
+    [20201133, "melvorD:Cooking"],
+    [20201134, "melvorD:Mining"],
+    [20201135, "melvorD:Smithing"],
+    [20201136, "melvorD:Farming"],
+  ])
+
+  skill_actions = new Map([
+    ["melvorD:Woodcutting", [
+      "melvorD:Normal",
+      "melvorD:Oak",
+      "melvorD:Willow",
+      "melvorD:Teak",
+      "melvorD:Maple"
+    ]]
+  ])
 }

@@ -26,7 +26,7 @@ export class SkillHandler{
 
             if(skill instanceof SkillWithMastery){
                 skill.sortedMasteryActions.forEach(action => {
-                    actionHandler.lockAction(this, skill.id, action as BasicSkillRecipe);
+                    actionHandler.lockAction(skill.id, action as BasicSkillRecipe);
                 })
             }
             else{

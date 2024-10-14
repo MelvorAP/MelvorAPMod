@@ -3,6 +3,20 @@ import { NotificationHandler } from "../handlers/notification_handler";
 import { ActionHandler } from "../handlers/skills/action_handler";
 import { SkillHandler } from "../handlers/skills/skill_handler";
 
+export interface ApRequirementData {
+  type: string, 
+  itemId: string, 
+  itemType: string,
+  skillId: string,
+  isProgressive: boolean,
+  countNeeded: number,
+  items: Items,
+  actionHandler: ActionHandler,
+  skillHandler: SkillHandler,
+  notificationHandler: NotificationHandler,
+  iconUrl: string
+}
+
 // @ts-ignore
 export class ArchipelagoRequirement extends GameRequirement {
     type: string;
@@ -18,7 +32,7 @@ export class ArchipelagoRequirement extends GameRequirement {
     actionHandler: ActionHandler;
     notificationHandler: NotificationHandler;
 
-  constructor(data : any, game : Game) {
+  constructor(data : ApRequirementData, game : Game) {
     super (game);
 
     this.type = 'ArchipelagoUnlock';
@@ -43,7 +57,7 @@ export class ArchipelagoRequirement extends GameRequirement {
       //console.log("Is progresive and unlocked:",unlocked);
       return unlocked;
     }
-    else if (this.items.skillActions.get(this.skillId)?.includes(this.itemId) && !this.isProgressive){
+    else if (this.items.skill_actions.get(this.skillId)?.includes(this.itemId) && !this.isProgressive){
       //console.log("Is not progresive and unlocked:")
       return this.actionHandler.isActionUnlocked(this.itemId);
     }

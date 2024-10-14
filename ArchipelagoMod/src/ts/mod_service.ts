@@ -85,12 +85,15 @@ export default class ModService {
     this.slotdataHandler = new SlotdataHandler();
 
     this.items = new Items();
-    this.skillHandler = new SkillHandler(this.items);
-    this.actionHandler = new ActionHandler(this.items, this.#data.icon_url);
-    this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler);
-  
+
     this.notificationHandler = new NotificationHandler(this.#data.icon_url, this.#data.icon_url_large);
     this.settingsManager = new SettingsManager();
+
+    this.skillHandler = new SkillHandler(this.items);
+    this.actionHandler = new ActionHandler(this.skillHandler, this.notificationHandler, this.items, this.#data.icon_url);
+    this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler);
+  
+
     this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
   }
 
@@ -143,6 +146,8 @@ export default class ModService {
     service.#ctx.onModsLoaded(ctx => {
       // @ts-ignore
       ctx.patch(Game, "getRequirementFromData").after(function (_requirement, data) {return service.addApUnlock(data)});
+      // @ts-ignore
+      ctx.patch(Farming, "modifyData").after(function (data) {return service.farmingModifyData(data)});
 
       // @ts-ignore
       ctx.patch(SidebarItem, 'click').replace(function(o) {
@@ -211,17 +216,8 @@ export default class ModService {
   
       //game.astrology.on("levelChanged", function (e) {console.log(e.skill, "leveled up from", e.oldLevel, " to ", e.newLevel)})
       //game.astrology.on("masteryLevelChanged", function (e) {console.log(e.action, "leveled up from", e.oldLevel, " to ", e.newLevel)})
-  
-      //service.notificationHandler.showApModal("", "");
-      //ctx.notificationHandler.showSkillModal("TITLE", "MESSAGE", "attack");
-  
-      //game.woodcutting.modifyData({trees: [{id: "melvorD:Normal", requirements: {add: [{type: "ArchipelagoUnlock", itemId: "melvorD:Normal", itemType: "melvorD:Woodcutting"}]}}]})
-      //woodcuttingMenu.treeMenus.get(game.woodcutting.actions.getObjectByID("melvorD:Normal")).setTree(game.woodcutting.actions.getObjectByID("melvorD:Normal"), game.woodcutting);
-      //woodcuttingMenu.updateTreeUnlocks();
-
-      //game.woodcutting.renderQueue.treeUnlocks = true;
-      
-      //game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent("melvorD:WoodCutting"));
+    
+    
     });
   }
 
@@ -229,4 +225,18 @@ export default class ModService {
     if(data.type == "ArchipelagoUnlock")
       return new ArchipelagoRequirement(data, game);
   };
+
+  farmingModifyData(data : any) {
+    var _a;
+    (_a = data.seeds) === null ||
+    _a === void 0 ? void 0 : _a.forEach(
+      (modData : any) => {
+        const seed = game.farming.actions.getObjectByID(modData.id);
+        if (seed === undefined)
+          throw new UnregisteredDataModError(FarmingRecipe.name, modData.id);
+        // @ts-ignore
+        seed.applyDataModification(modData, this.game);
+      }
+    );
+  }
 }
