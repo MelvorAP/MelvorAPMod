@@ -20,7 +20,7 @@ export class SettingsManager{
       name: "ap-hostname",
       label: "Host name",
       hint: "Host name of the AP world server, for example archipelago.gg",
-      default: "archipelago.gg"
+      default: "localhost"
     } as SettingConfig)
 
     settings.push({
@@ -28,7 +28,7 @@ export class SettingsManager{
       name: "ap-port",
       label: "Port",
       hint: "Port of the AP world server",
-      default: 1
+      default: 38281
     } as SettingConfig)
 
     settings.push({
