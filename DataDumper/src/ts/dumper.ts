@@ -19,13 +19,18 @@ export class Dumper{
     console.log(message);
   }
 
-  dumpAllMasteryUnlocks(namespace : string = "", ignoreLevelOne : boolean = false){
+  dumpAllMasteryUnlocks(namespace : string = "", skillId : string = "", ignoreLevelOne : boolean = true, onlySmithingBars : boolean = true){
     let message = ``;
   
     for(let i = 0; i < game.skills.allObjects.length; i++){
       let nameList : string[] = [];
       if(game.skills.allObjects[i] instanceof SkillWithMastery){
         let skill = game.skills.allObjects[i] as SkillWithMastery<BasicSkillRecipe,any>;
+
+        if(skillId != "" && skillId != skill.localID){
+          continue;
+        }
+
         for(let j = 0; j < skill.actions.allObjects.length; j++){
           let action = skill.actions.allObjects.sort(this.compareActionLevels)[j];
           if(namespace != "" && namespace != action.namespace){
@@ -33,6 +38,10 @@ export class Dumper{
           }
 
           if(ignoreLevelOne && action.level == 1){
+            continue;
+          }
+
+          if(onlySmithingBars && this.isSmithingRecipe(action) && action.category.id != "melvorD:Bars"){
             continue;
           }
 
@@ -61,6 +70,40 @@ export class Dumper{
           message += `\t\t),\n`
 
           nameList.push(name);
+        }
+      }
+    }
+  
+    console.log(message);
+  }
+
+  dumpAllMasteryProgressiveSkillData(namespace : string = "", skillId : string = "", ignoreLevelOne : boolean = true, onlySmithingBars : boolean = true){
+    let message = ``;
+  
+    for(let i = 0; i < game.skills.allObjects.length; i++){
+      let nameList : string[] = [];
+      if(game.skills.allObjects[i] instanceof SkillWithMastery){
+        let skill = game.skills.allObjects[i] as SkillWithMastery<BasicSkillRecipe,any>;
+
+        if(skillId != "" && skillId != skill.localID){
+          continue;
+        }
+
+        for(let j = 0; j < skill.actions.allObjects.length; j++){
+          let action = skill.actions.allObjects.sort(this.compareActionLevels)[j];
+          if(namespace != "" && namespace != action.namespace){
+              continue;
+          }
+
+          if(ignoreLevelOne && action.level == 1){
+            continue;
+          }
+
+          if(onlySmithingBars && this.isSmithingRecipe(action) && action.category.id != "melvorD:Bars"){
+            continue;
+          }
+
+          message += `\tProgressiveSkillData("${action.name}", ${action.level}),\n`
         }
       }
     }
@@ -346,4 +389,9 @@ export class Dumper{
     }
     return 0;
   }  
+
+
+  private isSmithingRecipe(action: BasicSkillRecipe): action is SmithingRecipe {
+    return (action as SmithingRecipe).category !== undefined;
+  }
 }
