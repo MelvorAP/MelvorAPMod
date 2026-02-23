@@ -44,19 +44,17 @@ export class ItemHandler{
     }
 
     receiveItem(id : number){
-        const itemID = this.items.itemDict.get(id);
+        const itemID = this.items.itemDict.get(id)!;
         console.log(`Received item ${itemID} (${id})`)
         
         if(this.items.skills.find(x => x == itemID) && !this.slotdataHandler.apSettings.progressiveSkills){
-            this.skillHandler.progressSkill(itemID);
+            //this.skillHandler.progressSkill(itemID);
         }
         else if(this.items.progressive_skills.has(id) && this.slotdataHandler.apSettings.progressiveSkills){
             let skillName : string = this.items.progressive_skills.get(id) ?? "";
             this.skillHandler.progressSkill(skillName);
             // @ts-ignore
             game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent(skillName));
-
-            this.refreshMenus();
         }
         else if(this.items.pets.find(x => x == itemID)){
             this.unlockPet(itemID);
@@ -70,9 +68,5 @@ export class ItemHandler{
 
     unlockPet(petName : string){
         game.petManager.unlockPetByID(petName)
-    }
-
-    refreshMenus(){
-        game.woodcutting.renderQueue.treeUnlocks = true;
     }
 }

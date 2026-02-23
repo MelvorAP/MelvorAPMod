@@ -69,7 +69,6 @@ export default class ModService {
   slotdataHandler: SlotdataHandler;
   itemHandler: ItemHandler;
   skillHandler: SkillHandler;
-  actionHandler : ActionHandler;
 
   settingsManager: SettingsManager;
   bar?: SidebarCategoryWrapper;
@@ -89,10 +88,8 @@ export default class ModService {
     this.notificationHandler = new NotificationHandler(this.#data.icon_url, this.#data.icon_url_large);
     this.settingsManager = new SettingsManager();
 
-    this.skillHandler = new SkillHandler(this.items);
-    this.actionHandler = new ActionHandler(this.skillHandler, this.notificationHandler, this.items, this.#data.icon_url);
+    this.skillHandler = new SkillHandler(this.items, this.notificationHandler, this.#data.icon_url);
     this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler);
-    this.skillHandler.setActionHandler(this.actionHandler);
 
     this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
   }
@@ -130,7 +127,7 @@ export default class ModService {
     this.setSideBar(this.#data.sidebar_category_name ?? "", "Connected");
 
     if(this.slotdataHandler.apSettings.removeSkillActionLevels){
-      this.actionHandler.setLevelsToLowest();
+      this.skillHandler.setLevelsToLowest();
     }
   }
 
@@ -198,7 +195,6 @@ export default class ModService {
       }
 
       service.skillHandler.setCharacterStorage(ctx.characterStorage);
-      service.actionHandler.setCharacterStorage(ctx.characterStorage);
       service.itemHandler.setCharacterStorage(ctx.characterStorage);
   
       service.skillHandler.lockSkills();

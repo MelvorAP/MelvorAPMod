@@ -12,7 +12,6 @@ export interface ApRequirementData {
   countNeeded: number,
   items: Items,
   actionHandler: ActionHandler,
-  skillHandler: SkillHandler,
   notificationHandler: NotificationHandler,
   iconUrl: string
 }
@@ -28,7 +27,6 @@ export class ArchipelagoRequirement extends GameRequirement {
     iconUrl: string;
 
     items: Items;
-    skillHandler: SkillHandler;
     actionHandler: ActionHandler;
     notificationHandler: NotificationHandler;
 
@@ -46,14 +44,13 @@ export class ArchipelagoRequirement extends GameRequirement {
     this.iconUrl = data.iconUrl;
 
     this.items = data.items;
-    this.skillHandler = data.skillHandler;
     this.actionHandler = data.actionHandler;
     this.notificationHandler = data.notificationHandler;
   }
 
   isMet() {
     if(this.items.skills.includes(this.skillId) && this.isProgressive){
-      let unlocked = this.skillHandler.getProgressiveSkillCount(this.skillId) >= this.countNeeded;
+      let unlocked = this.actionHandler.getProgressiveSkillCount() >= this.countNeeded;
       //console.log("Is progresive and unlocked:",unlocked);
       return unlocked;
     }

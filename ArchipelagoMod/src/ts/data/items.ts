@@ -1,7 +1,7 @@
 export class Items{
   private startID = 1;
 
-  itemDict = new Map(); 
+  itemDict = new Map<number, string>(); 
   
   constructor(){
     for (let i = 0; i < this.all_items.length; i++) {

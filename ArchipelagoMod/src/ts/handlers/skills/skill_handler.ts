@@ -1,27 +1,26 @@
 import { Items } from "../../data/items";
+import { NotificationHandler } from "../notification_handler";
 import { ActionHandler } from "./action_handler";
+import { WoodcuttingHandler } from "./actions/woodcutting_handler";
+
 
 let skillSavePrefix = "AP_skill_";
 
 export class SkillHandler{
-    private items : Items;
-
     private characterStorage : ModStorage;
-    private actionHandler : ActionHandler;
 
-    constructor(items : Items){
-        this.items = items;
+    private actionHandlers : Map<string, ActionHandler>;
 
+    constructor(items : Items, notificationHandler : NotificationHandler, apIcon : string){
         this.characterStorage = {} as ModStorage;
-        this.actionHandler = {} as ActionHandler;
+
+        this.actionHandlers = new Map<string, ActionHandler>([
+            ["melvorD:Woodcutting", new WoodcuttingHandler(notificationHandler, items, apIcon)]
+        ]);
     }
 
     setCharacterStorage(characterStorage : ModStorage){
         this.characterStorage = characterStorage;
-    }
-
-    setActionHandler(actionHandler : ActionHandler){
-        this.actionHandler = actionHandler;
     }
 
     lockSkills(){
@@ -32,7 +31,7 @@ export class SkillHandler{
 
             if(skill instanceof SkillWithMastery){
                 skill.sortedMasteryActions.forEach(action => {
-                    this.actionHandler.lockAction(skill.id, action as BasicSkillRecipe);
+                    this.actionHandlers.get(skill.id)?.lockAction(action as BasicSkillRecipe);
                 })
             }
             else{
@@ -41,9 +40,20 @@ export class SkillHandler{
         })
     }
 
+    setLevelsToLowest(){
+        game.skills.allObjects.forEach(skill => {
+            if(skill instanceof SkillWithMastery){
+                skill.sortedMasteryActions.forEach(action => {
+                    action.level = 1;
+                })
+                this.actionHandlers.get(skill.id)?.refreshUI();
+            }
+        })
+    }
+
     loadUnlockedSkills(){
         game.skills.allObjects.forEach(skill => {         
-            let saveCount = this.getProgressiveSkillCount(skill.id);
+            let saveCount = this.actionHandlers.get(skill.id)!.getProgressiveSkillCount();
 
             if(saveCount >= 1){
                 console.log("Unlocking skill", skill.id);
@@ -57,20 +67,18 @@ export class SkillHandler{
 
         if(skill){
             let saveName = skillSavePrefix + skillName;
-            let saveCount = this.getProgressiveSkillCount(skillName);
+            let saveCount = this.actionHandlers.get(skill.id)!.getProgressiveSkillCount()!;
 
             console.log(`${saveName} count went up from ${saveCount} to ${saveCount +1}`);
 
             skill.setUnlock(true);
             this.characterStorage.setItem(saveName, saveCount + 1);
+            
+            this.actionHandlers.get(skill.id)?.refreshUI();
         }
         else{
             console.warn("Unknown skill", skillName);
         }
-    }
-
-    getProgressiveSkillCount(skillID : string) : number{
-        return this.characterStorage.getItem(skillSavePrefix + skillID) ?? 0;
     }
     
     hasShop(){
