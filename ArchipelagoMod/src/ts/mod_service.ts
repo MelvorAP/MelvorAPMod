@@ -92,7 +92,7 @@ export default class ModService {
     this.skillHandler = new SkillHandler(this.items);
     this.actionHandler = new ActionHandler(this.skillHandler, this.notificationHandler, this.items, this.#data.icon_url);
     this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler);
-  
+    this.skillHandler.setActionHandler(this.actionHandler);
 
     this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
   }
@@ -151,7 +151,6 @@ export default class ModService {
 
       // @ts-ignore
       ctx.patch(SidebarItem, 'click').replace(function(o) {
-        console.log("test");
         // @ts-ignore
         if (this.id === 'melvorD:Combat' && service.isArchipelagoGameMode && ! service.skillHandler.hasAnyCombat()){
           service.notificationHandler.showSkillModal(
@@ -163,6 +162,19 @@ export default class ModService {
               "https://cdn2-main.melvor.net/assets/media/skills/combat/strength.png",
               "https://cdn2-main.melvor.net/assets/media/skills/ranged/ranged.png",
               "https://cdn2-main.melvor.net/assets/media/skills/magic/magic.png",
+              service.#data.icon_url
+            ]
+          );
+          return;
+        }
+        // @ts-ignore
+        else if (this.id === 'melvorD:Shop' && service.isArchipelagoGameMode && ! service.skillHandler.hasShop()){
+          service.notificationHandler.showSkillModal(
+            "You don't have the shop", 
+            'You need to find the ${0}Shop Unlock in the ${1}AP World to enter the ${0}Shop.', 
+            "combat",
+            [
+              "https://cdn2-main.melvor.net/assets/media/main/gp.png",
               service.#data.icon_url
             ]
           );
@@ -189,7 +201,7 @@ export default class ModService {
       service.actionHandler.setCharacterStorage(ctx.characterStorage);
       service.itemHandler.setCharacterStorage(ctx.characterStorage);
   
-      service.skillHandler.lockSkills(service.actionHandler);
+      service.skillHandler.lockSkills();
     })
   
     service.#ctx.onInterfaceReady(ctx  => {
@@ -208,6 +220,13 @@ export default class ModService {
       if(Boolean(service.settingsManager.apConnectionSection.get("ap-auto-connect"))){
         service.connectionHandler.connectToAP();
       }
+
+      // @ts-ignore
+      game.skillHandler = service.skillHandler;
+      // @ts-ignore
+      game.itemHandler = service.itemHandler;
+      // @ts-ignore
+      game.actionHandler = service.actionHandler;
   
       //game.combat.on("monsterKilled", function (e) {console.log("Monster killed:", e)})
       //game.combat.on("dungeonCompleted", function (e) {console.log("Dungeon completed:", e)})
@@ -216,8 +235,6 @@ export default class ModService {
   
       //game.astrology.on("levelChanged", function (e) {console.log(e.skill, "leveled up from", e.oldLevel, " to ", e.newLevel)})
       //game.astrology.on("masteryLevelChanged", function (e) {console.log(e.action, "leveled up from", e.oldLevel, " to ", e.newLevel)})
-  
-      
     });
   }
 

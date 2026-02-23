@@ -31,12 +31,21 @@ export class ItemHandler{
     updateItemIndex(newIndex : number){
         this.characterStorage.setItem("AP_itemIndex", newIndex)
 
-        console.log("New recieved item index is", newIndex);
+        console.log(`New recieved item index is ${newIndex}`);
+    }
+
+    receiveItemByName(name : string){
+        this.items.itemDict.forEach((value: string, id: number) => {
+            if(value === name){
+                this.receiveItem(id);
+                return;
+            }
+        });
     }
 
     receiveItem(id : number){
         const itemID = this.items.itemDict.get(id);
-        console.log("recieve item",id, itemID)
+        console.log(`Received item ${itemID} (${id})`)
         
         if(this.items.skills.find(x => x == itemID) && !this.slotdataHandler.apSettings.progressiveSkills){
             this.skillHandler.progressSkill(itemID);

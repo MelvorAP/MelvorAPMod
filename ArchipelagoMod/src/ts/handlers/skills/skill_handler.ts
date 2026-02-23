@@ -7,18 +7,24 @@ export class SkillHandler{
     private items : Items;
 
     private characterStorage : ModStorage;
+    private actionHandler : ActionHandler;
 
     constructor(items : Items){
         this.items = items;
 
         this.characterStorage = {} as ModStorage;
+        this.actionHandler = {} as ActionHandler;
     }
 
     setCharacterStorage(characterStorage : ModStorage){
         this.characterStorage = characterStorage;
     }
 
-    lockSkills(actionHandler : ActionHandler){
+    setActionHandler(actionHandler : ActionHandler){
+        this.actionHandler = actionHandler;
+    }
+
+    lockSkills(){
         game.skills.allObjects.forEach(skill => {
             skill.setUnlock(false);
             
@@ -26,7 +32,7 @@ export class SkillHandler{
 
             if(skill instanceof SkillWithMastery){
                 skill.sortedMasteryActions.forEach(action => {
-                    actionHandler.lockAction(skill.id, action as BasicSkillRecipe);
+                    this.actionHandler.lockAction(skill.id, action as BasicSkillRecipe);
                 })
             }
             else{
@@ -53,7 +59,7 @@ export class SkillHandler{
             let saveName = skillSavePrefix + skillName;
             let saveCount = this.getProgressiveSkillCount(skillName);
 
-            console.log(`${saveName} is going from ${saveCount} to ${saveCount +1}`);
+            console.log(`${saveName} count went up from ${saveCount} to ${saveCount +1}`);
 
             skill.setUnlock(true);
             this.characterStorage.setItem(saveName, saveCount + 1);
@@ -65,6 +71,10 @@ export class SkillHandler{
 
     getProgressiveSkillCount(skillID : string) : number{
         return this.characterStorage.getItem(skillSavePrefix + skillID) ?? 0;
+    }
+    
+    hasShop(){
+        return this.characterStorage.getItem(skillSavePrefix + "Shop_Unlock")
     }
 
     hasAnyCombat(){
