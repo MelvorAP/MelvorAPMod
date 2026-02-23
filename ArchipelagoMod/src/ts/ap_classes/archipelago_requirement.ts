@@ -57,7 +57,7 @@ export class ArchipelagoRequirement extends GameRequirement {
       //console.log("Is progresive and unlocked:",unlocked);
       return unlocked;
     }
-    else if (this.items.skill_actions.get(this.skillId)?.includes(this.itemId) && !this.isProgressive){
+    else if (this.items.skill_actions.get(this.skillId)?.find((element) => element[1] === this.itemId) && !this.isProgressive){
       //console.log("Is not progresive and unlocked:")
       return this.actionHandler.isActionUnlocked(this.itemId);
     }

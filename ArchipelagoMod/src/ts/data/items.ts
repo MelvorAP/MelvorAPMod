@@ -1,5 +1,5 @@
 export class Items{
-  private startID = 20201120;
+  private startID = 1;
 
   itemDict = new Map(); 
   
@@ -101,13 +101,13 @@ export class Items{
   ]
 
   progressive_skills = new Map([
-    [20201130, "melvorD:Woodcutting"],
-    [20201131, "melvorD:Fishing"],
-    [20201132, "melvorD:Firemaking"],
-    [20201133, "melvorD:Cooking"],
-    [20201134, "melvorD:Mining"],
-    [20201135, "melvorD:Smithing"],
-    [20201136, "melvorD:Farming"],
+    [12, "melvorD:Woodcutting"],
+    [13, "melvorD:Fishing"],
+    [14, "melvorD:Firemaking"],
+    [15, "melvorD:Cooking"],
+    [16, "melvorD:Mining"],
+    [17, "melvorD:Smithing"],
+    [18, "melvorD:Farming"],
   ])
 
   skill_actions = new Map([

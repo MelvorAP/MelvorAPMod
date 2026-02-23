@@ -32,7 +32,8 @@ export class ActionHandler{
     }
 
     lockAction(skillId : string, action : BasicSkillRecipe){
-        let countNeeded = this.items.skill_actions.get(skillId)?.indexOf(action.id) ?? -1;
+        console.warn(this.items.skill_actions.get(skillId))
+        let countNeeded = this.items.skill_actions.get(skillId)?.find((element) => element[1] === action.id)?.at(0) as number ?? -1;
 
         if(countNeeded == -1){
             countNeeded = 999999;
