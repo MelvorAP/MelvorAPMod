@@ -1,16 +1,17 @@
 import { Items } from "src/ts/data/items";
 import { NotificationHandler } from "../../notification_handler";
-import { ActionHandler } from "../action_handler";
+import { ActionHandler } from "./action_handler";
 
 export class WoodcuttingHandler extends ActionHandler{
+    private itemType = "tree";
 
     constructor(notificationHandler : NotificationHandler, items : Items, apIcon : string){
-        super(notificationHandler, items, apIcon, "melvorD:Woodcutting", "tree");
+        super(notificationHandler, items, apIcon, "melvorD:Woodcutting");
     }
 
     public lockAction(action : BasicSkillRecipe){
         // @ts-ignore
-        game.woodcutting.modifyData({trees: [{id: action.id, requirements: {add: [ super.createApRequirementData(action.id) ]}}]})
+        game.woodcutting.modifyData({trees: [{id: action.id, requirements: {add: [ super.createApRequirementData(action.id, this.itemType) ]}}]})
     }
 
     public refreshUI() {

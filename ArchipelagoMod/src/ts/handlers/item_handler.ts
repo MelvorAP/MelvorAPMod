@@ -4,9 +4,9 @@ import { SkillHandler } from "./skills/skill_handler";
 import { SlotdataHandler } from "./slotdata_handler";
 
 export class ItemHandler{
-    lastRecievedItemIndex : number = -1;
+    public lastRecievedItemIndex : number = -1;
 
-    items : Items;
+    public items : Items;
 
     private skillHandler : SkillHandler;
     private slotdataHandler : SlotdataHandler;

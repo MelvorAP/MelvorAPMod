@@ -1,11 +1,8 @@
 import { ApRequirementData } from "src/ts/ap_classes/archipelago_requirement";
-import { Items } from "../../data/items";
-import { SlotdataHandler } from "../slotdata_handler";
-import { SkillHandler } from "./skill_handler";
-import { NotificationHandler } from "../notification_handler";
-
-let actionSavePrefix = "AP_action_";
-let skillSavePrefix = "AP_skill_";
+import { Items } from "../../../data/items";
+import { SlotdataHandler } from "../../slotdata_handler";
+import { SkillHandler } from "../skill_handler";
+import { NotificationHandler } from "../../notification_handler";
 
 export class ActionHandler{
     private notificationHandler : NotificationHandler;
@@ -14,16 +11,14 @@ export class ActionHandler{
 
     protected characterStorage : ModStorage;
     protected skillId : string;
-    protected itemType : string;
     
     private apIcon : string;
 
-    constructor(notificationHandler : NotificationHandler, items : Items, apIcon : string, skillId : string, itemType : string){
+    constructor(notificationHandler : NotificationHandler, items : Items, apIcon : string, skillId : string){
         this.notificationHandler = notificationHandler;
         
         this.items = items;
         this.skillId = skillId;
-        this.itemType = itemType;
 
         this.characterStorage = {} as ModStorage;
 
@@ -92,17 +87,42 @@ export class ActionHandler{
     // }
     
     public isActionUnlocked(actionID : string) : boolean{
-        return this.characterStorage.getItem(actionSavePrefix + actionID) >= 1;
+        console.warn(Items.actionSavePrefix + actionID);
+        return this.characterStorage.getItem(Items.actionSavePrefix + actionID) >= 1;
     }
 
     public refreshUI() {
     }
 
     public getProgressiveSkillCount() : number{
-        return this.characterStorage.getItem(skillSavePrefix + this.skillId) ?? 0;
+        return this.characterStorage.getItem(Items.skillSavePrefix + this.skillId) ?? 0;
     }
 
-    protected createApRequirementData(actionId : string) : ApRequirementData{
+    public setLevelsToLowest(){
+        const skill = game.skills.getObjectByID(this.skillId);
+
+        if(skill instanceof SkillWithMastery){
+            skill.sortedMasteryActions.forEach(action => {
+                action.level = 1;
+            })
+            this.refreshUI();
+        }
+    }
+
+    public increaseProgressiveSkillCount() : boolean{
+        let saveName = Items.skillSavePrefix + this.skillId;
+        let saveCount = this.getProgressiveSkillCount();
+
+        console.log(`${saveName} count went up from ${saveCount} to ${saveCount +1}`);
+        
+        this.characterStorage.setItem(saveName, saveCount + 1);
+        
+        this.refreshUI();
+        
+        return true;
+    }
+
+    protected createApRequirementData(actionId : string, itemType : string) : ApRequirementData{
         let countNeeded = this.items.skill_actions.get(this.skillId)?.find((element) => element[1] === actionId)?.at(0) as number ?? -1;
 
         if(countNeeded == -1){
@@ -116,7 +136,7 @@ export class ActionHandler{
             return {
             type: "ArchipelagoUnlock", 
             itemId: actionId, 
-            itemType: this.itemType,
+            itemType: itemType,
             skillId: this.skillId,
             isProgressive: true,
             countNeeded: countNeeded,

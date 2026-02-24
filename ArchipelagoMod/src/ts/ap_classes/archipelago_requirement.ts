@@ -1,6 +1,6 @@
 import { Items } from "../data/items";
 import { NotificationHandler } from "../handlers/notification_handler";
-import { ActionHandler } from "../handlers/skills/action_handler";
+import { ActionHandler } from "../handlers/skills/actions/action_handler";
 import { SkillHandler } from "../handlers/skills/skill_handler";
 
 export interface ApRequirementData {

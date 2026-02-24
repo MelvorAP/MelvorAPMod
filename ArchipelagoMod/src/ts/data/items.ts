@@ -1,4 +1,7 @@
 export class Items{
+    public static actionSavePrefix = "AP_action_";
+    public static skillSavePrefix = "AP_skill_";
+
   private startID = 1;
 
   itemDict = new Map<number, string>(); 
@@ -10,12 +13,10 @@ export class Items{
 
         this.itemDict.set(id, name);
 
-        console.log("Item ", name , "is at ID ", id)
+        //console.log("Item ", name , "is at ID ", id)
       }
       
     console.log("Found ", String(this.itemDict.size), " AP items.");
-
-    console.log(this.itemDict.get(this.startID));
   }
 
   demo_skill_unlocks = [

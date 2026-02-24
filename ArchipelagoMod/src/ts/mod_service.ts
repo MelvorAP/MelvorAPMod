@@ -6,7 +6,7 @@ import { SkillHandler } from "./handlers/skills/skill_handler";
 import { SlotdataHandler } from "./handlers/slotdata_handler";
 import { SettingsManager } from "./settings_manager";
 import { ArchipelagoRequirement } from "./ap_classes/archipelago_requirement";
-import { ActionHandler } from "./handlers/skills/action_handler";
+import { ActionHandler } from "./handlers/skills/actions/action_handler";
 
 export interface IModServiceData {
   icon_url: string;
