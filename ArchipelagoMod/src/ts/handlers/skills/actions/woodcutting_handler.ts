@@ -5,8 +5,8 @@ import { ActionHandler } from "./action_handler";
 export class WoodcuttingHandler extends ActionHandler{
     private itemType = "tree";
 
-    constructor(notificationHandler : NotificationHandler, items : Items, apIcon : string){
-        super(notificationHandler, items, apIcon, "melvorD:Woodcutting");
+    constructor(ctx: ModContext, notificationHandler : NotificationHandler, items : Items, apIcon : string){
+        super(ctx, notificationHandler, items, apIcon, "melvorD:Woodcutting");
     }
 
     public lockAction(action : BasicSkillRecipe){

@@ -8,25 +8,29 @@ export class ActionHandler{
     private notificationHandler : NotificationHandler;
 
     protected items : Items;
-
     protected characterStorage : ModStorage;
-    protected skillId : string;
-    
-    private apIcon : string;
+    protected ctx: ModContext;
 
-    constructor(notificationHandler : NotificationHandler, items : Items, apIcon : string, skillId : string){
+    protected skillId : string; 
+    protected apIcon : string;
+
+    constructor(ctx: ModContext, notificationHandler : NotificationHandler, items : Items, apIcon : string, skillId : string){
         this.notificationHandler = notificationHandler;
         
         this.items = items;
-        this.skillId = skillId;
-
         this.characterStorage = {} as ModStorage;
+        this.ctx = ctx;
 
+        this.skillId = skillId;
         this.apIcon = apIcon;
     }
 
     setCharacterStorage(characterStorage : ModStorage){
         this.characterStorage = characterStorage;
+    }
+
+    patchSkill(){
+        
     }
 
     lockAction(action : BasicSkillRecipe){

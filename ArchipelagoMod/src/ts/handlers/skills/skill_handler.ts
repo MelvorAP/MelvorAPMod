@@ -9,12 +9,12 @@ export class SkillHandler{
 
     private actionHandlers : Map<string, ActionHandler>;
 
-    constructor(items : Items, notificationHandler : NotificationHandler, apIcon : string){
+    constructor(ctx: ModContext, items : Items, notificationHandler : NotificationHandler, apIcon : string){
         this.characterStorage = {} as ModStorage;
 
         this.actionHandlers = new Map<string, ActionHandler>([
-            ["melvorD:Woodcutting", new WoodcuttingHandler(notificationHandler, items, apIcon)],
-            ["melvorD:Mining", new MiningHandler(notificationHandler, items, apIcon)], 
+            ["melvorD:Woodcutting", new WoodcuttingHandler(ctx, notificationHandler, items, apIcon)],
+            ["melvorD:Mining", new MiningHandler(ctx, notificationHandler, items, apIcon)], 
         ]);
     }
 
@@ -33,9 +33,16 @@ export class SkillHandler{
             console.log("Locking skill", skill.id);
 
             if(skill instanceof SkillWithMastery){
-                skill.sortedMasteryActions.forEach(action => {
-                    this.actionHandlers.get(skill.id)?.lockAction(action as BasicSkillRecipe);
-                })
+                let actionHandler = this.actionHandlers.get(skill.id);
+                if(!actionHandler){
+                    console.warn(`${skill.id} does not have an Action Handler! Skipping!`);
+                }
+                else{
+                    actionHandler.patchSkill();
+                    skill.sortedMasteryActions.forEach(action => {
+                        actionHandler!.lockAction(action as BasicSkillRecipe);
+                    })
+                }
             }
             else{
                 console.log(`${skill.name} does not have any actions.`);
@@ -54,7 +61,7 @@ export class SkillHandler{
             let actionHandler = this.actionHandlers.get(skill.id);
 
             if(!actionHandler){
-                console.warn(`${skill.id} does not have an Action Handler! Skipping!`);
+                return;
             }
             else if(actionHandler.getProgressiveSkillCount() > 0){
                 console.log("Unlocking skill", skill.id);

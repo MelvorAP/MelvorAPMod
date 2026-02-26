@@ -88,7 +88,7 @@ export default class ModService {
     this.notificationHandler = new NotificationHandler(this.#data.icon_url, this.#data.icon_url_large);
     this.settingsManager = new SettingsManager();
 
-    this.skillHandler = new SkillHandler(this.items, this.notificationHandler, this.#data.icon_url);
+    this.skillHandler = new SkillHandler(ctx, this.items, this.notificationHandler, this.#data.icon_url);
     this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler);
 
     this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
@@ -141,6 +141,7 @@ export default class ModService {
     service.#log("Intializing AP Mod...");
 
     service.#ctx.onModsLoaded(ctx => {
+
       // @ts-ignore
       ctx.patch(Game, "getRequirementFromData").after(function (_requirement, data) {return service.addApUnlock(data)});
       // @ts-ignore
