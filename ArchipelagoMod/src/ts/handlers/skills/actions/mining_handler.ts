@@ -10,15 +10,24 @@ export class MiningHandler extends ActionHandler{
         super(ctx, notificationHandler, items, apIcon, "melvorD:Mining");
     }
 
-    meow = () => {
-        return this.skillId
+    public setLevelsToLowest(){
+        const skill = game.skills.getObjectByID(this.skillId);
+
+        if(skill instanceof SkillWithMastery){
+            skill.sortedMasteryActions.forEach(action => {
+                action.level = 1;
+                if(action instanceof MiningRock){
+                    action.totalMasteryRequired = 0;
+                }
+            })
+            this.refreshUI();
+        }
     }
 
     public patchSkill(){
 
         // @ts-ignore
         this.ctx.patch(Mining, "canMineOre").after(function(returnValue: boolean, rock : MiningRock) {
-
             // @ts-ignore
             return returnValue && rock.requirement.isMet();
         });
@@ -27,11 +36,22 @@ export class MiningHandler extends ActionHandler{
             // @ts-ignore
             if(!rock.requirement.isMet()){
                 // @ts-ignore
-                this.setRequirement("Item not collected yet!");
+                if(!rock.addedApText) {
+                    // @ts-ignore
+                    this.requirementText.append(...rock.requirement.getNodes('skill-icon-xs mr-1'));
+                }
+                // @ts-ignore
+                showElement(this.requirementText);
+                // @ts-ignore
+                this.setLocked();
+                // @ts-ignore
+                rock.addedApText = true;
             }
             else{
                 // @ts-ignore
                 this.hideRequirement();
+                // @ts-ignore
+                this.setUnlocked();
             }
         });
     }
