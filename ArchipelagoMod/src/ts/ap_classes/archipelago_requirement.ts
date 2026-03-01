@@ -93,8 +93,15 @@ export class ArchipelagoRequirement extends GameRequirement {
     game.completion.off('apItemsChangedEvent', handler);
   }
 
-  getNodes(imageClass : string) {
+  getNodes(imageClass : string) : (Node)[] {
     // @ts-ignore
     return templateStringWithNodes('Find this ${itemType} in the ${apImage}AP world to unlock it.', { apImage: this.createImage(this.iconUrl, imageClass) }, {itemType: this.itemType}, false);
+  }
+
+  getContainer(imageClass : string) : HTMLElement{
+    let element = document.createElement('div');
+    element.append(...this.getNodes(imageClass))
+    element.classList.add("text-danger", "ap-requirement");
+    return element
   }
 }

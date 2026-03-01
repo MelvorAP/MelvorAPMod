@@ -25,7 +25,6 @@ export class MiningHandler extends ActionHandler{
     }
 
     public patchSkill(){
-
         // @ts-ignore
         this.ctx.patch(Mining, "canMineOre").after(function(returnValue: boolean, rock : MiningRock) {
             // @ts-ignore
@@ -34,36 +33,48 @@ export class MiningHandler extends ActionHandler{
         // @ts-ignore
         this.ctx.patch(MiningRockElement, "setLockedContainer").after(function(returnValue: null, rock : MiningRock) {
             // @ts-ignore
+            if(!this.apRequirementDiv) {
+                rock.totalMasteryRequired = 0;
+                // @ts-ignore
+                let node : Node = this.getElementsByClassName("text-danger")[1];
+                // @ts-ignore
+                let div = rock.requirement.getContainer('skill-icon-xs mr-1');
+                // @ts-ignore
+                node.parentNode.insertBefore(div, node);
+                // @ts-ignore
+                this.apRequirementDiv = div;
+            }
+            // @ts-ignore
             if(!rock.requirement.isMet()){
                 // @ts-ignore
-                if(!rock.addedApText) {
-                    // @ts-ignore
-                    this.requirementText.append(...rock.requirement.getNodes('skill-icon-xs mr-1'));
-                }
-                // @ts-ignore
-                showElement(this.requirementText);
+                this.apRequirementDiv.classList.remove("d-none");
                 // @ts-ignore
                 this.setLocked();
-                // @ts-ignore
-                rock.addedApText = true;
             }
             else{
                 // @ts-ignore
-                this.hideRequirement();
+                this.apRequirementDiv.classList.add("d-none");
                 // @ts-ignore
                 this.setUnlocked();
             }
+            if(rock.totalMasteryRequired === 0){
+                // @ts-ignore
+                this.hideRequirement();
+            }
+
         });
     }
 
     public lockAction(action : BasicSkillRecipe){
         // @ts-ignore
         action.requirement = new ArchipelagoRequirement(super.createApRequirementData(action.id, this.itemType), game);
+        // @ts-ignore
+        game.mining.modifyData({rockData: [{id: action.id, totalMasteryRequired: 0}]})
     }
 
     public refreshUI() {        
-        rockMenus.forEach((value: MiningRockMenu, key: MiningRock) => {
-            value.setRock(key);
+        rockMenus.forEach((menu: MiningRockMenu, rock: MiningRock) => {
+            menu.setRock(rock);
         });
 
         game.mining.renderQueue.rockUnlock = true;
