@@ -5,7 +5,7 @@ import { SkillHandler } from "../skill_handler";
 import { NotificationHandler } from "../../notification_handler";
 
 export class ActionHandler{
-    private notificationHandler : NotificationHandler;
+    protected itemType = "recipe";
 
     protected items : Items;
     protected characterStorage : ModStorage;
@@ -14,9 +14,8 @@ export class ActionHandler{
     protected skillId : string; 
     protected apIcon : string;
 
-    constructor(ctx: ModContext, notificationHandler : NotificationHandler, items : Items, apIcon : string, skillId : string){
-        this.notificationHandler = notificationHandler;
-        
+    constructor(ctx: ModContext, items : Items, apIcon : string, skillId : string){
+      
         this.items = items;
         this.characterStorage = {} as ModStorage;
         this.ctx = ctx;
@@ -126,7 +125,7 @@ export class ActionHandler{
         return true;
     }
 
-    protected createApRequirementData(actionId : string, itemType : string) : ApRequirementData{
+    protected createApRequirementData(actionId : string) : ApRequirementData{
         let countNeeded = this.items.skill_actions.get(this.skillId)?.find((element) => element[1] === actionId)?.at(0) as number ?? -1;
 
         if(countNeeded == -1){
@@ -140,13 +139,12 @@ export class ActionHandler{
             return {
             type: "ArchipelagoUnlock", 
             itemId: actionId, 
-            itemType: itemType,
+            itemType: this.itemType,
             skillId: this.skillId,
             isProgressive: true,
             countNeeded: countNeeded,
             items: this.items,
             actionHandler: this,
-            notificationHandler: this.notificationHandler,
             iconUrl: this.apIcon
         } as ApRequirementData;
     }

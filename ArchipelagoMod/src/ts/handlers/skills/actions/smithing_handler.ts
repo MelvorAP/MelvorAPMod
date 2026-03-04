@@ -1,0 +1,43 @@
+import { Items } from "src/ts/data/items";
+import { NotificationHandler } from "../../notification_handler";
+import { ActionHandler } from "./action_handler";
+import { ArchipelagoRequirement } from "../../../ap_classes/archipelago_requirement";
+
+export class SmithingHandler extends ActionHandler{
+    constructor(ctx: ModContext, items : Items, apIcon : string){
+        super(ctx, items, apIcon, "melvorD:Smithing");
+    }
+
+    public patchSkill(){
+        // @ts-ignore
+        this.ctx.patch(Smithing, "selectRecipeOnClick").replace(function( o , recipe : SmithingRecipe) {
+            // @ts-ignore
+            if( recipe.requirement.isMet()){
+                o(recipe);
+            }
+            else{
+                notifyPlayer(game.smithing, "You do not have access to this recipe yet!", 'danger');
+            }
+        });
+        // @ts-ignore
+        this.ctx.patch(Smithing, "createButtonOnClick").replace(( o) => {
+            // @ts-ignore
+            if( game.smithing.selectedRecipe.requirement.isMet()){
+                o();
+            }
+            else{
+                notifyPlayer(game.smithing, "You do not have access to this recipe yet!", 'danger');
+            }
+        });
+    }
+
+    public lockAction(action : BasicSkillRecipe){
+        // @ts-ignore
+        action.requirement = new ArchipelagoRequirement(super.createApRequirementData(action.id), game);
+    }
+
+    public refreshUI() {       
+        game.smithing.renderQueue.selectedRecipe = true;
+        game.smithing.renderQueue.selectionTabs = true;
+    }
+}

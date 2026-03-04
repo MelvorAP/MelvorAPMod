@@ -12,7 +12,6 @@ export interface ApRequirementData {
   countNeeded: number,
   items: Items,
   actionHandler: ActionHandler,
-  notificationHandler: NotificationHandler,
   iconUrl: string
 }
 
@@ -28,7 +27,6 @@ export class ArchipelagoRequirement extends GameRequirement {
 
     items: Items;
     actionHandler: ActionHandler;
-    notificationHandler: NotificationHandler;
 
   constructor(data : ApRequirementData, game : Game) {
     super (game);
@@ -45,7 +43,6 @@ export class ArchipelagoRequirement extends GameRequirement {
 
     this.items = data.items;
     this.actionHandler = data.actionHandler;
-    this.notificationHandler = data.notificationHandler;
   }
 
   isMet() {
@@ -66,7 +63,8 @@ export class ArchipelagoRequirement extends GameRequirement {
   }
 
   notifyFailure() {
-    this.notificationHandler.showApModal("This", "a")
+    //@ts-ignore
+    game.notificationHandler.showApModal("This", "a")
   }
 
   // @ts-ignore

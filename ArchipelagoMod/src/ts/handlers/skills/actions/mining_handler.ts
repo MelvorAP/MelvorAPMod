@@ -4,10 +4,9 @@ import { ActionHandler } from "./action_handler";
 import { ArchipelagoRequirement } from "../../../ap_classes/archipelago_requirement";
 
 export class MiningHandler extends ActionHandler{
-    private itemType = "rock";
-
-    constructor(ctx : ModContext, notificationHandler : NotificationHandler, items : Items, apIcon : string){
-        super(ctx, notificationHandler, items, apIcon, "melvorD:Mining");
+    constructor(ctx : ModContext, items : Items, apIcon : string){
+        super(ctx, items, apIcon, "melvorD:Mining");
+            this.itemType = "rock";
     }
 
     public setLevelsToLowest(){
@@ -67,7 +66,7 @@ export class MiningHandler extends ActionHandler{
 
     public lockAction(action : BasicSkillRecipe){
         // @ts-ignore
-        action.requirement = new ArchipelagoRequirement(super.createApRequirementData(action.id, this.itemType), game);
+        action.requirement = new ArchipelagoRequirement(super.createApRequirementData(action.id), game);
         // @ts-ignore
         game.mining.modifyData({rockData: [{id: action.id, totalMasteryRequired: 0}]})
     }

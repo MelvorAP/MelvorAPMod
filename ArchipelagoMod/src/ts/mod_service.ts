@@ -88,7 +88,7 @@ export default class ModService {
     this.notificationHandler = new NotificationHandler(this.#data.icon_url, this.#data.icon_url_large);
     this.settingsManager = new SettingsManager();
 
-    this.skillHandler = new SkillHandler(ctx, this.items, this.notificationHandler, this.#data.icon_url);
+    this.skillHandler = new SkillHandler(ctx, this.items, this.#data.icon_url);
     this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler);
 
     this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
@@ -224,6 +224,8 @@ export default class ModService {
       game.itemHandler = service.itemHandler;
       // @ts-ignore
       game.actionHandler = service.actionHandler;
+      // @ts-ignore
+      game.notificationHandler = service.notificationHandler;
   
       //game.combat.on("monsterKilled", function (e) {console.log("Monster killed:", e)})
       //game.combat.on("dungeonCompleted", function (e) {console.log("Dungeon completed:", e)})

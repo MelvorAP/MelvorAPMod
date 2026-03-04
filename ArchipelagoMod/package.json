@@ -32,7 +32,7 @@
     "@typescript-eslint/parser": "^8.56.0",
     "archiver": "^4.0.2",
     "commander": "^10.0.0",
-    "copy-webpack-plugin": "^11.0.0",
+    "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^6.7.1",
     "del": "^8.0.1",
     "eslint": "^10.0.1",
