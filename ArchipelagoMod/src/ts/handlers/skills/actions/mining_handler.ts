@@ -30,7 +30,7 @@ export class MiningHandler extends ActionHandler{
             return returnValue && rock.requirement.isMet();
         });
         // @ts-ignore
-        this.ctx.patch(MiningRockElement, "setLockedContainer").after(function(returnValue: null, rock : MiningRock) {
+        this.ctx.patch(MiningRockElement, "setLockedContainer").after(function(_returnValue: null, rock : MiningRock) {
             // @ts-ignore
             if(!this.apRequirementDiv) {
                 rock.totalMasteryRequired = 0;

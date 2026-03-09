@@ -1,6 +1,7 @@
 import { Items } from "../../data/items";
 import { NotificationHandler } from "../notification_handler";
 import { ActionHandler } from "./actions/action_handler";
+import { FiremakingHandler } from "./actions/firemaking_handler";
 import { MiningHandler } from "./actions/mining_handler";
 import { SmithingHandler } from "./actions/smithing_handler";
 import { WoodcuttingHandler } from "./actions/woodcutting_handler";
@@ -8,22 +9,23 @@ import { WoodcuttingHandler } from "./actions/woodcutting_handler";
 export class SkillHandler{
     private characterStorage : ModStorage;
 
-    private actionHandlers : Map<string, ActionHandler>;
+    private actionHandlers : Array<ActionHandler>;
 
     constructor(ctx: ModContext, items : Items, apIcon : string){
         this.characterStorage = {} as ModStorage;
 
-        this.actionHandlers = new Map<string, ActionHandler>([
-            ["melvorD:Woodcutting", new WoodcuttingHandler(ctx, items, apIcon)],
-            ["melvorD:Mining", new MiningHandler(ctx, items, apIcon)], 
-            ["melvorD:Smithing", new SmithingHandler(ctx, items, apIcon)], 
-        ]);
+        this.actionHandlers = [
+            new WoodcuttingHandler(ctx, items, apIcon),
+            new MiningHandler(ctx, items, apIcon), 
+            new SmithingHandler(ctx, items, apIcon), 
+            new FiremakingHandler(ctx, items, apIcon)
+        ];
     }
 
     setCharacterStorage(characterStorage : ModStorage){
         this.characterStorage = characterStorage;
 
-        this.actionHandlers.forEach((value : ActionHandler, key : string) => {
+        this.actionHandlers.forEach((value : ActionHandler) => {
             value.setCharacterStorage(characterStorage);
         });
     }
@@ -35,7 +37,7 @@ export class SkillHandler{
             console.log("Locking skill", skill.id);
 
             if(skill instanceof SkillWithMastery){
-                let actionHandler = this.actionHandlers.get(skill.id);
+                let actionHandler = this.actionHandlers.find(x => x.skillId === skill.id);
                 if(!actionHandler){
                     console.warn(`${skill.id} does not have an Action Handler! Skipping!`);
                 }
@@ -60,7 +62,7 @@ export class SkillHandler{
 
     loadUnlockedSkills(){
         game.skills.allObjects.forEach(skill => {         
-            let actionHandler = this.actionHandlers.get(skill.id);
+            let actionHandler = this.actionHandlers.find(x => x.skillId === skill.id);
 
             if(!actionHandler){
                 return;
@@ -78,7 +80,7 @@ export class SkillHandler{
         let skill = game.skills.getObjectByID(skillName);
 
         if(skill){
-            let actionHandler = this.actionHandlers.get(skill.id)
+            let actionHandler = this.actionHandlers.find(x => x.skillId === skill!.id);
             
             if(!actionHandler){
                 console.warn(`${skill.id} does not have an Action Handler! Skipping!`);

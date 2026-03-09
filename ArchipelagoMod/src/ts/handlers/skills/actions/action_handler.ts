@@ -5,13 +5,14 @@ import { SkillHandler } from "../skill_handler";
 import { NotificationHandler } from "../../notification_handler";
 
 export class ActionHandler{
+    public skillId : string; 
+
     protected itemType = "recipe";
 
     protected items : Items;
     protected characterStorage : ModStorage;
     protected ctx: ModContext;
 
-    protected skillId : string; 
     protected apIcon : string;
 
     constructor(ctx: ModContext, items : Items, apIcon : string, skillId : string){
