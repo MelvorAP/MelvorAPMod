@@ -1,6 +1,6 @@
 import { Items } from "../../data/items";
-import { NotificationHandler } from "../notification_handler";
 import { ActionHandler } from "./actions/action_handler";
+import { CookingHandler } from "./actions/cooking_handler";
 import { FiremakingHandler } from "./actions/firemaking_handler";
 import { MiningHandler } from "./actions/mining_handler";
 import { SmithingHandler } from "./actions/smithing_handler";
@@ -18,7 +18,8 @@ export class SkillHandler{
             new WoodcuttingHandler(ctx, items, apIcon),
             new MiningHandler(ctx, items, apIcon), 
             new SmithingHandler(ctx, items, apIcon), 
-            new FiremakingHandler(ctx, items, apIcon)
+            new FiremakingHandler(ctx, items, apIcon),
+            new CookingHandler(ctx, items, apIcon),
         ];
     }
 
@@ -93,10 +94,6 @@ export class SkillHandler{
         else{
             console.warn("Unknown skill", skillName);
         }
-    }
-    
-    hasShop(){
-        return this.characterStorage.getItem(Items.skillSavePrefix + "Shop_Unlock")
     }
 
     hasAnyCombat(){

@@ -59,6 +59,12 @@ export class ItemHandler{
         else if(this.items.pets.find(x => x == itemID)){
             this.unlockPet(itemID);
         }
+        else if(this.items.demo_extra_unlocks.find(x => x == itemID) === "Shop Unlock"){
+            this.characterStorage.setItem(Items.otherSavePrefix + "Shop_Unlock", 1)
+        }
+        else if(this.items.demo_extra_unlocks.find(x => x == itemID) === "Bank Unlock"){
+            this.characterStorage.setItem(Items.otherSavePrefix + "Bank_Unlock", 1)
+        }
         else{
             console.error("Unimplemented item: ", id, itemID);
             return false;
@@ -68,5 +74,10 @@ export class ItemHandler{
 
     unlockPet(petName : string){
         game.petManager.unlockPetByID(petName)
+    }
+
+        
+    hasShop(){
+        return this.characterStorage.getItem(Items.otherSavePrefix + "Shop_Unlock")
     }
 }

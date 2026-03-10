@@ -1,6 +1,7 @@
 export class Items{
-    public static actionSavePrefix = "AP_action_";
-    public static skillSavePrefix = "AP_skill_";
+    public static actionSavePrefix = "AP_Action_";
+    public static skillSavePrefix = "AP_Skill_";
+	public static otherSavePrefix = "AP_Unlock_";
 
   private startID = 1;
 
@@ -24,13 +25,6 @@ export class Items{
     "melvorD:Strength",
     "melvorD:Defence",
     "melvorD:Hitpoints",
-    "melvorD:Woodcutting",
-    "melvorD:Fishing",
-    "melvorD:Firemaking",
-    "melvorD:Cooking",
-    "melvorD:Mining",
-    "melvorD:Smithing",
-    "melvorD:Farming"
 ]
 
   demo_progressive_skill_unlocks = [
@@ -83,12 +77,18 @@ export class Items{
     "melvorD:PrestonThePlatypus",
   ]
 
+  demo_extra_unlocks = [
+	"Shop Unlock",
+	"Bank Unlock"
+  ]
+
   all_items = [
     ...this.demo_skill_unlocks,
     ...this.demo_progressive_skill_unlocks,
     ...this.demo_pets,
     ...this.demo_event_pets,
-    ...this.demo_goblin_raid_pets
+    ...this.demo_goblin_raid_pets,
+	...this.demo_extra_unlocks
   ]
 
   skills = [
@@ -102,13 +102,13 @@ export class Items{
   ]
 
   progressive_skills = new Map([
-    [12, "melvorD:Woodcutting"],
-    [13, "melvorD:Fishing"],
-    [14, "melvorD:Firemaking"],
-    [15, "melvorD:Cooking"],
-    [16, "melvorD:Mining"],
-    [17, "melvorD:Smithing"],
-    [18, "melvorD:Farming"],
+    [5, "melvorD:Woodcutting"],
+    [6, "melvorD:Fishing"],
+    [7, "melvorD:Firemaking"],
+    [8, "melvorD:Cooking"],
+    [9, "melvorD:Mining"],
+    [10, "melvorD:Smithing"],
+    [11, "melvorD:Farming"],
   ])
 
   skill_actions = new Map([

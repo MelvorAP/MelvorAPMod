@@ -28,6 +28,7 @@
 				"startingSkills": [],
 				"playerModifiers": {},
 				"enemyModifiers": {},
+				"allowXPOverLevelCap" : false,
 				"description": "Game mode that will connect to an AP world to unlock skills and other unlocks. You can safely play other gamemodes."
 			}
 		]

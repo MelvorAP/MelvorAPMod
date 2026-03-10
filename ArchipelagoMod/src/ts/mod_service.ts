@@ -166,14 +166,14 @@ export default class ModService {
           return;
         }
         // @ts-ignore
-        else if (this.id === 'melvorD:Shop' && service.isArchipelagoGameMode && ! service.skillHandler.hasShop()){
-          service.notificationHandler.showSkillModal(
+        else if (this.id === 'melvorD:Shop' && service.isArchipelagoGameMode && ! service.itemHandler.hasShop()){
+          service.notificationHandler.showApModal(
             "You don't have the shop", 
-            'You need to find the ${0}Shop Unlock in the ${1}AP World to enter the ${0}Shop.', 
-            "combat",
+            'You need to find the ${0}Shop Unlock in the ${1}AP World to enter the ${2}Shop.', 
             [
               "https://cdn2-main.melvor.net/assets/media/main/gp.png",
-              service.#data.icon_url
+              service.#data.icon_url,
+              "https://cdn2-main.melvor.net/assets/media/main/gp.png",
             ]
           );
           return;

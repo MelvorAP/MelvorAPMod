@@ -1,8 +1,5 @@
 import { ApRequirementData } from "src/ts/ap_classes/archipelago_requirement";
 import { Items } from "../../../data/items";
-import { SlotdataHandler } from "../../slotdata_handler";
-import { SkillHandler } from "../skill_handler";
-import { NotificationHandler } from "../../notification_handler";
 
 export class ActionHandler{
     public skillId : string; 

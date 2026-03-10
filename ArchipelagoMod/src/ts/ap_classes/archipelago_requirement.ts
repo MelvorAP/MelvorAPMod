@@ -46,7 +46,7 @@ export class ArchipelagoRequirement extends GameRequirement {
   }
 
   isMet() {
-    if(this.items.skills.includes(this.skillId) && this.isProgressive){
+    if(game.skills.getObjectByID(this.skillId) && this.isProgressive){
       let unlocked = this.actionHandler.getProgressiveSkillCount() >= this.countNeeded;
       //console.log("Is progresive and unlocked:",unlocked);
       return unlocked;

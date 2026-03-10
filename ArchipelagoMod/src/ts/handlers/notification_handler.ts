@@ -32,7 +32,11 @@ export class NotificationHandler{
         }
     }
 
-    showApModal(title : string, message : string){
+    showApModal(title : string, message : string, images : string[]){
+        for(let i = 0; i < images.length; i++){
+            message = message.replace("${" + i + "}" , `<img class="skill-icon-xs mr-1" src="${images[i]}">`)
+        }
+
         addModalToQueue({
             title: title,
             html: `<h5 class="font-w400 text-combat-smoke font-size-sm">${ 
