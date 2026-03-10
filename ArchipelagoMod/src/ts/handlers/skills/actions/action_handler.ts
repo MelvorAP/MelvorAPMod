@@ -27,7 +27,23 @@ export class ActionHandler{
     }
 
     patchSkill(){
-        
+        // @ts-ignore
+        this.ctx.patch(SkillWithMastery, "addMasteryXP").replace(function(o, action : MasteryAction, xp) {
+            // @ts-ignore
+            let mastery = this.actionMastery.get(action);
+            // @ts-ignore
+            let masteryCap = action.masteryCap ?? this.masteryLevelCap;
+            // @ts-ignore
+            if(!mastery || mastery.xp < exp.level_to_xp(masteryCap) ){
+                return o(action, xp);
+            }
+            else{
+                mastery.xp = exp.level_to_xp(masteryCap);
+                // @ts-ignore
+                this.renderQueue.actionMastery.add(action);
+                return false;
+            }
+        });
     }
 
     lockAction(action : BasicSkillRecipe){

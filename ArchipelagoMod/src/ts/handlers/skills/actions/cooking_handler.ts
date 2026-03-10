@@ -10,6 +10,7 @@ export class CookingHandler extends ActionHandler{
     }
 
     public patchSkill(){
+        super.patchSkill();
         // @ts-ignore
         this.ctx.patch(Cooking, "onRecipeSelectionClick").replace(function(o, recipe : CookingRecipe) {
             // @ts-ignore

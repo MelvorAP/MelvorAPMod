@@ -24,6 +24,7 @@ export class MiningHandler extends ActionHandler{
     }
 
     public patchSkill(){
+        super.patchSkill();
         // @ts-ignore
         this.ctx.patch(Mining, "canMineOre").after(function(returnValue: boolean, rock : MiningRock) {
             // @ts-ignore

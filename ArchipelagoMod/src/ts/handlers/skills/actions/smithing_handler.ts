@@ -9,6 +9,7 @@ export class SmithingHandler extends ActionHandler{
     }
 
     public patchSkill(){
+        super.patchSkill();
         // @ts-ignore
         this.ctx.patch(Smithing, "selectRecipeOnClick").replace(function( o , recipe : SmithingRecipe) {
             // @ts-ignore

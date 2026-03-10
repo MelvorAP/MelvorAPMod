@@ -16,6 +16,7 @@ export class FiremakingHandler extends ActionHandler{
     }
 
     public patchSkill(){
+        super.patchSkill();
         // @ts-ignore
         this.ctx.patch(Firemaking, "selectLog").replace(function(o, recipe) {
             // @ts-ignore
