@@ -99,7 +99,7 @@ export class ActionHandler{
         return this.characterStorage.getItem(Items.skillSavePrefix + this.skillId) ?? 0;
     }
 
-    public setLevelsToLowest(){
+    public setLevelRequirementsToLowest(){
         const skill = game.skills.getObjectByID(this.skillId);
 
         if(skill instanceof SkillWithMastery){

@@ -1,4 +1,3 @@
-import { ArchipelagoItemsChangedEvent } from "../ap_classes/archipelago_items_changed_event";
 import { Items } from "../data/items";
 import { SkillHandler } from "./skills/skill_handler";
 import { SlotdataHandler } from "./slotdata_handler";
@@ -51,10 +50,10 @@ export class ItemHandler{
             //this.skillHandler.progressSkill(itemID);
         }
         else if(this.items.progressive_skills.has(id) && this.slotdataHandler.apSettings.progressiveSkills){
-            let skillName : string = this.items.progressive_skills.get(id) ?? "";
-            this.skillHandler.progressSkill(skillName);
-            // @ts-ignore
-            game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent(skillName));
+            this.skillHandler.progressSkill(this.items.progressive_skills.get(id) ?? "UNKNOWN");
+        }
+        else if(this.items.demo_skill_level_caps.find(x => x == itemID)){
+            this.skillHandler.increaseCap(this.items.skill_caps.get(id) ?? "UNKNOWN");
         }
         else if(this.items.pets.find(x => x == itemID)){
             this.unlockPet(itemID);

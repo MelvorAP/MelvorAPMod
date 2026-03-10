@@ -1,6 +1,7 @@
 export class Items{
     public static actionSavePrefix = "AP_Action_";
     public static skillSavePrefix = "AP_Skill_";
+	public static skillCapSavePrefix = "AP_Skill_Cap_"
 	public static otherSavePrefix = "AP_Unlock_";
 
   private startID = 1;
@@ -35,6 +36,16 @@ export class Items{
     "Progressive Mining",
     "Progressive Smithing",
     "Progressive Farming"
+  ]
+
+    demo_skill_level_caps = [
+    "Woodcutting Level Cap",
+    "Fishing Level Cap",
+    "Firemaking Level Cap",
+    "Cooking Level Cap",
+    "Mining Level Cap",
+    "Smithing Level Cap",
+    "Farming Level Cap"
   ]
 
   demo_pets = [
@@ -85,6 +96,7 @@ export class Items{
   all_items = [
     ...this.demo_skill_unlocks,
     ...this.demo_progressive_skill_unlocks,
+	...this.demo_skill_level_caps,
     ...this.demo_pets,
     ...this.demo_event_pets,
     ...this.demo_goblin_raid_pets,
@@ -109,6 +121,16 @@ export class Items{
     [9, "melvorD:Mining"],
     [10, "melvorD:Smithing"],
     [11, "melvorD:Farming"],
+  ])
+  
+  skill_caps = new Map([
+    [12, "melvorD:Woodcutting"],
+    [13, "melvorD:Fishing"],
+    [14, "melvorD:Firemaking"],
+    [15, "melvorD:Cooking"],
+    [16, "melvorD:Mining"],
+    [17, "melvorD:Smithing"],
+    [18, "melvorD:Farming"],
   ])
 
   skill_actions = new Map([

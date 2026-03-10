@@ -127,7 +127,7 @@ export default class ModService {
     this.setSideBar(this.#data.sidebar_category_name ?? "", "Connected");
 
     if(this.slotdataHandler.apSettings.removeSkillActionLevels){
-      this.skillHandler.setLevelsToLowest();
+      this.skillHandler.setLevelRequirementsToLowest();
     }
   }
 
