@@ -17,6 +17,16 @@ export class FiremakingHandler extends ActionHandler{
 
     public patchSkill(){
         // @ts-ignore
+        this.ctx.patch(Firemaking, "selectLog").replace(function(o, recipe) {
+            // @ts-ignore
+            if(recipe.requirement.isMet()){
+                o(recipe);
+            }
+            else{
+                notifyPlayer(game.firemaking, "You do not have access to this log yet!", 'danger');
+            }
+        });
+        // @ts-ignore
         this.ctx.patch(Firemaking, "burnLog").replace(function(o) {
             // @ts-ignore
             if( this.selectedRecipe.requirement.isMet()){
