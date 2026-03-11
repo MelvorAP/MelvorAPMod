@@ -1,5 +1,5 @@
 import { ApRequirementData } from "src/ts/ap_classes/archipelago_requirement";
-import { Items } from "../../../data/items";
+import { ActionSavePrefix, Items, SkillSavePrefix } from "../../../data/items";
 
 export class ActionHandler{
     public skillId : string; 
@@ -104,15 +104,15 @@ export class ActionHandler{
     // }
     
     public isActionUnlocked(actionID : string) : boolean{
-        console.warn(Items.actionSavePrefix + actionID);
-        return this.characterStorage.getItem(Items.actionSavePrefix + actionID) >= 1;
+        console.warn(ActionSavePrefix + actionID);
+        return this.characterStorage.getItem(ActionSavePrefix + actionID) >= 1;
     }
 
     public refreshUI() {
     }
 
     public getProgressiveSkillCount() : number{
-        return this.characterStorage.getItem(Items.skillSavePrefix + this.skillId) ?? 0;
+        return this.characterStorage.getItem(SkillSavePrefix + this.skillId) ?? 0;
     }
 
     public setLevelRequirementsToLowest(){
@@ -127,7 +127,7 @@ export class ActionHandler{
     }
 
     public increaseProgressiveSkillCount() : boolean{
-        let saveName = Items.skillSavePrefix + this.skillId;
+        let saveName = SkillSavePrefix + this.skillId;
         let saveCount = this.getProgressiveSkillCount();
 
         console.log(`${saveName} count went up from ${saveCount} to ${saveCount +1}`);
@@ -140,7 +140,7 @@ export class ActionHandler{
     }
 
     protected createApRequirementData(actionId : string) : ApRequirementData{
-        let countNeeded = this.items.skill_actions.get(this.skillId)?.find((element) => element[1] === actionId)?.at(0) as number ?? -1;
+        let countNeeded = this.items.skill_actions.get(this.skillId)?.find((element) => element[1] === actionId)![0] as number ?? -1;
 
         if(countNeeded == -1){
             countNeeded = 999999;

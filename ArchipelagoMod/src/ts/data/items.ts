@@ -1,75 +1,119 @@
+export enum ItemType {
+  Skills = 1,
+  ProgressiveSkills,
+  SkillLevelCaps,
+  ActionLevelCaps,
+  Pets,
+  OtherUnlocks
+}
+
+export enum Namespace {
+	melvorD = 1,
+	melvorF
+}
+
+export const ActionSavePrefix = "AP_Action_";
+export const SkillSavePrefix = "AP_Skill_";
+export const SkillCapSavePrefix = "AP_Skill_Cap_"
+export const OtherSavePrefix = "AP_Unlock_";
+
+export const NamespaceMult = 1000000;
+export const ItemTypeMult = 1000;
+
 export class Items{
-    public static actionSavePrefix = "AP_Action_";
-    public static skillSavePrefix = "AP_Skill_";
-	public static skillCapSavePrefix = "AP_Skill_Cap_"
-	public static otherSavePrefix = "AP_Unlock_";
+	itemDict = new Map<number, [string, string]>(); 
+	
+	constructor(){
+		let values = new Map<[ItemType, Namespace, number], [string, string]>;
 
-  private startID = 1;
+		for (let namespaceMap of game.skills.namespaceMaps){
+			for(let i = 0; i < namespaceMap[1].size; i++){
+				let skill = game.skills.allObjects[i];
+				if(!skill){
+					continue;
+				}
 
-  itemDict = new Map<number, string>(); 
-  
-  constructor(){
-    for (let i = 0; i < this.all_items.length; i++) {
-        let id = this.startID + i;
-        let name = this.all_items[i];
+				const skillNamespace = Namespace[namespaceMap[0] as keyof typeof Namespace];
 
-        this.itemDict.set(id, name);
+				if(!skillNamespace){
+					//console.warn(`${skill.namespace} is not supported in the AP world!`);
+					continue;
+				}
 
-        //console.log("Item ", name , "is at ID ", id)
-      }
-      
-    console.log("Found ", String(this.itemDict.size), " AP items.");
-  }
+				values.set([ItemType.SkillLevelCaps, skillNamespace, i], [skill.id, `${skill.name} Level Cap`]);
 
-  demo_skill_unlocks = [
+				if(this.skill_unlocks.includes(skill.id)){
+					values.set([ItemType.Skills, skillNamespace, i], [skill.id, skill.name]);
+					continue;
+				}
+
+				values.set([ItemType.ProgressiveSkills, skillNamespace, i], [skill.id, `Progressive ${skill.name}`]);
+
+				if(skill instanceof SkillWithMastery){
+					for(let j = 0; j < skill.actions.size; j++){
+						let action = skill.actions.allObjects[j];
+						if(action instanceof MasteryAction){
+							const actionNamespace = Namespace[action.namespace as keyof typeof Namespace];
+							if(!actionNamespace){
+								console.warn(`${action.namespace} is not supported in the AP world!`);
+								continue;
+							}
+
+							values.set([ItemType.ActionLevelCaps, actionNamespace, j], [action.id, action.name]);
+						}
+					}
+				}
+			}
+		}
+
+		for(let i = 0; i < game.pets.size; i++){
+			let pet = game.pets.allObjects[i];
+			if(!pet){
+				continue;
+			}
+
+			const namespace = Namespace[pet.namespace as keyof typeof Namespace];
+			if(!namespace){
+				console.warn(`${pet.namespace} is not supported in the AP world!`);
+				continue;
+			}
+			
+			values.set([ItemType.Pets, namespace, i], [pet.id ,pet.name]);
+		}
+
+		for(let i = 0; i < this.demo_ap_unlocks.length; i++){
+			let name = this.demo_ap_unlocks[i];
+			values.set([ItemType.OtherUnlocks, Namespace.melvorD, i], [name, name]);
+		}
+
+		values.forEach((name: [string, string], enums : [ItemType, Namespace, number]) => {
+			let id = enums[0] * ItemTypeMult + enums[1] * NamespaceMult + enums[2];
+			this.itemDict.set(id, name);
+			console.log(`Item ${name[0]} is at ${id}`)
+		})
+		
+		console.log("Found ", String(this.itemDict.size), " AP items.");
+	}
+
+  skill_unlocks = [
     "melvorD:Attack",
     "melvorD:Strength",
     "melvorD:Defence",
     "melvorD:Hitpoints",
-]
-
-  demo_progressive_skill_unlocks = [
-    "Progressive Woodcutting",
-    "Progressive Fishing",
-    "Progressive Firemaking",
-    "Progressive Cooking",
-    "Progressive Mining",
-    "Progressive Smithing",
-    "Progressive Farming"
+	"melvorD:Ranged",
+	"melvorD:Magic",
+	"melvorD:Prayer",
+	"melvorD:Slayer"
   ]
 
-    demo_skill_level_caps = [
-    "Woodcutting Level Cap",
-    "Fishing Level Cap",
-    "Firemaking Level Cap",
-    "Cooking Level Cap",
-    "Mining Level Cap",
-    "Smithing Level Cap",
-    "Farming Level Cap"
-  ]
-
-  demo_pets = [
-    "melvorD:Beavis",
-    "melvorD:PuddingDuckie",
-    "melvorD:Pyro",
-    "melvorD:Cris",
-    "melvorD:CoolRock",
-    "melvorD:PuffTheBabyDragon",
-    "melvorD:LarryTheLonelyLizard",
-    "melvorD:Bruce",
-    "melvorD:LilRon",
-    "melvorD:Leonardo",
-    "melvorD:FinnTheCat",
-    "melvorD:GoldenGolbin",
-    "melvorD:Ty",
-    "melvorD:Chick",
-    "melvorD:Zarrah",
-    "melvorD:Chio",
-    "melvorD:BouncingBob",
-    "melvorD:Rosey",
-    "melvorD:Ayyden",
-    "melvorD:ArcticYeti",
-    "melvorD:Mac"
+  progressive_skills = [
+    "melvorD:Woodcutting",
+    "melvorD:Fishing",
+    "melvorD:Firemaking",
+    "melvorD:Cooking",
+    "melvorD:Mining",
+    "melvorD:Smithing",
+    "melvorD:Farming"
   ]
 
   demo_event_pets = [
@@ -88,50 +132,26 @@ export class Items{
     "melvorD:PrestonThePlatypus",
   ]
 
-  demo_extra_unlocks = [
+  demo_ap_unlocks = [
 	"Shop Unlock",
 	"Bank Unlock"
   ]
 
-  all_items = [
-    ...this.demo_skill_unlocks,
-    ...this.demo_progressive_skill_unlocks,
-	...this.demo_skill_level_caps,
-    ...this.demo_pets,
-    ...this.demo_event_pets,
-    ...this.demo_goblin_raid_pets,
-	...this.demo_extra_unlocks
+  ap_unlocks = [
+	...this.demo_ap_unlocks
   ]
 
   skills = [
-    ...this.demo_skill_unlocks,
+	...this.skill_unlocks,
+	...this.progressive_skills
   ]
 
-  pets = [
-    ...this.demo_pets,
-    ...this.demo_event_pets,
-    ...this.demo_goblin_raid_pets
+  all_items = [
+    ...this.skills,
+	...this.skills.flatMap((id : string) => `${game.skills.getObjectByID(id)?.name} Level Cap`),
+    ...game.pets.allObjects.flatMap((value : Pet) => value.id),
+	...this.ap_unlocks
   ]
-
-  progressive_skills = new Map([
-    [5, "melvorD:Woodcutting"],
-    [6, "melvorD:Fishing"],
-    [7, "melvorD:Firemaking"],
-    [8, "melvorD:Cooking"],
-    [9, "melvorD:Mining"],
-    [10, "melvorD:Smithing"],
-    [11, "melvorD:Farming"],
-  ])
-  
-  skill_caps = new Map([
-    [12, "melvorD:Woodcutting"],
-    [13, "melvorD:Fishing"],
-    [14, "melvorD:Firemaking"],
-    [15, "melvorD:Cooking"],
-    [16, "melvorD:Mining"],
-    [17, "melvorD:Smithing"],
-    [18, "melvorD:Farming"],
-  ])
 
   skill_actions = new Map([
 		["melvorD:Magic", [
