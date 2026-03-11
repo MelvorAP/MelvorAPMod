@@ -9,7 +9,10 @@ export enum ItemType {
 
 export enum Namespace {
 	melvorD = 1,
-	melvorF
+	//melvorF,
+	//melvorTotH,
+	//melvorAoD
+	//melvorItA
 }
 
 export const ActionSavePrefix = "AP_Action_";
@@ -17,14 +20,15 @@ export const SkillSavePrefix = "AP_Skill_";
 export const SkillCapSavePrefix = "AP_Skill_Cap_"
 export const OtherSavePrefix = "AP_Unlock_";
 
-export const NamespaceMult = 1000000;
-export const ItemTypeMult = 1000;
+export const SkillMult = 1000 * 1000 * 1000;
+export const ItemTypeMult = 1000 * 1000;
+export const NamespaceMult = 1000;
 
 export class Items{
 	itemDict = new Map<number, [string, string]>(); 
 	
 	constructor(){
-		let values = new Map<[ItemType, Namespace, number], [string, string]>;
+		let values = new Map<[number, ItemType, Namespace, number], [string, string]>;
 
 		for (let namespaceMap of game.skills.namespaceMaps){
 			for(let i = 0; i < namespaceMap[1].size; i++){
@@ -34,20 +38,25 @@ export class Items{
 				}
 
 				const skillNamespace = Namespace[namespaceMap[0] as keyof typeof Namespace];
+				const skillIndex = this.skills.indexOf(skill.id) + 1;
 
 				if(!skillNamespace){
 					//console.warn(`${skill.namespace} is not supported in the AP world!`);
 					continue;
 				}
-
-				values.set([ItemType.SkillLevelCaps, skillNamespace, i], [skill.id, `${skill.name} Level Cap`]);
-
-				if(this.skill_unlocks.includes(skill.id)){
-					values.set([ItemType.Skills, skillNamespace, i], [skill.id, skill.name]);
+				else if(skillIndex === 0){
+					console.warn(`${skill.name} is not supported in the AP world!`);
 					continue;
 				}
 
-				values.set([ItemType.ProgressiveSkills, skillNamespace, i], [skill.id, `Progressive ${skill.name}`]);
+				values.set([skillIndex, ItemType.SkillLevelCaps, skillNamespace, i], [skill.id, `${skill.name} Level Cap`]);
+
+				if(this.skill_unlocks.includes(skill.id)){
+					values.set([skillIndex, ItemType.Skills, skillNamespace, i], [skill.id, skill.name]);
+					continue;
+				}
+
+				values.set([skillIndex, ItemType.ProgressiveSkills, skillNamespace, i], [skill.id, `Progressive ${skill.name}`]);
 
 				if(skill instanceof SkillWithMastery){
 					for(let j = 0; j < skill.actions.size; j++){
@@ -59,7 +68,7 @@ export class Items{
 								continue;
 							}
 
-							values.set([ItemType.ActionLevelCaps, actionNamespace, j], [action.id, action.name]);
+							values.set([skillIndex, ItemType.ActionLevelCaps, actionNamespace, j], [action.id, action.name]);
 						}
 					}
 				}
@@ -78,21 +87,21 @@ export class Items{
 				continue;
 			}
 			
-			values.set([ItemType.Pets, namespace, i], [pet.id ,pet.name]);
+			values.set([this.skills.indexOf(pet.skill?.id ?? "") + 1, ItemType.Pets, namespace, i], [pet.id ,pet.name]);
 		}
 
 		for(let i = 0; i < this.demo_ap_unlocks.length; i++){
 			let name = this.demo_ap_unlocks[i];
-			values.set([ItemType.OtherUnlocks, Namespace.melvorD, i], [name, name]);
+			values.set([0, ItemType.OtherUnlocks, Namespace.melvorD, i], [name, name]);
 		}
 
-		values.forEach((name: [string, string], enums : [ItemType, Namespace, number]) => {
-			let id = enums[0] * ItemTypeMult + enums[1] * NamespaceMult + enums[2];
+		values.forEach((name: [string, string], enums : [number, ItemType, Namespace, number]) => {
+			let id = enums[0] * SkillMult + enums[1] * ItemTypeMult + enums[2] * NamespaceMult + enums[3];
 			this.itemDict.set(id, name);
-			console.log(`Item ${name[0]} is at ${id}`)
+			console.log(`Item ${name[1]} (${name[0]}) is at ${id}`)
 		})
 		
-		console.log("Found ", String(this.itemDict.size), " AP items.");
+		console.log(`Found ${String(this.itemDict.size)} item types.`);
 	}
 
   skill_unlocks = [

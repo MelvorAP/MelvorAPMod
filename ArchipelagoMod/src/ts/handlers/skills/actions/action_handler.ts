@@ -46,62 +46,8 @@ export class ActionHandler{
         });
     }
 
-    lockAction(action : BasicSkillRecipe){
+    lockAction(_action : BasicSkillRecipe){
     }
-
-    // lockAction(skillId : string, action : BasicSkillRecipe){
-    //     let countNeeded = this.items.skill_actions.get(skillId)?.find((element) => element[1] === action.id)?.at(0) as number ?? -1;
-
-    //     if(countNeeded == -1){
-    //         countNeeded = 999999;
-    //         console.log(`Invalid count needed for ${action.id}.`);
-    //     }
-    //     else{
-    //         countNeeded += 1;
-    //     }
-        
-    //     switch(skillId){
-    //         case "melvorD:Woodcutting":
-    //             data.itemType = "tree";
-    //             // @ts-ignore
-    //             game.woodcutting.modifyData({trees: [{id: action.id, requirements: {add: [ data ]}}]})
-    //             break;
-    //         case "melvorD:Fishing":
-    //             data.itemType = "fish";
-    //             // @ts-ignore
-    //             game.fishing.modifyData({fish: [{id: action.id, requirements: {add: [ data ]}}]})
-    //         case "melvorD:Firemaking":
-    //             data.itemType = "log";
-    //             // @ts-ignore
-    //             game.firemaking.modifyData({logs: [{id: action.id, requirements: {add: [ data ]}}]})
-    //             break;
-    //         case "melvorD:Cooking":
-    //             data.itemType = "recipe";
-    //             // @ts-ignore
-    //             game.cooking.modifyData({recipes: [{id: action.id, requirements: {add: [ data ]}}]})
-    //             break;
-    //         case "melvorD:Mining":
-    //             data.itemType = "rock";
-    //             // @ts-ignore
-    //             game.mining.modifyData({rockData: [{id: action.id, requirements: {add: [ data ]}}]})
-    //             break;
-    //         case "melvorD:Smithing":
-    //             data.itemType = "recipe";
-    //             // @ts-ignore
-    //             game.cooking.modifyData({recipe: [{id: action.id, requirements: {add: [ data ]}}]})
-    //             break;
-    //         case "melvorD:Farming":
-    //             data.itemType = "seed";
-    //             // @ts-ignore
-    //             game.farming.modifyData({seeds: [{id: action.id, requirements: {add: [ data ]}}]})
-    //             break;
-    //         default:
-    //             console.log(`Unknown action type ${action.id}.`);
-    //             break;
-    //         }
-
-    //     this.refreshUI();
-    // }
     
     public isActionUnlocked(actionID : string) : boolean{
         console.warn(ActionSavePrefix + actionID);
@@ -140,17 +86,18 @@ export class ActionHandler{
     }
 
     protected createApRequirementData(actionId : string) : ApRequirementData{
-        let countNeeded = this.items.skill_actions.get(this.skillId)?.find((element) => element[1] === actionId)![0] as number ?? -1;
+        let skillAction = this.items.skill_actions.get(this.skillId)?.find((element) => element[1] === actionId);
+        let countNeeded = 1;
 
-        if(countNeeded == -1){
+        if(!skillAction){
             countNeeded = 999999;
             console.log(`Invalid progressive count for ${actionId}.`);
         }
         else{
-            countNeeded += 1;
+            countNeeded += skillAction[0] as number;
         }
 
-            return {
+        return {
             type: "ArchipelagoUnlock", 
             itemId: actionId, 
             itemType: this.itemType,
