@@ -1,4 +1,4 @@
-import { Items } from "src/ts/data/items";
+import { Items } from "../../../data/items";
 import { NotificationHandler } from "../../notification_handler";
 import { ActionHandler } from "./action_handler";
 

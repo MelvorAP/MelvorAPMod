@@ -64,7 +64,7 @@ export class Items{
 						if(action instanceof MasteryAction){
 							const actionNamespace = Namespace[action.namespace as keyof typeof Namespace];
 							if(!actionNamespace){
-								console.warn(`${action.namespace} is not supported in the AP world!`);
+								//console.warn(`${action.namespace} is not supported in the AP world!`);
 								continue;
 							}
 
@@ -83,7 +83,7 @@ export class Items{
 
 			const namespace = Namespace[pet.namespace as keyof typeof Namespace];
 			if(!namespace){
-				console.warn(`${pet.namespace} is not supported in the AP world!`);
+				//console.warn(`${pet.namespace} is not supported in the AP world!`);
 				continue;
 			}
 			
@@ -123,6 +123,21 @@ export class Items{
     "melvorD:Mining",
     "melvorD:Smithing",
     "melvorD:Farming"
+  ]
+  
+  demo_skill_unlocks = [
+    "melvorD:Attack",
+    "melvorD:Strength",
+    "melvorD:Defence",
+    "melvorD:Hitpoints"
+  ]
+
+  //These skills are in the demo namespace, even if they're not playable in the demo
+  full_skill_unlocks = [
+	"melvorD:Ranged",
+	"melvorD:Magic",
+	"melvorD:Prayer",
+	"melvorD:Slayer"
   ]
 
   demo_event_pets = [

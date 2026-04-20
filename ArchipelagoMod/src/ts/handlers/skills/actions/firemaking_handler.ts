@@ -1,7 +1,7 @@
-import { Items } from "src/ts/data/items";
 import { NotificationHandler } from "../../notification_handler";
 import { ActionHandler } from "./action_handler";
 import { ArchipelagoRequirement } from "../../../ap_classes/archipelago_requirement";
+import { Items } from "../../../data/items";
 
 export class FiremakingHandler extends ActionHandler{
 

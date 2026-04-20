@@ -1,5 +1,5 @@
-import { ApRequirementData } from "src/ts/ap_classes/archipelago_requirement";
-import { ActionSavePrefix, Items, SkillSavePrefix } from "../../../data/items";
+import { ApRequirementData } from "../../../ap_classes/archipelago_requirement";
+import { ActionSavePrefix, Items, Namespace, SkillSavePrefix } from "../../../data/items";
 
 export class ActionHandler{
     public skillId : string; 
@@ -12,6 +12,8 @@ export class ActionHandler{
 
     protected apIcon : string;
 
+    protected actionRequirements = new Map<string, number>();
+
     constructor(ctx: ModContext, items : Items, apIcon : string, skillId : string){
       
         this.items = items;
@@ -20,6 +22,8 @@ export class ActionHandler{
 
         this.skillId = skillId;
         this.apIcon = apIcon;
+
+        this.setActionRequirements();
     }
 
     setCharacterStorage(characterStorage : ModStorage){
@@ -85,16 +89,33 @@ export class ActionHandler{
         return true;
     }
 
-    protected createApRequirementData(actionId : string) : ApRequirementData{
-        let skillAction = this.items.skill_actions.get(this.skillId)?.find((element) => element[1] === actionId);
-        let countNeeded = 1;
+    protected setActionRequirements(){
+        let skill = game.skills.getObjectByID(this.skillId);
+        let countNeeded = 0;
 
-        if(!skillAction){
+        if(skill instanceof SkillWithMastery){
+            for(let j = 0; j < skill.actions.size; j++){
+                let action = skill.actions.allObjects[j];
+                if(action instanceof MasteryAction){
+                    const actionNamespace = Namespace[action.namespace as keyof typeof Namespace];
+                    if(!actionNamespace){
+                        continue;
+                    }
+                    
+                    countNeeded += 1;
+                    this.actionRequirements.set(action.id, countNeeded);
+                    console.warn(`${action.id} is unlocked at ${countNeeded}`);
+                }
+            }
+        }
+    }
+
+    protected createApRequirementData(actionId : string) : ApRequirementData{
+        let countNeeded = this.actionRequirements.get(actionId);
+
+        if(!countNeeded){
             countNeeded = 999999;
             console.log(`Invalid progressive count for ${actionId}.`);
-        }
-        else{
-            countNeeded += skillAction[0] as number;
         }
 
         return {

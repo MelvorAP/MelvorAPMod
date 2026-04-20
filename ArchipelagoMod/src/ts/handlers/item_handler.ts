@@ -55,11 +55,6 @@ export class ItemHandler{
         const namespaceName = Namespace[namespace]
         const skill = this.items.skills[skill_id - 1];
 
-        console.log(id);
-        console.log(ItemType[itemType]);
-        console.log(namespaceName);
-        console.log(skill);
-
         if(!namespace){
             console.warn(`${namespace} is not supported in the AP world!`);
             return;
@@ -98,8 +93,8 @@ export class ItemHandler{
                                 break;
                         }
                         break;
-                    case Namespace.melvorF :
-                        break;
+                    // case Namespace.melvorF :
+                    //     break;
                     default :
                         break;
                 }

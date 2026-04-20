@@ -6,6 +6,7 @@ import { FiremakingHandler } from "./actions/firemaking_handler";
 import { MiningHandler } from "./actions/mining_handler";
 import { SmithingHandler } from "./actions/smithing_handler";
 import { WoodcuttingHandler } from "./actions/woodcutting_handler";
+import { FishingHandler } from "./actions/fishing_handler";
 
 export class SkillHandler{
     private characterStorage : ModStorage;
@@ -21,6 +22,7 @@ export class SkillHandler{
             new SmithingHandler(ctx, items, apIcon), 
             new FiremakingHandler(ctx, items, apIcon),
             new CookingHandler(ctx, items, apIcon),
+            new FishingHandler(ctx, items, apIcon)
         ];
     }
 
