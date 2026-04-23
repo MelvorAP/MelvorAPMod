@@ -30,7 +30,7 @@ export class FishingHandler extends ActionHandler{
         // @ts-ignore
         this.ctx.patch(Fishing, "onAreaStartButtonClick").replace(function(o, area : FishingArea) {
             // @ts-ignore
-            let fish : Fish = game.fishing.selectedAreaFish.entries().next()?.value[1];
+            let fish : Fish = this.selectedAreaFish.get(area);
             // @ts-ignore
             if(fish.requirement.isMet()){
                 o(area);
