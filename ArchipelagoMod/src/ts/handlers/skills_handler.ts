@@ -1,5 +1,5 @@
-import { Items, SkillCapSavePrefix, SkillSavePrefix } from "../data/items";
-import { ArchipelagoItemsChangedEvent } from "../ap_classes/archipelago_items_changed_event";
+import { Items, SkillCapPrefix, SkillPrefix } from "../data/items";
+import { ArchipelagoItemsChangedEvent } from "../archipelago_items_changed_event";
 import { BaseSkillHandler } from "./skills/base_skill_handler";
 import { CookingHandler } from "./skills/cooking_handler";
 import { FiremakingHandler } from "./skills/firemaking_handler";
@@ -89,7 +89,7 @@ export class SkillsHandler{
         let skill = game.skills.getObjectByID(skillName);
 
         if(skill){
-            let saveName = SkillSavePrefix + skill.id;
+            let saveName = SkillPrefix + skill.id;
             
             this.characterStorage.setItem(saveName, true);
 
@@ -131,7 +131,7 @@ export class SkillsHandler{
             return;
         }
 
-        let cap = (this.characterStorage.getItem(SkillCapSavePrefix + skillName) ?? 1) + 1;
+        let cap = (this.characterStorage.getItem(SkillCapPrefix + skillName) ?? 1) + 1;
 
         // @ts-ignore
         if(cap > skill.maxLevelCap){
@@ -139,7 +139,7 @@ export class SkillsHandler{
             console.warn(`Skill ${skillName} is already at level cap of ${skill.maxLevelCap}!`)
         }
         else{   
-            this.characterStorage.setItem(SkillCapSavePrefix + skillName, cap);
+            this.characterStorage.setItem(SkillCapPrefix + skillName, cap);
 
             console.log(`Skill ${skillName} level cap went up from ${cap -1} to ${cap}`);
 
@@ -161,7 +161,7 @@ export class SkillsHandler{
         // @ts-ignore
         let cap = skill.maxLevelCap as number;
         
-        this.characterStorage.setItem(SkillCapSavePrefix + skillName, cap);
+        this.characterStorage.setItem(SkillCapPrefix + skillName, cap);
 
         console.log(`Skill ${skillName} level cap went up to ${cap}`);
 
@@ -169,12 +169,5 @@ export class SkillsHandler{
         skill.setLevelCap(cap);
         // @ts-ignore
         game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent(skillName));
-    }
-
-    hasAnyCombat(){
-        return this.characterStorage.getItem(SkillSavePrefix + "melvorD:Attack") ||
-            this.characterStorage.getItem(SkillSavePrefix + "melvorD:Strength") ||
-            this.characterStorage.getItem(SkillSavePrefix + "melvorD:Ranged") ||
-            this.characterStorage.getItem(SkillSavePrefix + "melvorD:Magic");
     }
 }

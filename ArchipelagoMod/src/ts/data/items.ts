@@ -15,10 +15,14 @@ export enum Namespace {
 	//melvorItA
 }
 
-export const ActionSavePrefix = "AP_Action_";
-export const SkillSavePrefix = "AP_Skill_";
-export const SkillCapSavePrefix = "AP_Skill_Cap_"
-export const OtherSavePrefix = "AP_Unlock_";
+export const ActionPrefix = "AP_Action_";
+export const SkillPrefix = "AP_Skill_";
+export const SkillCapPrefix = "AP_Skill_Cap_"
+export const CombatAreaPrefix = "AP_Area_"
+export const SlayerAreaPrefix = "AP_Slayer_Area_"
+export const DungeonPrefix = "AP_Dungeon_"
+export const StrongholdPrefix = "AP_Stronghold_"
+export const OtherPrefix = "AP_Unlock_";
 
 export const SkillMult = 1000 * 1000 * 1000;
 export const ItemTypeMult = 1000 * 1000;

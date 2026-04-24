@@ -5,7 +5,7 @@ import { NotificationHandler } from "./handlers/notification_handler";
 import { SkillsHandler } from "./handlers/skills_handler";
 import { SlotdataHandler } from "./handlers/slotdata_handler";
 import { SettingsManager } from "./settings_manager";
-import { ProgressiveArchipelagoRequirement } from "./ap_classes/requirements/progressive_archipelago_requirement";
+import { ProgressiveSkillRequirement } from "./handlers/skills/requirements/progressive_skill_requirement";
 import { BaseSkillHandler } from "./handlers/skills/base_skill_handler";
 
 export interface IModServiceData {
@@ -239,7 +239,7 @@ export default class ModService {
 
   addApUnlock(data : any) {
     if(data.type == "ArchipelagoUnlock")
-      return new ProgressiveArchipelagoRequirement(data, game);
+      return new ProgressiveSkillRequirement(data, game);
   };
 
   farmingModifyData(data : any) {

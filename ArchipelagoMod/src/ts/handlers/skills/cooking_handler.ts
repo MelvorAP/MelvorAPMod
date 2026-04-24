@@ -1,7 +1,7 @@
 import { Items } from "../../data/items";
 import { NotificationHandler } from "../notification_handler";
 import { BaseSkillHandler } from "./base_skill_handler";
-import { ProgressiveArchipelagoRequirement } from "../../ap_classes/requirements/progressive_archipelago_requirement";
+import { ProgressiveSkillRequirement } from "./requirements/progressive_skill_requirement";
 
 export class CookingHandler extends BaseSkillHandler{
 
@@ -49,7 +49,7 @@ export class CookingHandler extends BaseSkillHandler{
 
     public lockAction(action : BasicSkillRecipe){
         // @ts-ignore
-        action.requirement = new ProgressiveArchipelagoRequirement(super.createApRequirementData(action.id), game);
+        action.requirement = new ProgressiveSkillRequirement(super.createApRequirementData(action.id), game);
     }
 
     public refreshUI() {

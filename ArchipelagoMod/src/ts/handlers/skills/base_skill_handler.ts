@@ -1,5 +1,5 @@
-import { ProgressiveApRequirementData } from "../../ap_classes/requirements/progressive_archipelago_requirement";
-import { ActionSavePrefix, Items, Namespace, SkillSavePrefix } from "../../data/items";
+import { ProgressiveRequirementData } from "./requirements/progressive_skill_requirement";
+import { ActionPrefix, Items, Namespace, SkillPrefix } from "../../data/items";
 
 export class BaseSkillHandler{
     public skillId : string; 
@@ -54,15 +54,15 @@ export class BaseSkillHandler{
     }
     
     public isActionUnlocked(actionID : string) : boolean{
-        console.warn(ActionSavePrefix + actionID);
-        return this.characterStorage.getItem(ActionSavePrefix + actionID) >= 1;
+        console.warn(ActionPrefix + actionID);
+        return this.characterStorage.getItem(ActionPrefix + actionID) >= 1;
     }
 
     public refreshUI() {
     }
 
     public getProgressiveSkillCount() : number{
-        return this.characterStorage.getItem(SkillSavePrefix + this.skillId) ?? 0;
+        return this.characterStorage.getItem(SkillPrefix + this.skillId) ?? 0;
     }
 
     public setLevelRequirementsToLowest(){
@@ -77,7 +77,7 @@ export class BaseSkillHandler{
     }
 
     public increaseProgressiveSkillCount() : boolean{
-        let saveName = SkillSavePrefix + this.skillId;
+        let saveName = SkillPrefix + this.skillId;
         let saveCount = this.getProgressiveSkillCount();
 
         console.log(`${saveName} count went up from ${saveCount} to ${saveCount +1}`);
@@ -110,7 +110,7 @@ export class BaseSkillHandler{
         }
     }
 
-    protected createApRequirementData(actionId : string) : ProgressiveApRequirementData{
+    protected createApRequirementData(actionId : string) : ProgressiveRequirementData{
         let countNeeded = this.actionRequirements.get(actionId);
 
         if(!countNeeded){
@@ -119,15 +119,12 @@ export class BaseSkillHandler{
         }
 
         return {
-            type: "ArchipelagoUnlock", 
             itemId: actionId, 
             itemType: this.itemType,
             skillId: this.skillId,
-            isProgressive: true,
             countNeeded: countNeeded,
-            items: this.items,
-            actionHandler: this,
-            iconUrl: this.apIcon
-        } as ProgressiveApRequirementData;
+            iconUrl: this.apIcon,
+            actionHandler: this
+        } as ProgressiveRequirementData;
     }
 }

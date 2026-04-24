@@ -1,4 +1,4 @@
-import { Items, ItemType, ItemTypeMult, Namespace, NamespaceMult, OtherSavePrefix, SkillMult } from "../data/items";
+import { Items, ItemType, ItemTypeMult, Namespace, NamespaceMult, OtherPrefix, SkillMult, SkillPrefix } from "../data/items";
 import { SkillsHandler } from "./skills_handler";
 import { SlotdataHandler } from "./slotdata_handler";
 
@@ -86,10 +86,10 @@ export class ItemHandler{
                     case Namespace.melvorD :
                         switch(this.items.demo_ap_unlocks[id]){
                             case "Shop Unlock" :
-                                this.characterStorage.setItem(OtherSavePrefix + "Shop_Unlock", true);
+                                this.characterStorage.setItem(OtherPrefix + "Shop_Unlock", true);
                                 break;
                             case "Bank Unlock" :
-                                this.characterStorage.setItem(OtherSavePrefix + "Bank_Unlock", true);
+                                this.characterStorage.setItem(OtherPrefix + "Bank_Unlock", true);
                                 break;
                         }
                         break;
@@ -116,6 +116,13 @@ export class ItemHandler{
 
         
     hasShop(){
-        return this.characterStorage.getItem(OtherSavePrefix + "Shop_Unlock")
+        return this.characterStorage.getItem(OtherPrefix + "Shop_Unlock")
+    }
+
+    hasAnyCombat(){
+        return this.characterStorage.getItem(SkillPrefix + "melvorD:Attack") ||
+            this.characterStorage.getItem(SkillPrefix + "melvorD:Strength") ||
+            this.characterStorage.getItem(SkillPrefix + "melvorD:Ranged") ||
+            this.characterStorage.getItem(SkillPrefix + "melvorD:Magic");
     }
 }
