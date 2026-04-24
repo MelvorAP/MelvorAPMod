@@ -1,9 +1,9 @@
-import { Items } from "../data/items";
-import { NotificationHandler } from "../handlers/notification_handler";
-import { ActionHandler } from "../handlers/skills/actions/action_handler";
-import { SkillHandler } from "../handlers/skills/skill_handler";
+import { Items } from "../../data/items";
+import { NotificationHandler } from "../../handlers/notification_handler";
+import { BaseSkillHandler } from "../../handlers/skills/base_skill_handler";
+import { SkillsHandler } from "../../handlers/skills_handler";
 
-export interface ApRequirementData {
+export interface ProgressiveApRequirementData {
   type: string, 
   itemId: string, 
   itemType: string,
@@ -11,24 +11,23 @@ export interface ApRequirementData {
   isProgressive: boolean,
   countNeeded: number,
   items: Items,
-  actionHandler: ActionHandler,
+  actionHandler: BaseSkillHandler,
   iconUrl: string
 }
 
 // @ts-ignore
-export class ArchipelagoRequirement extends GameRequirement {
+export class ProgressiveArchipelagoRequirement extends GameRequirement {
     type: string;
     itemId: string;
     itemType: string;
     skillId: string;
-    isProgressive: boolean;
     countNeeded: number;
     iconUrl: string;
 
     items: Items;
-    actionHandler: ActionHandler;
+    actionHandler: BaseSkillHandler;
 
-  constructor(data : ApRequirementData, game : Game) {
+  constructor(data : ProgressiveApRequirementData, game : Game) {
     super (game);
 
     this.type = 'ArchipelagoUnlock';
@@ -36,7 +35,6 @@ export class ArchipelagoRequirement extends GameRequirement {
     this.itemType = data.itemType;
     this.skillId = data.skillId;
 
-    this.isProgressive = data.isProgressive;
     this.countNeeded = data.countNeeded;
 
     this.iconUrl = data.iconUrl;
@@ -46,14 +44,10 @@ export class ArchipelagoRequirement extends GameRequirement {
   }
 
   isMet() {
-    if(game.skills.getObjectByID(this.skillId) && this.isProgressive){
+    if(game.skills.getObjectByID(this.skillId)){
       let unlocked = this.actionHandler.getProgressiveSkillCount() >= this.countNeeded;
       //console.log("Is progresive and unlocked:",unlocked);
       return unlocked;
-    }
-    else if (this.items.skill_actions.get(this.skillId)?.find((element) => element[1] === this.itemId) && !this.isProgressive){
-      //console.log("Is not progresive and unlocked:")
-      return this.actionHandler.isActionUnlocked(this.itemId);
     }
     else{
       console.warn("Unknown type for requirement of", this.itemId);

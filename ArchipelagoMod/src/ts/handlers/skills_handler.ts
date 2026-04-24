@@ -1,18 +1,18 @@
-import { Items, SkillCapSavePrefix, SkillSavePrefix } from "../../data/items";
-import { ArchipelagoItemsChangedEvent } from "../../ap_classes/archipelago_items_changed_event";
-import { ActionHandler } from "./actions/action_handler";
-import { CookingHandler } from "./actions/cooking_handler";
-import { FiremakingHandler } from "./actions/firemaking_handler";
-import { MiningHandler } from "./actions/mining_handler";
-import { SmithingHandler } from "./actions/smithing_handler";
-import { WoodcuttingHandler } from "./actions/woodcutting_handler";
-import { FishingHandler } from "./actions/fishing_handler";
-import { FarmingHandler } from "./actions/farming_handler";
+import { Items, SkillCapSavePrefix, SkillSavePrefix } from "../data/items";
+import { ArchipelagoItemsChangedEvent } from "../ap_classes/archipelago_items_changed_event";
+import { BaseSkillHandler } from "./skills/base_skill_handler";
+import { CookingHandler } from "./skills/cooking_handler";
+import { FiremakingHandler } from "./skills/firemaking_handler";
+import { MiningHandler } from "./skills/mining_handler";
+import { SmithingHandler } from "./skills/smithing_handler";
+import { WoodcuttingHandler } from "./skills/woodcutting_handler";
+import { FishingHandler } from "./skills/fishing_handler";
+import { FarmingHandler } from "./skills/farming_handler";
 
-export class SkillHandler{
+export class SkillsHandler{
     private characterStorage : ModStorage;
 
-    private actionHandlers : Array<ActionHandler>;
+    private actionHandlers : Array<BaseSkillHandler>;
 
     constructor(ctx: ModContext, items : Items, apIcon : string){
         this.characterStorage = {} as ModStorage;
@@ -31,7 +31,7 @@ export class SkillHandler{
     setCharacterStorage(characterStorage : ModStorage){
         this.characterStorage = characterStorage;
 
-        this.actionHandlers.forEach((value : ActionHandler) => {
+        this.actionHandlers.forEach((value : BaseSkillHandler) => {
             value.setCharacterStorage(characterStorage);
         });
     }

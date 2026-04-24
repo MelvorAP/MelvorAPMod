@@ -1,5 +1,5 @@
 import { Items, ItemType, ItemTypeMult, Namespace, NamespaceMult, OtherSavePrefix, SkillMult } from "../data/items";
-import { SkillHandler } from "./skills/skill_handler";
+import { SkillsHandler } from "./skills_handler";
 import { SlotdataHandler } from "./slotdata_handler";
 
 export class ItemHandler{
@@ -7,12 +7,12 @@ export class ItemHandler{
 
     public items : Items;
 
-    private skillHandler : SkillHandler;
+    private skillHandler : SkillsHandler;
     private slotdataHandler : SlotdataHandler;
 
     private characterStorage : ModStorage;
 
-    constructor(items : Items, skillHandler: SkillHandler, slotdataHandler : SlotdataHandler){
+    constructor(items : Items, skillHandler: SkillsHandler, slotdataHandler : SlotdataHandler){
         this.items = items;
 
         this.skillHandler = skillHandler;

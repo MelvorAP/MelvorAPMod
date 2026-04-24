@@ -1,7 +1,7 @@
-import { ApRequirementData } from "../../../ap_classes/archipelago_requirement";
-import { ActionSavePrefix, Items, Namespace, SkillSavePrefix } from "../../../data/items";
+import { ProgressiveApRequirementData } from "../../ap_classes/requirements/progressive_archipelago_requirement";
+import { ActionSavePrefix, Items, Namespace, SkillSavePrefix } from "../../data/items";
 
-export class ActionHandler{
+export class BaseSkillHandler{
     public skillId : string; 
 
     protected itemType = "recipe";
@@ -110,7 +110,7 @@ export class ActionHandler{
         }
     }
 
-    protected createApRequirementData(actionId : string) : ApRequirementData{
+    protected createApRequirementData(actionId : string) : ProgressiveApRequirementData{
         let countNeeded = this.actionRequirements.get(actionId);
 
         if(!countNeeded){
@@ -128,6 +128,6 @@ export class ActionHandler{
             items: this.items,
             actionHandler: this,
             iconUrl: this.apIcon
-        } as ApRequirementData;
+        } as ProgressiveApRequirementData;
     }
 }

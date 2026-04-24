@@ -2,11 +2,11 @@ import { ConnectionHandler } from "./handlers/connection_handler";
 import { Items } from "./data/items";
 import { ItemHandler } from "./handlers/item_handler";
 import { NotificationHandler } from "./handlers/notification_handler";
-import { SkillHandler } from "./handlers/skills/skill_handler";
+import { SkillsHandler } from "./handlers/skills_handler";
 import { SlotdataHandler } from "./handlers/slotdata_handler";
 import { SettingsManager } from "./settings_manager";
-import { ArchipelagoRequirement } from "./ap_classes/archipelago_requirement";
-import { ActionHandler } from "./handlers/skills/actions/action_handler";
+import { ProgressiveArchipelagoRequirement } from "./ap_classes/requirements/progressive_archipelago_requirement";
+import { BaseSkillHandler } from "./handlers/skills/base_skill_handler";
 
 export interface IModServiceData {
   icon_url: string;
@@ -68,7 +68,7 @@ export default class ModService {
 
   slotdataHandler: SlotdataHandler;
   itemHandler: ItemHandler;
-  skillHandler: SkillHandler;
+  skillHandler: SkillsHandler;
 
   settingsManager: SettingsManager;
   bar?: SidebarCategoryWrapper;
@@ -88,7 +88,7 @@ export default class ModService {
     this.notificationHandler = new NotificationHandler(this.#data.icon_url, this.#data.icon_url_large);
     this.settingsManager = new SettingsManager();
 
-    this.skillHandler = new SkillHandler(ctx, this.items, this.#data.icon_url);
+    this.skillHandler = new SkillsHandler(ctx, this.items, this.#data.icon_url);
     this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler);
 
     this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
@@ -239,7 +239,7 @@ export default class ModService {
 
   addApUnlock(data : any) {
     if(data.type == "ArchipelagoUnlock")
-      return new ArchipelagoRequirement(data, game);
+      return new ProgressiveArchipelagoRequirement(data, game);
   };
 
   farmingModifyData(data : any) {

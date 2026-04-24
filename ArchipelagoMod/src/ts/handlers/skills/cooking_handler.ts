@@ -1,9 +1,9 @@
-import { Items } from "../../../data/items";
-import { NotificationHandler } from "../../notification_handler";
-import { ActionHandler } from "./action_handler";
-import { ArchipelagoRequirement } from "../../../ap_classes/archipelago_requirement";
+import { Items } from "../../data/items";
+import { NotificationHandler } from "../notification_handler";
+import { BaseSkillHandler } from "./base_skill_handler";
+import { ProgressiveArchipelagoRequirement } from "../../ap_classes/requirements/progressive_archipelago_requirement";
 
-export class CookingHandler extends ActionHandler{
+export class CookingHandler extends BaseSkillHandler{
 
     constructor(ctx: ModContext, items : Items, apIcon : string){
         super(ctx, items, apIcon, "melvorD:Cooking");
@@ -49,7 +49,7 @@ export class CookingHandler extends ActionHandler{
 
     public lockAction(action : BasicSkillRecipe){
         // @ts-ignore
-        action.requirement = new ArchipelagoRequirement(super.createApRequirementData(action.id), game);
+        action.requirement = new ProgressiveArchipelagoRequirement(super.createApRequirementData(action.id), game);
     }
 
     public refreshUI() {

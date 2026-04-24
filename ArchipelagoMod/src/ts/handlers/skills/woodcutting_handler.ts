@@ -1,8 +1,8 @@
-import { Items } from "../../../data/items";
-import { NotificationHandler } from "../../notification_handler";
-import { ActionHandler } from "./action_handler";
+import { Items } from "../../data/items";
+import { NotificationHandler } from "../notification_handler";
+import { BaseSkillHandler } from "./base_skill_handler";
 
-export class WoodcuttingHandler extends ActionHandler{
+export class WoodcuttingHandler extends BaseSkillHandler{
 
     constructor(ctx: ModContext, items : Items, apIcon : string){
         super(ctx, items, apIcon, "melvorD:Woodcutting");
