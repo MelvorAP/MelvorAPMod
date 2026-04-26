@@ -1,6 +1,6 @@
 import { CombatAreaPrefix, Items } from "../../data/items";
 import { ItemHandler } from "../item_handler";
-import { CombatRequirement, CombatRequirementData } from "./requirement/combat_requirement";
+import { CombatRequirement, CombatRequirementData, CombatRequirementType } from "./requirement/combat_requirement";
 
 export class CombatUnlockHandler{
     private apIcon : string;
@@ -8,9 +8,12 @@ export class CombatUnlockHandler{
     private itemHandler : ItemHandler;
     private characterStorage : ModStorage;
 
-    constructor(itemHandler : ItemHandler, apIcon : string){
+    private ctx: ModContext;
+
+    constructor(ctx : ModContext, itemHandler : ItemHandler, apIcon : string){
         this.itemHandler = itemHandler;
         this.apIcon = apIcon;
+        this.ctx = ctx;
 
         this.characterStorage = {} as ModStorage;
     }
@@ -20,17 +23,48 @@ export class CombatUnlockHandler{
     }
 
     lockCombatAreas(){
-        game.combatAreas.allObjects.forEach(area => {
-            let requirement = new CombatRequirement(this.createApRequirementData(area.id, "area", CombatAreaPrefix), game);
+        // @ts-ignore
+        this.ctx.patch(CombatAreaMenuElement, "setRequirements").after(function(_returnValue, area : CombatArea) {
+            if (area.entryRequirements.length > 0) {
+                // @ts-ignore
+                const small = this.entryRequirements;
+                // @ts-ignore
+                const reqSpans = this.requirements;
+                area.entryRequirements.forEach((requirement) => {
+                    const listEl = createElement('li');
+                    listEl.lastChild
+                    let reqSpan;
+                    // @ts-ignore
+                    if(requirement.type == CombatRequirementType){
+                        // @ts-ignore
+                        let combatRequirement = requirement as CombatRequirement;
+                            // @ts-ignore
+                            listEl.appendChild(this.createReqImage(combatRequirement.iconUrl));
+                            // @ts-ignore
+                            reqSpan = this.createReqSpan(`Find this ${combatRequirement.itemType} to acces it!`);
+                            reqSpans.push(reqSpan);
+                            listEl.appendChild(reqSpan);
+                    }
+                    small.appendChild(listEl);
+                })
+            }
+        });
 
-            //@ts-ignore
-            area.entryRequirements.push(requirement);
+        game.combatAreas.allObjects.forEach(area => {
+            if(area.id == "UnknownArea"){
+                console.log("Skipping unknown area");
+            }
+            else{
+                //@ts-ignore
+                area.applyDataModification({entryRequirements: {add: [ this.createApRequirementData(area.id, "area", CombatAreaPrefix) ]}}, game);
+            }
         })
     }
 
     protected createApRequirementData(areaId : string, itemType : string, savePrefix : string) : CombatRequirementData{
         
         return {
+            type: CombatRequirementType,
             itemId: areaId, 
             itemType : itemType,
             savePrefix: savePrefix,

@@ -1,8 +1,10 @@
 import { APRequirement } from "../../../ap_classes/ap_requirement";
-import { Items } from "../../../data/items";
 import { BaseSkillHandler } from "../base_skill_handler";
 
+export const ProgressiveSkillRequirementType = "ProgressiveSkillRequirement";
+
 export interface ProgressiveRequirementData {
+  type: string,
   itemId: string, 
   itemType: string,
   skillId: string,
@@ -20,7 +22,7 @@ export class ProgressiveSkillRequirement extends APRequirement {
     private actionHandler: BaseSkillHandler;
 
   constructor(data : ProgressiveRequirementData, game : Game) {
-    super (game, data.itemId, data.itemType, data.iconUrl);
+    super (game, data.type, data.itemId, data.itemType, data.iconUrl);
 
     this.skillId = data.skillId;
 

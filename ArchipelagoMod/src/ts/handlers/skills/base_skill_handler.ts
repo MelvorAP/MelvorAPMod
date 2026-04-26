@@ -1,4 +1,4 @@
-import { ProgressiveRequirementData } from "./requirements/progressive_skill_requirement";
+import { ProgressiveRequirementData, ProgressiveSkillRequirementType } from "./requirements/progressive_skill_requirement";
 import { ActionPrefix, Items, Namespace, SkillPrefix } from "../../data/items";
 
 export class BaseSkillHandler{
@@ -119,6 +119,7 @@ export class BaseSkillHandler{
         }
 
         return {
+            type: ProgressiveSkillRequirementType,
             itemId: actionId, 
             itemType: this.itemType,
             skillId: this.skillId,

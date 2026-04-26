@@ -42,9 +42,10 @@ export class SkillsHandler{
             
             console.log("Locking skill", skill.id);
 
+            // @ts-ignore
+            skill.setLevelCap(this.characterStorage.getItem(Items.skillCapSavePrefix + skill.id) ?? 1);
+
             if(skill instanceof SkillWithMastery){
-                // @ts-ignore
-                skill.setLevelCap(this.characterStorage.getItem(Items.skillCapSavePrefix + skill.id) ?? 1);
 
                 let actionHandler = this.actionHandlers.find(x => x.skillId === skill.id);
                 if(!actionHandler){

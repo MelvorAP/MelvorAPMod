@@ -5,8 +5,9 @@ import { NotificationHandler } from "./handlers/notification_handler";
 import { SkillsHandler } from "./handlers/skills_handler";
 import { SlotdataHandler } from "./handlers/slotdata_handler";
 import { SettingsManager } from "./settings_manager";
-import { ProgressiveSkillRequirement } from "./handlers/skills/requirements/progressive_skill_requirement";
-import { BaseSkillHandler } from "./handlers/skills/base_skill_handler";
+import { ProgressiveSkillRequirement, ProgressiveSkillRequirementType } from "./handlers/skills/requirements/progressive_skill_requirement";
+import { CombatUnlockHandler } from "./handlers/combat/combat_unlock_handler";
+import { CombatRequirement, CombatRequirementType } from "./handlers/combat/requirement/combat_requirement";
 
 export interface IModServiceData {
   icon_url: string;
@@ -69,6 +70,7 @@ export default class ModService {
   slotdataHandler: SlotdataHandler;
   itemHandler: ItemHandler;
   skillHandler: SkillsHandler;
+  combatUnlockHandler: CombatUnlockHandler;
 
   settingsManager: SettingsManager;
   bar?: SidebarCategoryWrapper;
@@ -90,6 +92,7 @@ export default class ModService {
 
     this.skillHandler = new SkillsHandler(ctx, this.items, this.#data.icon_url);
     this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler);
+    this.combatUnlockHandler = new CombatUnlockHandler(ctx, this.itemHandler, this.#data.icon_url);
 
     this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
   }
@@ -197,8 +200,10 @@ export default class ModService {
 
       service.skillHandler.setCharacterStorage(ctx.characterStorage);
       service.itemHandler.setCharacterStorage(ctx.characterStorage);
+      service.combatUnlockHandler.setCharacterStorage(ctx.characterStorage);
   
       service.skillHandler.lockSkills();
+      service.combatUnlockHandler.lockCombatAreas();
     })
   
     service.#ctx.onInterfaceReady(ctx  => {
@@ -226,6 +231,8 @@ export default class ModService {
       game.actionHandler = service.actionHandler;
       // @ts-ignore
       game.notificationHandler = service.notificationHandler;
+      // @ts-ignore
+      game.combatHandler = service.combatUnlockHandler;
   
       //game.combat.on("monsterKilled", function (e) {console.log("Monster killed:", e)})
       //game.combat.on("dungeonCompleted", function (e) {console.log("Dungeon completed:", e)})
@@ -238,8 +245,10 @@ export default class ModService {
   }
 
   addApUnlock(data : any) {
-    if(data.type == "ArchipelagoUnlock")
+    if(data.type == ProgressiveSkillRequirementType)
       return new ProgressiveSkillRequirement(data, game);
+    if(data.type == CombatRequirementType)
+      return new CombatRequirement(data, game);
   };
 
   farmingModifyData(data : any) {

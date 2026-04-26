@@ -1,11 +1,10 @@
 import { APRequirement } from "../../../ap_classes/ap_requirement";
-import { CombatAreaPrefix, Items, SlayerAreaPrefix } from "../../../data/items";
 import { ItemHandler } from "../../item_handler";
-import { NotificationHandler } from "../../notification_handler";
-import { BaseSkillHandler } from "../../skills/base_skill_handler";
-import { SkillsHandler } from "../../skills_handler";
+
+export const CombatRequirementType = "CombatRequirement";
 
 export interface CombatRequirementData {
+  type: string,
   itemId: string, 
   itemType: string, 
   savePrefix: string,
@@ -23,7 +22,7 @@ export class CombatRequirement extends APRequirement {
   private characterStorage : ModStorage;
 
   constructor(data : CombatRequirementData, game : Game) {
-    super(game, data.itemId, data.itemType, data.iconUrl);
+    super(game, data.type, data.itemId, data.itemType, data.iconUrl);
 
     this.savePrefix = data.savePrefix;
 
