@@ -1,4 +1,4 @@
-import { CombatAreaPrefix, Items } from "../../data/items";
+import { CombatAreaPrefix, DungeonPrefix, Items, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
 import { ItemHandler } from "../item_handler";
 import { CombatRequirement, CombatRequirementData, CombatRequirementType } from "./requirement/combat_requirement";
 
@@ -54,9 +54,27 @@ export class CombatUnlockHandler{
             if(area.id == "UnknownArea"){
                 console.log("Skipping unknown area");
             }
-            else{
+            // @ts-ignore
+            else if (area instanceof Stronghold){
+                //@ts-ignore
+                area.applyDataModification({entryRequirements: {add: [ this.createApRequirementData(area.id, "stronghold", StrongholdPrefix) ]}}, game);
+                this.removeSlayerRequirement(area);
+            }
+            else if (area instanceof SlayerArea){
+                //@ts-ignore
+                area.applyDataModification({entryRequirements: {add: [ this.createApRequirementData(area.id, "area", SlayerAreaPrefix) ]}}, game);
+                this.removeSlayerRequirement(area);
+            }
+            else if (area instanceof Dungeon){
+                //@ts-ignore
+                area.applyDataModification({entryRequirements: {add: [ this.createApRequirementData(area.id, "dungeon", DungeonPrefix) ]}}, game);
+            }
+            else if (area instanceof CombatArea){
                 //@ts-ignore
                 area.applyDataModification({entryRequirements: {add: [ this.createApRequirementData(area.id, "area", CombatAreaPrefix) ]}}, game);
+            }
+            else{
+                console.warn(`Unknown area type!`);
             }
         })
     }
@@ -73,5 +91,10 @@ export class CombatUnlockHandler{
             itemHandler: this.itemHandler,
             characterStorage: this.characterStorage
         } as CombatRequirementData;
+    }
+
+    private removeSlayerRequirement(area : CombatArea) {
+            //@ts-ignore
+            area.applyDataModification({entryRequirements: {remove: [ "SkillLevel" ]}}, game);
     }
 }
