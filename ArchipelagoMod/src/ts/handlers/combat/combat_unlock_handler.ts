@@ -1,17 +1,16 @@
-import { CombatAreaPrefix, DungeonPrefix, Items, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
+import { ArchipelagoItemsChangedEvent } from "../../archipelago_items_changed_event";
+import { CombatAreaPrefix, DungeonPrefix, Items, SkillPrefix, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
 import { ItemHandler } from "../item_handler";
 import { CombatRequirement, CombatRequirementData, CombatRequirementType } from "./requirement/combat_requirement";
 
 export class CombatUnlockHandler{
     private apIcon : string;
 
-    private itemHandler : ItemHandler;
     private characterStorage : ModStorage;
 
     private ctx: ModContext;
 
-    constructor(ctx : ModContext, itemHandler : ItemHandler, apIcon : string){
-        this.itemHandler = itemHandler;
+    constructor(ctx : ModContext, apIcon : string){
         this.apIcon = apIcon;
         this.ctx = ctx;
 
@@ -51,7 +50,7 @@ export class CombatUnlockHandler{
         });
 
         game.combatAreas.allObjects.forEach(area => {
-            if(area.id == "UnknownArea"){
+            if(area.id == "melvorD:UnknownArea"){
                 console.log("Skipping unknown area");
             }
             // @ts-ignore
@@ -79,6 +78,25 @@ export class CombatUnlockHandler{
         })
     }
 
+    unlockCombatArea(areaId : string, savePrefix : string){
+        this.characterStorage.setItem(savePrefix + areaId, true);
+        //@ts-ignore
+        game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent("Attack"));
+        //@ts-ignore
+        game.combat.renderQueue.areaRequirements = true
+    }
+
+    isAreaUnlocked(savePrefix : string, itemId : string){
+        return this.characterStorage.getItem(savePrefix + itemId) as boolean
+    }
+
+    hasAnyCombat(){
+        return this.characterStorage.getItem(SkillPrefix + "melvorD:Attack") ||
+            this.characterStorage.getItem(SkillPrefix + "melvorD:Strength") ||
+            this.characterStorage.getItem(SkillPrefix + "melvorD:Ranged") ||
+            this.characterStorage.getItem(SkillPrefix + "melvorD:Magic");
+    }
+
     protected createApRequirementData(areaId : string, itemType : string, savePrefix : string) : CombatRequirementData{
         
         return {
@@ -88,8 +106,7 @@ export class CombatUnlockHandler{
             savePrefix: savePrefix,
             iconUrl: this.apIcon,
 
-            itemHandler: this.itemHandler,
-            characterStorage: this.characterStorage
+            combatUnlockHandler: this
         } as CombatRequirementData;
     }
 

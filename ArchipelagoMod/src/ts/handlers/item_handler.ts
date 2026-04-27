@@ -1,4 +1,5 @@
-import { Items, ItemType, ItemTypeMult, Namespace, NamespaceMult, OtherPrefix, SkillMult, SkillPrefix } from "../data/items";
+import { CombatAreaPrefix, DungeonPrefix, Items, ItemType, ItemTypeMult, Namespace, NamespaceMult, OtherPrefix, SkillMult, SkillPrefix, SlayerAreaPrefix, StrongholdPrefix } from "../data/items";
+import { CombatUnlockHandler } from "./combat/combat_unlock_handler";
 import { SkillsHandler } from "./skills_handler";
 import { SlotdataHandler } from "./slotdata_handler";
 
@@ -9,16 +10,33 @@ export class ItemHandler{
 
     private skillHandler : SkillsHandler;
     private slotdataHandler : SlotdataHandler;
+    private combatUnlockHandler : CombatUnlockHandler;
 
     private characterStorage : ModStorage;
 
-    constructor(items : Items, skillHandler: SkillsHandler, slotdataHandler : SlotdataHandler){
+    private regularCombatAreas : CombatArea[];
+
+    constructor(items : Items, skillHandler: SkillsHandler, slotdataHandler : SlotdataHandler, combatUnlockHandler : CombatUnlockHandler){
         this.items = items;
 
         this.skillHandler = skillHandler;
         this.slotdataHandler = slotdataHandler;
+        this.combatUnlockHandler = combatUnlockHandler;
 
         this.characterStorage = {} as ModStorage; 
+
+        this.regularCombatAreas = [];
+
+        game.combatAreas.forEach(area => {
+            if (!(area instanceof SlayerArea) && 
+                !(area instanceof Dungeon) &&
+                //@ts-ignore
+                !(area instanceof Stronghold) &&
+                //@ts-ignore
+                !(area instanceof AbyssDepth)) {
+                    this.regularCombatAreas.push(area);
+                }
+            })
     }
 
     setCharacterStorage(characterStorage : ModStorage){
@@ -81,6 +99,25 @@ export class ItemHandler{
                 this.unlockPet(pet.id);
                 break;
             }
+            case ItemType.CombatAreaUnlock : {
+                this.combatUnlockHandler.unlockCombatArea(this.regularCombatAreas[id].id, CombatAreaPrefix);
+                break;
+            }
+            case ItemType.SlayerAreaUnlock : {
+                // @ts-ignore
+                this.combatUnlockHandler.unlockCombatArea(game.combatAreas.slayer[id].id, SlayerAreaPrefix);
+                break;
+            }
+            case ItemType.DungeonUnlock : {
+                // @ts-ignore
+                this.combatUnlockHandler.unlockCombatArea(game.combatAreas.dungeons[id].id, DungeonPrefix);
+                break;
+            }
+            case ItemType.StrongholdUnlock : {
+                // @ts-ignore
+                this.combatUnlockHandler.unlockCombatArea(game.combatAreas.strongholds[id].id, StrongholdPrefix);
+                break;
+            }
             case ItemType.OtherUnlocks : {
                 switch(namespace){
                     case Namespace.melvorD :
@@ -113,16 +150,8 @@ export class ItemHandler{
     unlockPet(petName : string){
         game.petManager.unlockPetByID(petName)
     }
-
         
     hasShop(){
         return this.characterStorage.getItem(OtherPrefix + "Shop_Unlock")
-    }
-
-    hasAnyCombat(){
-        return this.characterStorage.getItem(SkillPrefix + "melvorD:Attack") ||
-            this.characterStorage.getItem(SkillPrefix + "melvorD:Strength") ||
-            this.characterStorage.getItem(SkillPrefix + "melvorD:Ranged") ||
-            this.characterStorage.getItem(SkillPrefix + "melvorD:Magic");
     }
 }

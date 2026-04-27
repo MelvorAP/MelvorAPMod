@@ -91,8 +91,8 @@ export default class ModService {
     this.settingsManager = new SettingsManager();
 
     this.skillHandler = new SkillsHandler(ctx, this.items, this.#data.icon_url);
-    this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler);
-    this.combatUnlockHandler = new CombatUnlockHandler(ctx, this.itemHandler, this.#data.icon_url);
+    this.combatUnlockHandler = new CombatUnlockHandler(ctx, this.#data.icon_url);
+    this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler, this.combatUnlockHandler);
 
     this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
   }
@@ -153,7 +153,8 @@ export default class ModService {
       // @ts-ignore
       ctx.patch(SidebarItem, 'click').replace(function(o) {
         // @ts-ignore
-        if (this.id === 'melvorD:Combat' && service.isArchipelagoGameMode && ! service.skillHandler.hasAnyCombat()){
+        if (this.id === 'melvorD:Combat' && service.isArchipelagoGameMode && 
+            !service.combatUnlockHandler.hasAnyCombat()){
           service.notificationHandler.showSkillModal(
             "You don't have any combat skill", 
             'You need to find ${0}Attack, ${1}Strength, ${2}Ranged or<br>${3}Magic in the ${4}AP World to do combat.', 

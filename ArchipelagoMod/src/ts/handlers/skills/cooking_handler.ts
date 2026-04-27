@@ -60,7 +60,6 @@ export class CookingHandler extends BaseSkillHandler{
             game.cooking.renderQueue.selectedRecipes.add(category);
         }
 
-        game.cooking.renderQueue.recipeRates = true;
         game.cooking.renderQueue.quantities = true;
         game.cooking.renderQueue.upgrades = true;
     }

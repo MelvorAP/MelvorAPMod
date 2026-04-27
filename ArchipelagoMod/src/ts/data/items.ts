@@ -4,6 +4,10 @@ export enum ItemType {
   SkillLevelCaps,
   ActionLevelCaps,
   Pets,
+  CombatAreaUnlock,
+  SlayerAreaUnlock,
+  DungeonUnlock,
+  StrongholdUnlock,
   OtherUnlocks
 }
 
@@ -36,7 +40,7 @@ export class Items{
 
 		for (let namespaceMap of game.skills.namespaceMaps){
 			for(let i = 0; i < namespaceMap[1].size; i++){
-				let skill = game.skills.allObjects[i];
+				let skill = Array.from(namespaceMap[1])[i][1];
 				if(!skill){
 					continue;
 				}
@@ -99,10 +103,50 @@ export class Items{
 			values.set([0, ItemType.OtherUnlocks, Namespace.melvorD, i], [name, name]);
 		}
 
+		for (let namespaceMap of game.combatAreas.namespaceMaps){
+			for(let i = 0; i < namespaceMap[1].size; i++){
+				let area =  Array.from(namespaceMap[1])[i][1];
+				if(!area){
+					continue;
+				}
+
+				const namespace = Namespace[area.namespace as keyof typeof Namespace];
+
+				if(!namespace){
+					//console.warn(`${area.namespace} is not supported in the AP world!`);
+					continue;
+				}
+
+				let itemType = ItemType.CombatAreaUnlock;
+				let skillIndex = this.skills.indexOf(game.attack.id) + 1;
+
+				if(area.id == "melvorD:UnknownArea"){
+					continue;
+				}
+				// @ts-ignore
+				else if (area instanceof Stronghold){
+					itemType = ItemType.StrongholdUnlock;
+				}
+				else if (area instanceof SlayerArea){
+					itemType = ItemType.SlayerAreaUnlock;
+					skillIndex = this.skills.indexOf(game.slayer.id) + 1;
+				}
+				else if (area instanceof Dungeon){
+					itemType = ItemType.DungeonUnlock;
+				}
+				else if (!(area instanceof CombatArea)){
+					console.warn(`Unknown area type!`);
+					continue;
+				}
+
+				values.set([skillIndex, itemType, namespace, i], [area.id, area.name]);
+			}
+		}
+
 		values.forEach((name: [string, string], enums : [number, ItemType, Namespace, number]) => {
 			let id = enums[0] * SkillMult + enums[1] * ItemTypeMult + enums[2] * NamespaceMult + enums[3];
 			this.itemDict.set(id, name);
-			console.log(`Item ${name[1]} (${name[0]}) is at ${id}`)
+			console.log(`Item '${name[1]}' (${name[0]}) is at ${id}`)
 		})
 		
 		console.log(`Found ${String(this.itemDict.size)} item types.`);

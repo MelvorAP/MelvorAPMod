@@ -1,5 +1,6 @@
 import { APRequirement } from "../../../ap_classes/ap_requirement";
 import { ItemHandler } from "../../item_handler";
+import { CombatUnlockHandler } from "../combat_unlock_handler";
 
 export const CombatRequirementType = "CombatRequirement";
 
@@ -10,27 +11,24 @@ export interface CombatRequirementData {
   savePrefix: string,
   iconUrl: string,
 
-  itemHandler: ItemHandler,
-  characterStorage : ModStorage
+  combatUnlockHandler: CombatUnlockHandler
 }
 
 // @ts-ignore
 export class CombatRequirement extends APRequirement {
   savePrefix : string;
 
-  private itemHandler : ItemHandler;
-  private characterStorage : ModStorage;
+  private combatUnlockHandler : CombatUnlockHandler;
 
   constructor(data : CombatRequirementData, game : Game) {
     super(game, data.type, data.itemId, data.itemType, data.iconUrl);
 
     this.savePrefix = data.savePrefix;
 
-    this.itemHandler = data.itemHandler;
-    this.characterStorage = data.characterStorage;
+    this.combatUnlockHandler = data.combatUnlockHandler;
   }
 
   isMet() {
-    return this.itemHandler.hasAnyCombat() && this.characterStorage.getItem(this.savePrefix + this.itemId) as boolean;
+    return this.combatUnlockHandler.hasAnyCombat() && this.combatUnlockHandler.isAreaUnlocked(this.savePrefix, this.itemId);
   }
 }
