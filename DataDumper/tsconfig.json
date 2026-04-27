@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2016",
     "lib": [
-      "es6",
+      "es2019",
       "DOM"
     ],
     "allowUmdGlobalAccess": true,
@@ -14,10 +14,8 @@
     "strict": true,
     "sourceMap": true,
     "noImplicitAny": true,
-    "moduleResolution": "Node",
     "strictBindCallApply": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
   },
   "include": [
     "src/**/*",
