@@ -1,7 +1,7 @@
 import { ArchipelagoItemsChangedEvent } from "../../archipelago_items_changed_event";
 import { CombatAreaPrefix, DungeonPrefix, Items, SkillPrefix, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
 import { ItemHandler } from "../item_handler";
-import { CombatRequirement, CombatRequirementData, CombatRequirementType } from "./requirement/combat_requirement";
+import { CombatRequirement, CombatRequirementData, CombatRequirementType } from "./requirements/combat_requirement";
 
 export class CombatUnlockHandler{
     private apIcon : string;
@@ -31,7 +31,6 @@ export class CombatUnlockHandler{
                 const reqSpans = this.requirements;
                 area.entryRequirements.forEach((requirement) => {
                     const listEl = createElement('li');
-                    listEl.lastChild
                     let reqSpan;
                     // @ts-ignore
                     if(requirement.type == CombatRequirementType){

@@ -7,7 +7,9 @@ import { SlotdataHandler } from "./handlers/slotdata_handler";
 import { SettingsManager } from "./settings_manager";
 import { ProgressiveSkillRequirement, ProgressiveSkillRequirementType } from "./handlers/skills/requirements/progressive_skill_requirement";
 import { CombatUnlockHandler } from "./handlers/combat/combat_unlock_handler";
-import { CombatRequirement, CombatRequirementType } from "./handlers/combat/requirement/combat_requirement";
+import { CombatRequirement, CombatRequirementType } from "./handlers/combat/requirements/combat_requirement";
+import { ShopRequirement, ShopRequirementType } from "./handlers/shop/requirements/shop_requirement";
+import { ShopHandler } from "./handlers/shop/shop_handler";
 
 export interface IModServiceData {
   icon_url: string;
@@ -69,6 +71,7 @@ export default class ModService {
 
   slotdataHandler: SlotdataHandler;
   itemHandler: ItemHandler;
+  shopHandler : ShopHandler;
   skillHandler: SkillsHandler;
   combatUnlockHandler: CombatUnlockHandler;
 
@@ -93,6 +96,7 @@ export default class ModService {
     this.skillHandler = new SkillsHandler(ctx, this.items, this.#data.icon_url);
     this.combatUnlockHandler = new CombatUnlockHandler(ctx, this.#data.icon_url);
     this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler, this.combatUnlockHandler);
+    this.shopHandler = new ShopHandler(ctx, this.#data.icon_url);
 
     this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
   }
@@ -153,7 +157,8 @@ export default class ModService {
       // @ts-ignore
       ctx.patch(SidebarItem, 'click').replace(function(o) {
         // @ts-ignore
-        if (this.id === 'melvorD:Combat' && service.isArchipelagoGameMode && 
+        if (this.id === 'melvorD:Combat' && 
+            service.isArchipelagoGameMode && 
             !service.combatUnlockHandler.hasAnyCombat()){
           service.notificationHandler.showSkillModal(
             "You don't have any combat skill", 
@@ -170,7 +175,9 @@ export default class ModService {
           return;
         }
         // @ts-ignore
-        else if (this.id === 'melvorD:Shop' && service.isArchipelagoGameMode && ! service.itemHandler.hasShop()){
+        else if (this.id === 'melvorD:Shop' && 
+                  service.isArchipelagoGameMode && ! 
+                  service.shopHandler.hasShop()){
           service.notificationHandler.showApModal(
             "You don't have the shop", 
             'You need to find the ${0}Shop Unlock in the ${1}AP World to enter the ${2}Shop.', 
@@ -202,9 +209,11 @@ export default class ModService {
       service.skillHandler.setCharacterStorage(ctx.characterStorage);
       service.itemHandler.setCharacterStorage(ctx.characterStorage);
       service.combatUnlockHandler.setCharacterStorage(ctx.characterStorage);
+      service.shopHandler.setCharacterStorage(ctx.characterStorage);
   
       service.skillHandler.lockSkills();
       service.combatUnlockHandler.lockCombatAreas();
+      service.shopHandler.lockShopItems();
     })
   
     service.#ctx.onInterfaceReady(ctx  => {
@@ -234,6 +243,8 @@ export default class ModService {
       game.notificationHandler = service.notificationHandler;
       // @ts-ignore
       game.combatHandler = service.combatUnlockHandler;
+      // @ts-ignore
+      game.shopHandler = service.shopHandler;
   
       //game.combat.on("monsterKilled", function (e) {console.log("Monster killed:", e)})
       //game.combat.on("dungeonCompleted", function (e) {console.log("Dungeon completed:", e)})
@@ -246,10 +257,14 @@ export default class ModService {
   }
 
   addApUnlock(data : any) {
-    if(data.type == ProgressiveSkillRequirementType)
-      return new ProgressiveSkillRequirement(data, game);
-    if(data.type == CombatRequirementType)
-      return new CombatRequirement(data, game);
+    switch(data.type){
+      case ProgressiveSkillRequirementType:
+        return new ProgressiveSkillRequirement(data, game);
+      case CombatRequirementType:
+        return new CombatRequirement(data, game);
+      case ShopRequirementType:
+        return new ShopRequirement(data, game);
+    }
   };
 
   farmingModifyData(data : any) {

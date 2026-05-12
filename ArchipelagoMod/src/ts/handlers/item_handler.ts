@@ -150,8 +150,4 @@ export class ItemHandler{
     unlockPet(petName : string){
         game.petManager.unlockPetByID(petName)
     }
-        
-    hasShop(){
-        return this.characterStorage.getItem(OtherPrefix + "Shop_Unlock")
-    }
 }
