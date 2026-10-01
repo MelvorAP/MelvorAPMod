@@ -54,4 +54,15 @@ export class APRequirement extends GameRequirement {
         element.classList.add("text-danger", "ap-requirement");
         return element
     }
+
+    public isMet() {
+        return false
+    }
+
+    public check(notifyOnFailure = false) {
+        const met = this.isMet();
+        if (!met && notifyOnFailure)
+            this.notifyFailure();
+        return met;
+    }
 }

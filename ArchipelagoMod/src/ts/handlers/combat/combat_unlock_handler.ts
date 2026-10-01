@@ -36,12 +36,12 @@ export class CombatUnlockHandler{
                     if(requirement.type == CombatRequirementType){
                         // @ts-ignore
                         let combatRequirement = requirement as CombatRequirement;
-                            // @ts-ignore
-                            listEl.appendChild(this.createReqImage(combatRequirement.iconUrl));
-                            // @ts-ignore
-                            reqSpan = this.createReqSpan(`Find this ${combatRequirement.itemType} to acces it!`);
-                            reqSpans.push(reqSpan);
-                            listEl.appendChild(reqSpan);
+                        // @ts-ignore
+                        listEl.appendChild(this.createReqImage(combatRequirement.iconUrl));
+                        // @ts-ignore
+                        reqSpan = this.createReqSpan(`Find this ${combatRequirement.itemType} to acces it!`);
+                        reqSpans.push(reqSpan);
+                        listEl.appendChild(reqSpan);
                     }
                     small.appendChild(listEl);
                 })

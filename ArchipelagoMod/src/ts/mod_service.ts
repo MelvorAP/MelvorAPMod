@@ -8,7 +8,7 @@ import { SettingsManager } from "./settings_manager";
 import { ProgressiveSkillRequirement, ProgressiveSkillRequirementType } from "./handlers/skills/requirements/progressive_skill_requirement";
 import { CombatUnlockHandler } from "./handlers/combat/combat_unlock_handler";
 import { CombatRequirement, CombatRequirementType } from "./handlers/combat/requirements/combat_requirement";
-import { ShopRequirement, ShopRequirementType } from "./handlers/shop/requirements/shop_requirement";
+import { ShopUnlockRequirement, ShopPurchaseRequirementType, ShopPurchaseRequirement, ShopUnlockRequirementType } from "./handlers/shop/requirements/shop_requirement";
 import { ShopHandler } from "./handlers/shop/shop_handler";
 
 export interface IModServiceData {
@@ -262,8 +262,10 @@ export default class ModService {
         return new ProgressiveSkillRequirement(data, game);
       case CombatRequirementType:
         return new CombatRequirement(data, game);
-      case ShopRequirementType:
-        return new ShopRequirement(data, game);
+      case ShopPurchaseRequirementType:
+        return new ShopPurchaseRequirement(data, game);
+      case ShopUnlockRequirementType:
+        return new ShopUnlockRequirement(data, game);
     }
   };
 

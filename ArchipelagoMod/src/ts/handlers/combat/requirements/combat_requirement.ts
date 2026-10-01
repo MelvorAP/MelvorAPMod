@@ -28,7 +28,7 @@ export class CombatRequirement extends APRequirement {
     this.combatUnlockHandler = data.combatUnlockHandler;
   }
 
-  isMet() {
+  public isMet() {
     return this.combatUnlockHandler.hasAnyCombat() && this.combatUnlockHandler.isAreaUnlocked(this.savePrefix, this.itemId);
   }
 }
