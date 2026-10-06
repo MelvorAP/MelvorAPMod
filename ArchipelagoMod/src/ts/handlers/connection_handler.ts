@@ -178,6 +178,10 @@ export class ConnectionHandler{
       }
   }
 
+  sendLocation(id : number){
+    this.client.locations.check(id);
+  }
+
   handleDeathLink(packet : any){
     game.combat.player.hitpoints = 0;
   }

@@ -1,4 +1,5 @@
 import { OtherPrefix } from "../../data/items";
+import { ConnectionHandler } from "../connection_handler";
 import { ShopPurchaseRequirementData, ShopPurchaseRequirementType, ShopUnlockRequirement, ShopUnlockRequirementData, ShopUnlockRequirementType } from "./requirements/shop_requirement";
 
 export class ShopHandler{
@@ -7,23 +8,25 @@ export class ShopHandler{
     private characterStorage : ModStorage;
 
     private ctx: ModContext;
+    private connectionHandler : ConnectionHandler;
 
-    constructor(ctx : ModContext, apIcon : string){
+    constructor(ctx : ModContext, connectionHandler : ConnectionHandler, apIcon : string){
         this.apIcon = apIcon;
         this.ctx = ctx;
 
         this.characterStorage = {} as ModStorage;
+        this.connectionHandler = connectionHandler;
 
         // console.log(game.shop.getPurchaseCount(game.shop.purchases.getObjectByID("melvorD:Iron_Axe")));
         // console.log(game.shop.isUpgradePurchased(game.shop.purchases.getObjectByID("melvorD:Iron_Axe")));
         
     }
 
-    setCharacterStorage(characterStorage : ModStorage){
+    public setCharacterStorage(characterStorage : ModStorage){
         this.characterStorage = characterStorage;
     }
 
-    lockShopItems(){
+    public lockShopItems(){
         // @ts-ignore
         this.ctx.patch(ShopCostsAndUnlock, "updatePurchaseRequirements").before(function(_returnValue) {
             //@ts-ignore
@@ -46,10 +49,7 @@ export class ShopHandler{
                         throw new Error(`Error modifying ShopPurchase with id: ${this.id}. Gamemode with id: ${gamemodeID} is not registered.`);
                     // @ts-ignore
                     // Remove shop items
-                    this.unlockRequirements = game.getRequirementsFromData(newRequirements);
-                    // @ts-ignore
-                    console.log(this.unlockRequirements);
-                    
+                    //this.unlockRequirements = game.getRequirementsFromData(newRequirements);                    
                 });
             }
             else{
@@ -104,8 +104,66 @@ export class ShopHandler{
         game.shop.renderQueue.requirements = true;
     }
 
+    public addShopLocations(count : number) {
+
+    }
+
+    public addShopLocation(index : number, name : string | undefined, description : string | undefined, icon : string | undefined) {
+        let namespace = {
+            name : "archipelago",
+            displayName : "archipelago",
+            isModded : true
+        } as DataNamespace
+
+        let id = `AP_Shop${index}`;
+      
+        //@ts-ignore
+        let purchaseData = {
+            id : id,
+            category : game.shop.categories.firstObject.id,
+            customName : name ?? id,
+            customDescription : description ?? "",
+            //TODO: figure out why service.#data.icon_url_large pre-expands if used here
+            media : icon ?? "img/iconLarge.png",
+            allowQuantityPurchase : false,
+            defaultBuyLimit : 1,
+            cost : {
+            currencies : [
+                {
+                currency : "melvorD:GP",
+                cost : 1,
+                type : "Fixed"
+                }
+            ],
+            items : []
+            },
+            contains : { items  : []},
+            unlockRequirements : [],
+            purchaseRequirements : [],
+            buyLimitOverrides : [],
+            showBuyLimit : false,
+        } as ShopPurchaseData
+
+        let purchase = new ShopPurchase(namespace, purchaseData, game)
+        game.shop.purchases.registerObject(purchase)
+        game.shop.purchaseDisplayOrder.push(purchase)
+    }
+
+    public refreshUI() {
+      //@ts-ignore
+      shopMenu.tabs.get(game.shop.categories.firstObject)!.menu.purchases = game.shop.purchaseDisplayOrder.filter((purchase) => purchase.category === game.shop.categories.firstObject);
+
+      shopMenu.tabs.forEach((tab : ShopMenuTab) => {
+            tab.menu.updateItemSelection();
+      })
+    }
+
+    public purchase(shopId: number) {
+        //TODO do the whole location ID thing
+        this.connectionHandler.sendLocation(shopId);
+    }
     
-    hasShop(){
+    public hasShop(){
         return this.characterStorage.getItem(OtherPrefix + "Shop_Unlock")
     }
 

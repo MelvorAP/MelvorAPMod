@@ -215,50 +215,9 @@ export default class ModService {
       service.combatUnlockHandler.lockCombatAreas();
       service.shopHandler.lockShopItems();
 
-      let namespace = {
-        name : "archipelago",
-        displayName : "archipelago",
-        isModded : true
-      } as DataNamespace
-
-
-      //@ts-ignore
-      let purchaseData = {
-        id : "AP_Shop1",
-        category : game.shop.categories.firstObject.id,
-        customName : "AP Item 1",
-        customDescription : "WOW!!!",
-        //TODO: figure out why service.#data.icon_url_large pre-expands if used here
-        media : "img/iconLarge.png",
-        allowQuantityPurchase : false,
-        defaultBuyLimit : 1,
-        cost : {
-          currencies : [
-            {
-              currency : "melvorD:GP",
-              cost : 1,
-              type : "Fixed"
-            }
-          ],
-          items : []
-        },
-        contains : { items  : []},
-        unlockRequirements : [],
-        purchaseRequirements : [],
-        buyLimitOverrides : [],
-        showBuyLimit : false,
-      } as ShopPurchaseData
-
-      let purchase = new ShopPurchase(namespace, purchaseData, game)
-      game.shop.purchases.registerObject(purchase)
-      game.shop.purchaseDisplayOrder.push(purchase)
-
-      //@ts-ignore
-      shopMenu.tabs.get(game.shop.categories.firstObject)!.menu.purchases = game.shop.purchaseDisplayOrder.filter((purchase) => purchase.category === game.shop.categories.firstObject);
-
-      shopMenu.tabs.forEach((tab : ShopMenuTab) => {
-            tab.menu.updateItemSelection();
-      })
+      service.shopHandler.addShopLocation(0, "Test", "Testing time", undefined);
+      service.shopHandler.addShopLocation(1, "Test 2", "Testing time!!", "https://cdn2-main.melvor.net/assets/media/main/gp.png");
+      service.shopHandler.refreshUI();
     })
   
     service.#ctx.onInterfaceReady(ctx  => {
