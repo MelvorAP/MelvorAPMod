@@ -1,4 +1,4 @@
-import { ArchipelagoItemsChangedEvent } from "../../archipelago_items_changed_event";
+import { ArchipelagoItemsChangedEvent } from "../../events/archipelago_items_changed_event";
 import { CombatAreaPrefix, DungeonPrefix, Items, SkillPrefix, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
 import { ItemHandler } from "../item_handler";
 import { CombatRequirement, CombatRequirementData, CombatRequirementType } from "./requirements/combat_requirement";

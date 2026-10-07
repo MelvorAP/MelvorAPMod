@@ -180,6 +180,7 @@ export class ConnectionHandler{
 
   sendLocation(id : number){
     this.client.locations.check(id);
+    console.log(`Sent location ${id}!`);
   }
 
   handleDeathLink(packet : any){

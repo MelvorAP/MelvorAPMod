@@ -10,6 +10,7 @@ import { CombatUnlockHandler } from "./handlers/combat/combat_unlock_handler";
 import { CombatRequirement, CombatRequirementType } from "./handlers/combat/requirements/combat_requirement";
 import { ShopUnlockRequirement, ShopPurchaseRequirementType, ShopPurchaseRequirement, ShopUnlockRequirementType } from "./handlers/shop/requirements/shop_requirement";
 import { ShopHandler } from "./handlers/shop/shop_handler";
+import { ArchipelagoItemsChangedEvent } from "./events/archipelago_items_changed_event";
 
 export interface IModServiceData {
   icon_url: string;
@@ -96,9 +97,9 @@ export default class ModService {
     this.skillHandler = new SkillsHandler(ctx, this.items, this.#data.icon_url);
     this.combatUnlockHandler = new CombatUnlockHandler(ctx, this.#data.icon_url);
     this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler, this.combatUnlockHandler);
-    this.shopHandler = new ShopHandler(ctx, this.#data.icon_url);
-
+    
     this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
+    this.shopHandler = new ShopHandler(ctx, this.connectionHandler, this.#data.icon_url);
   }
 
   setSideBar(categoryName : string, itemName : string){
@@ -215,8 +216,8 @@ export default class ModService {
       service.combatUnlockHandler.lockCombatAreas();
       service.shopHandler.lockShopItems();
 
-      service.shopHandler.addShopLocation(0, "Test", "Testing time", undefined);
-      service.shopHandler.addShopLocation(1, "Test 2", "Testing time!!", "https://cdn2-main.melvor.net/assets/media/main/gp.png");
+      service.shopHandler.addShopLocation(0, 1000, "Test", "Testing time", undefined);
+      service.shopHandler.addShopLocation(1, 1001, "Test 2", "Testing time!!", "https://cdn2-main.melvor.net/assets/media/main/gp.png");
       service.shopHandler.refreshUI();
     })
   

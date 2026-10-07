@@ -1,5 +1,6 @@
 import { OtherPrefix } from "../../data/items";
 import { ConnectionHandler } from "../connection_handler";
+import { ApShopPurchase } from "./ApShopPurchase";
 import { ShopPurchaseRequirementData, ShopPurchaseRequirementType, ShopUnlockRequirement, ShopUnlockRequirementData, ShopUnlockRequirementType } from "./requirements/shop_requirement";
 
 export class ShopHandler{
@@ -10,6 +11,8 @@ export class ShopHandler{
     private ctx: ModContext;
     private connectionHandler : ConnectionHandler;
 
+    public test : ShopPurchaseMadeEventMatcher;
+
     constructor(ctx : ModContext, connectionHandler : ConnectionHandler, apIcon : string){
         this.apIcon = apIcon;
         this.ctx = ctx;
@@ -19,7 +22,22 @@ export class ShopHandler{
 
         // console.log(game.shop.getPurchaseCount(game.shop.purchases.getObjectByID("melvorD:Iron_Axe")));
         // console.log(game.shop.isUpgradePurchased(game.shop.purchases.getObjectByID("melvorD:Iron_Axe")));
+
         
+        let data = {
+            type : "ShopPurchaseMade",
+            purchaseIDs : undefined
+        }
+        
+        //@ts-ignore
+        this.test = game.events.constructMatcher(data) as ShopPurchaseMadeEventMatcher;
+
+        //@ts-ignore
+        this.test.assignHandler((e : ShopPurchaseMadeEvent) => {
+            if(e.purchase instanceof ApShopPurchase){
+                this.connectionHandler.sendLocation(e.purchase.locationId);
+            }
+        })
     }
 
     public setCharacterStorage(characterStorage : ModStorage){
@@ -45,11 +63,16 @@ export class ShopHandler{
                 modData.unlockRequirements.forEach(({ gamemodeID, newRequirements }) => {
                     const mode = game.gamemodes.getObjectByID(gamemodeID);
                     if (mode === undefined)
+                    {
                         // @ts-ignore
                         throw new Error(`Error modifying ShopPurchase with id: ${this.id}. Gamemode with id: ${gamemodeID} is not registered.`);
-                    // @ts-ignore
-                    // Remove shop items
-                    //this.unlockRequirements = game.getRequirementsFromData(newRequirements);                    
+                    }
+                    //@ts-ignore
+                    if(!(this instanceof ApShopPurchase)){
+                        // @ts-ignore
+                        // Remove shop items
+                        this.unlockRequirements = game.getRequirementsFromData(newRequirements);     
+                    }               
                 });
             }
             else{
@@ -108,7 +131,7 @@ export class ShopHandler{
 
     }
 
-    public addShopLocation(index : number, name : string | undefined, description : string | undefined, icon : string | undefined) {
+    public addShopLocation(index : number, locationId : number, name : string | undefined, description : string | undefined, icon : string | undefined) {
         let namespace = {
             name : "archipelago",
             displayName : "archipelago",
@@ -144,7 +167,7 @@ export class ShopHandler{
             showBuyLimit : false,
         } as ShopPurchaseData
 
-        let purchase = new ShopPurchase(namespace, purchaseData, game)
+        let purchase = new ApShopPurchase(locationId, namespace, purchaseData, game)
         game.shop.purchases.registerObject(purchase)
         game.shop.purchaseDisplayOrder.push(purchase)
     }
@@ -158,11 +181,6 @@ export class ShopHandler{
       })
     }
 
-    public purchase(shopId: number) {
-        //TODO do the whole location ID thing
-        this.connectionHandler.sendLocation(shopId);
-    }
-    
     public hasShop(){
         return this.characterStorage.getItem(OtherPrefix + "Shop_Unlock")
     }

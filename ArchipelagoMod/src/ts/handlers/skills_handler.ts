@@ -1,5 +1,5 @@
 import { Items, SkillCapPrefix, SkillPrefix } from "../data/items";
-import { ArchipelagoItemsChangedEvent } from "../archipelago_items_changed_event";
+import { ArchipelagoItemsChangedEvent } from "../events/archipelago_items_changed_event";
 import { BaseSkillHandler } from "./skills/base_skill_handler";
 import { CookingHandler } from "./skills/cooking_handler";
 import { FiremakingHandler } from "./skills/firemaking_handler";
