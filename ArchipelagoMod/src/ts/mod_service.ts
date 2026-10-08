@@ -1,5 +1,5 @@
 import { ConnectionHandler } from "./handlers/connection_handler";
-import { Items } from "./data/items";
+import { Items, ItemType } from "./data/items";
 import { ItemHandler } from "./handlers/item_handler";
 import { NotificationHandler } from "./handlers/notification_handler";
 import { SkillsHandler } from "./handlers/skills_handler";
@@ -10,7 +10,9 @@ import { CombatUnlockHandler } from "./handlers/combat/combat_unlock_handler";
 import { CombatRequirement, CombatRequirementType } from "./handlers/combat/requirements/combat_requirement";
 import { ShopUnlockRequirement, ShopPurchaseRequirementType, ShopPurchaseRequirement, ShopUnlockRequirementType } from "./handlers/shop/requirements/shop_requirement";
 import { ShopHandler } from "./handlers/shop/shop_handler";
-import { ArchipelagoItemsChangedEvent } from "./events/archipelago_items_changed_event";
+import { ArchipelagoItemReceivedEventMatcher, ArchipelagoSkillItemReceivedEventMatcher } from "./events/archipelago_event_matchers";
+import { ApShopPurchase } from "./handlers/shop/ApShopPurchase";
+import { ArchipelagoItemReceivedEvent } from "./events/archipelago_events";
 
 export interface IModServiceData {
   icon_url: string;
@@ -154,6 +156,8 @@ export default class ModService {
       ctx.patch(Game, "getRequirementFromData").after(function (_requirement, data) {return service.addApUnlock(data)});
       // @ts-ignore
       ctx.patch(Farming, "modifyData").after(function (data) {return service.farmingModifyData(data)});
+      //@ts-ignore
+      ctx.patch(GameEventSystem, "constructMatcher").after(function (data) {return service.constructMatcher(data)});
 
       // @ts-ignore
       ctx.patch(SidebarItem, 'click').replace(function(o) {
@@ -286,5 +290,16 @@ export default class ModService {
         seed.applyDataModification(modData, this.game);
       }
     );
+  }
+
+  constructMatcher(data: any) {
+    switch(data.type){
+      case 'ArchipelagoItemReceived':
+        //@ts-ignore
+        return new ArchipelagoItemReceivedEventMatcher(data, this.game);
+      case 'ArchipelagoSkillItemReceived':
+        //@ts-ignore
+        return new ArchipelagoSkillItemReceivedEventMatcher(data, this.game);
+    }
   }
 }

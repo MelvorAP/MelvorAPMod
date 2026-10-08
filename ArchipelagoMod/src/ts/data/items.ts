@@ -1,5 +1,5 @@
 export enum ItemType {
-  Skills = 1,
+  SkillUnlock = 1,
   ProgressiveSkills,
   SkillLevelCaps,
   ActionLevelCaps,
@@ -60,7 +60,7 @@ export class Items{
 				values.set([skillIndex, ItemType.SkillLevelCaps, skillNamespace, i], [skill.id, `${skill.name} Level Cap`]);
 
 				if(this.skill_unlocks.includes(skill.id)){
-					values.set([skillIndex, ItemType.Skills, skillNamespace, i], [skill.id, skill.name]);
+					values.set([skillIndex, ItemType.SkillUnlock, skillNamespace, i], [skill.id, skill.name]);
 					continue;
 				}
 

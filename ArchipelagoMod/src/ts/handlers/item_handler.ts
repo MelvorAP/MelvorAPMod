@@ -79,7 +79,7 @@ export class ItemHandler{
         }
 
         switch(itemType){
-            case ItemType['Skills'] : {
+            case ItemType.SkillUnlock : {
                 this.skillHandler.unlockSkill(skill);
                 break;
             }
@@ -140,7 +140,7 @@ export class ItemHandler{
             }
             default:
                 console.warn(`Unknown item received ${id} ${skill} ${ItemType[itemType]} ${namespaceName}!`)
-                break;
+                return false;
 
         }
 

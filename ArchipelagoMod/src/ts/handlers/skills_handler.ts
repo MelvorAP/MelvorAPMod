@@ -1,5 +1,4 @@
 import { Items, SkillCapPrefix, SkillPrefix } from "../data/items";
-import { ArchipelagoItemsChangedEvent } from "../events/archipelago_items_changed_event";
 import { BaseSkillHandler } from "./skills/base_skill_handler";
 import { CookingHandler } from "./skills/cooking_handler";
 import { FiremakingHandler } from "./skills/firemaking_handler";
@@ -8,16 +7,17 @@ import { SmithingHandler } from "./skills/smithing_handler";
 import { WoodcuttingHandler } from "./skills/woodcutting_handler";
 import { FishingHandler } from "./skills/fishing_handler";
 import { FarmingHandler } from "./skills/farming_handler";
+import { SkillItemReceivedEvent } from "../events/archipelago_events";
 
 export class SkillsHandler{
     private characterStorage : ModStorage;
 
-    private actionHandlers : Array<BaseSkillHandler>;
+    private skillHandlers : Array<BaseSkillHandler>;
 
     constructor(ctx: ModContext, items : Items, apIcon : string){
         this.characterStorage = {} as ModStorage;
 
-        this.actionHandlers = [
+        this.skillHandlers = [
             new WoodcuttingHandler(ctx, items, apIcon),
             new MiningHandler(ctx, items, apIcon), 
             new SmithingHandler(ctx, items, apIcon), 
@@ -28,15 +28,15 @@ export class SkillsHandler{
         ];
     }
 
-    setCharacterStorage(characterStorage : ModStorage){
+    public setCharacterStorage(characterStorage : ModStorage){
         this.characterStorage = characterStorage;
 
-        this.actionHandlers.forEach((value : BaseSkillHandler) => {
+        this.skillHandlers.forEach((value : BaseSkillHandler) => {
             value.setCharacterStorage(characterStorage);
         });
     }
 
-    lockSkills(){
+    public lockSkills(){
         game.skills.allObjects.forEach(skill => {
             skill.setUnlock(false);
             
@@ -47,14 +47,14 @@ export class SkillsHandler{
 
             if(skill instanceof SkillWithMastery){
 
-                let actionHandler = this.actionHandlers.find(x => x.skillId === skill.id);
-                if(!actionHandler){
+                let skillHandler = this.skillHandlers.find(x => x.skillId === skill.id);
+                if(!skillHandler){
                     console.warn(`${skill.id} does not have an Action Handler! Skipping!`);
                 }
                 else{
-                    actionHandler.patchSkill();
+                    skillHandler.patchSkill();
                     skill.sortedMasteryActions.forEach(action => {
-                        actionHandler!.lockAction(action);
+                        skillHandler!.lockAction(action);
                     })
                 }
             }
@@ -64,30 +64,34 @@ export class SkillsHandler{
         })
     }
 
-    setLevelRequirementsToLowest(){
-        this.actionHandlers.forEach(handler => {
+    public setLevelRequirementsToLowest(){
+        this.skillHandlers.forEach(handler => {
             handler.setLevelRequirementsToLowest();
         })
     }
 
+    public getSkillHandler(skillId : string) : BaseSkillHandler | undefined {
+        return this.skillHandlers.find(x => x.skillId === skillId);
+    }
+
     loadUnlockedSkills(){
         game.skills.allObjects.forEach(skill => {         
-            let actionHandler = this.actionHandlers.find(x => x.skillId === skill.id);
+            let skillHandler = this.getSkillHandler(skill.id);
 
-            if(!actionHandler){
+            if(!skillHandler){
                 return;
             }
-            else if(actionHandler.getProgressiveSkillCount() > 0){
+            else if(skillHandler.getProgressiveSkillCount() > 0){
                 console.log("Unlocking skill", skill.id);
                 skill.setUnlock(true);
 
-                actionHandler.refreshUI();
+                skillHandler.refreshUI();
             }
         })
     }
     
-    unlockSkill(skillName : string){
-        let skill = game.skills.getObjectByID(skillName);
+    unlockSkill(skillId : string){
+        let skill = game.skills.getObjectByID(skillId);
 
         if(skill){
             let saveName = SkillPrefix + skill.id;
@@ -98,77 +102,40 @@ export class SkillsHandler{
             console.log(`${saveName} unlocked!`);
         }
         else{
-            console.warn("Unknown skill", skillName);
+            console.warn("Unknown skill", skillId);
         }
     }
     
-    
-    progressSkill(skillName : string){
-        let skill = game.skills.getObjectByID(skillName);
+    progressSkill(skillId : string){
+        let skillHandler = this.getSkillHandler(skillId);
 
-        if(skill){
-            let actionHandler = this.actionHandlers.find(x => x.skillId === skill!.id);
-            
-            if(!actionHandler){
-                console.warn(`${skill.id} does not have an Action Handler! Skipping!`);
-            }
-            else{
-                skill.setUnlock(true);
-                actionHandler.increaseProgressiveSkillCount();
-                // @ts-ignore
-                game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent(skillName));
-            }
+        if(skillHandler){
+            return skillHandler.increaseProgressiveSkillCount();
         }
         else{
-            console.warn("Unknown skill", skillName);
+            console.warn("Unknown skill", skillId);
         }
     }
 
-    increaseCap(skillName : string){
-        let skill = game.skills.getObjectByID(skillName);
+    increaseCap(skillId : string){
+        let skillHandler = this.getSkillHandler(skillId);
 
-        if(!skill){
-            console.warn(`Skill ${skillName} not found!`);
-            return;
+        if(skillHandler){
+            return skillHandler.increaseCap();
         }
-
-        let cap = (this.characterStorage.getItem(SkillCapPrefix + skillName) ?? 1) + 1;
-
-        // @ts-ignore
-        if(cap > skill.maxLevelCap){
-            // @ts-ignore
-            console.warn(`Skill ${skillName} is already at level cap of ${skill.maxLevelCap}!`)
-        }
-        else{   
-            this.characterStorage.setItem(SkillCapPrefix + skillName, cap);
-
-            console.log(`Skill ${skillName} level cap went up from ${cap -1} to ${cap}`);
-
-            // @ts-ignore
-            skill.setLevelCap(cap);
-            // @ts-ignore
-            game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent(skillName));
+        else{
+            console.warn("Unknown skill", skillId);
         }
     }
 
-    increaseCapToMax(skillName : string){
-        let skill = game.skills.getObjectByID(skillName);
+    increaseCapToMax(skillId : string){
+        let skillHandler = this.getSkillHandler(skillId);
 
-        if(!skill){
-            console.warn(`Skill ${skillName} not found!`);
-            return;
+        if(skillHandler){
+            return skillHandler.increaseCapToMax();
         }
-
-        // @ts-ignore
-        let cap = skill.maxLevelCap as number;
-        
-        this.characterStorage.setItem(SkillCapPrefix + skillName, cap);
-
-        console.log(`Skill ${skillName} level cap went up to ${cap}`);
-
-        // @ts-ignore
-        skill.setLevelCap(cap);
-        // @ts-ignore
-        game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent(skillName));
+        else{
+            console.warn("Unknown skill", skillId);
+        }
     }
 }

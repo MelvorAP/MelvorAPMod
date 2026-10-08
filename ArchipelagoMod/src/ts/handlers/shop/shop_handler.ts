@@ -3,7 +3,8 @@ import { ConnectionHandler } from "../connection_handler";
 import { ApShopPurchase } from "./ApShopPurchase";
 import { ShopPurchaseRequirementData, ShopPurchaseRequirementType, ShopUnlockRequirement, ShopUnlockRequirementData, ShopUnlockRequirementType } from "./requirements/shop_requirement";
 
-export class ShopHandler{
+//@ts-ignore
+export class ShopHandler extends GameEventEmitter{
     private apIcon : string;
 
     private characterStorage : ModStorage;
@@ -11,9 +12,10 @@ export class ShopHandler{
     private ctx: ModContext;
     private connectionHandler : ConnectionHandler;
 
-    public test : ShopPurchaseMadeEventMatcher;
+    public matcher : ShopPurchaseMadeEventMatcher;
 
     constructor(ctx : ModContext, connectionHandler : ConnectionHandler, apIcon : string){
+        super();
         this.apIcon = apIcon;
         this.ctx = ctx;
 
@@ -30,10 +32,10 @@ export class ShopHandler{
         }
         
         //@ts-ignore
-        this.test = game.events.constructMatcher(data) as ShopPurchaseMadeEventMatcher;
+        this.matcher = game.events.constructMatcher(data) as ShopPurchaseMadeEventMatcher;
 
         //@ts-ignore
-        this.test.assignHandler((e : ShopPurchaseMadeEvent) => {
+        this.matcher.assignHandler((e : ShopPurchaseMadeEvent) => {
             if(e.purchase instanceof ApShopPurchase){
                 this.connectionHandler.sendLocation(e.purchase.locationId);
             }

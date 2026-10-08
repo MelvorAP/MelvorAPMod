@@ -1,9 +1,9 @@
-import { ArchipelagoItemsChangedEvent } from "../../events/archipelago_items_changed_event";
 import { CombatAreaPrefix, DungeonPrefix, Items, SkillPrefix, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
 import { ItemHandler } from "../item_handler";
 import { CombatRequirement, CombatRequirementData, CombatRequirementType } from "./requirements/combat_requirement";
 
-export class CombatUnlockHandler{
+//@ts-ignore
+export class CombatUnlockHandler extends SkillItemReceivedEvent{
     private apIcon : string;
 
     private characterStorage : ModStorage;
@@ -11,6 +11,7 @@ export class CombatUnlockHandler{
     private ctx: ModContext;
 
     constructor(ctx : ModContext, apIcon : string){
+        super();
         this.apIcon = apIcon;
         this.ctx = ctx;
 
@@ -80,7 +81,7 @@ export class CombatUnlockHandler{
     unlockCombatArea(areaId : string, savePrefix : string){
         this.characterStorage.setItem(savePrefix + areaId, true);
         //@ts-ignore
-        game._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent("Attack"));
+        this._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent("Attack"));
         //@ts-ignore
         game.combat.renderQueue.areaRequirements = true
     }
