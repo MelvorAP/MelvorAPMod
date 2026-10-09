@@ -1,7 +1,7 @@
 import { OtherPrefix } from "../../data/items";
 import { ConnectionHandler } from "../connection_handler";
-import { ApShopPurchase } from "./ApShopPurchase";
-import { ShopPurchaseRequirementData, ShopPurchaseRequirementType, ShopUnlockRequirement, ShopUnlockRequirementData, ShopUnlockRequirementType } from "./requirements/shop_requirement";
+import { ApShopPurchase } from "./ap_shop_purchase";
+import { ShopPurchaseRequirementData, ShopPurchaseRequirementType, ShopUnlockRequirement, ShopUnlockRequirementData, ShopUnlockRequirementType } from "./shop_requirement";
 
 //@ts-ignore
 export class ShopHandler extends GameEventEmitter{

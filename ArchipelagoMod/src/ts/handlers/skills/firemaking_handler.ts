@@ -1,4 +1,3 @@
-import { NotificationHandler } from "../notification_handler";
 import { BaseSkillHandler } from "./base_skill_handler";
 import { ProgressiveSkillRequirement } from "./requirements/progressive_skill_requirement";
 import { Items } from "../../data/items";

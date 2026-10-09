@@ -1,5 +1,5 @@
-import { APRequirement } from "../../../ap_classes/ap_requirement";
-import { ShopHandler } from "../shop_handler";
+import { APRequirement } from "../../ap_classes/ap_requirement";
+import { ShopHandler } from "./shop_handler";
 
 export const ShopPurchaseRequirementType = "ShopPurchaseRequirement";
 export const ShopUnlockRequirementType = "ShopUnlockRequirement";

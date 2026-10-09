@@ -1,5 +1,5 @@
 import { ConnectionHandler } from "./handlers/connection_handler";
-import { Items, ItemType } from "./data/items";
+import { Items } from "./data/items";
 import { ItemHandler } from "./handlers/item_handler";
 import { NotificationHandler } from "./handlers/notification_handler";
 import { SkillsHandler } from "./handlers/skills_handler";
@@ -7,12 +7,10 @@ import { SlotdataHandler } from "./handlers/slotdata_handler";
 import { SettingsManager } from "./settings_manager";
 import { ProgressiveSkillRequirement, ProgressiveSkillRequirementType } from "./handlers/skills/requirements/progressive_skill_requirement";
 import { CombatUnlockHandler } from "./handlers/combat/combat_unlock_handler";
-import { CombatRequirement, CombatRequirementType } from "./handlers/combat/requirements/combat_requirement";
-import { ShopUnlockRequirement, ShopPurchaseRequirementType, ShopPurchaseRequirement, ShopUnlockRequirementType } from "./handlers/shop/requirements/shop_requirement";
+import { CombatRequirement, CombatRequirementType } from "./handlers/combat/combat_requirements";
+import { ShopUnlockRequirement, ShopPurchaseRequirementType, ShopPurchaseRequirement, ShopUnlockRequirementType } from "./handlers/shop/shop_requirement";
 import { ShopHandler } from "./handlers/shop/shop_handler";
 import { ArchipelagoItemReceivedEventMatcher, ArchipelagoSkillItemReceivedEventMatcher } from "./events/archipelago_event_matchers";
-import { ApShopPurchase } from "./handlers/shop/ApShopPurchase";
-import { ArchipelagoItemReceivedEvent } from "./events/archipelago_events";
 
 export interface IModServiceData {
   icon_url: string;

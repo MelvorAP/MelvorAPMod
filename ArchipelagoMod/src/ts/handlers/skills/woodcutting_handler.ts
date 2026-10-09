@@ -1,5 +1,4 @@
 import { Items } from "../../data/items";
-import { NotificationHandler } from "../notification_handler";
 import { BaseSkillHandler } from "./base_skill_handler";
 
 export class WoodcuttingHandler extends BaseSkillHandler{

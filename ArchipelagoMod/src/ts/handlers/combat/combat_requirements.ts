@@ -1,6 +1,5 @@
-import { APRequirement } from "../../../ap_classes/ap_requirement";
-import { ItemHandler } from "../../item_handler";
-import { CombatUnlockHandler } from "../combat_unlock_handler";
+import { APRequirement } from "../../ap_classes/ap_requirement";
+import { CombatUnlockHandler } from "./combat_unlock_handler";
 
 export const CombatRequirementType = "CombatRequirement";
 

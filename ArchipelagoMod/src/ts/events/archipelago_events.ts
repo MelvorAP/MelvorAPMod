@@ -19,3 +19,21 @@ export class ArchipelagoItemReceivedEvent extends GameEvent {
       this.skillId = skillId;
     }
   }
+
+export class PetReceivedEvent extends ArchipelagoItemReceivedEvent {
+    petId : string;
+    
+    constructor(itemId : number, itemType : ItemType, petId : string) {
+      super (itemId, itemType);
+      this.petId = petId;
+    }
+  }
+
+export class CombatAreaUnlockedEvent extends ArchipelagoItemReceivedEvent {
+    areaId : string;
+    
+    constructor(itemId : number, itemType : ItemType, areaId : string) {
+      super (itemId, itemType);
+      this.areaId = areaId;
+    }
+  }

@@ -1,5 +1,10 @@
 import { ItemType } from "../data/items";
-import { ArchipelagoItemReceivedEvent, SkillItemReceivedEvent } from "./archipelago_events";
+import { SkillItemReceivedEvent } from "./archipelago_events";
+
+export const ApItemReceivedType = "ApItemReceived";
+export const ApSkillItemReceivedType = "ApSkillItemReceived";
+export const ApPetReceivedType = "ApPetReceived";
+export const ApCOmbatAreaUnlockType = "ApCOmbatAreaUnlock";
 
 //@ts-ignore
 export class ArchipelagoItemReceivedEventMatcher extends NonRaidGameEventMatcher {
@@ -8,7 +13,7 @@ export class ArchipelagoItemReceivedEventMatcher extends NonRaidGameEventMatcher
 
     constructor(options : any, game : Game) {
         super(game);
-        this.type = 'ArchipelagoItemReceived';
+        this.type = ApItemReceivedType;
 
         try {
             if (options.itemType !== undefined)

@@ -1,4 +1,4 @@
-import { Items, SkillCapPrefix, SkillPrefix } from "../data/items";
+import { Items, SkillPrefix } from "../data/items";
 import { BaseSkillHandler } from "./skills/base_skill_handler";
 import { CookingHandler } from "./skills/cooking_handler";
 import { FiremakingHandler } from "./skills/firemaking_handler";
@@ -7,7 +7,6 @@ import { SmithingHandler } from "./skills/smithing_handler";
 import { WoodcuttingHandler } from "./skills/woodcutting_handler";
 import { FishingHandler } from "./skills/fishing_handler";
 import { FarmingHandler } from "./skills/farming_handler";
-import { SkillItemReceivedEvent } from "../events/archipelago_events";
 
 export class SkillsHandler{
     private characterStorage : ModStorage;

@@ -1,9 +1,10 @@
-import { CombatAreaPrefix, DungeonPrefix, Items, SkillPrefix, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
-import { ItemHandler } from "../item_handler";
-import { CombatRequirement, CombatRequirementData, CombatRequirementType } from "./requirements/combat_requirement";
+import { CombatAreaPrefix, DungeonPrefix, ItemType, SkillPrefix, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
+import { ArchipelagoSkillItemReceivedEventMatcher } from "../../events/archipelago_event_matchers";
+import { CombatAreaUnlockedEvent } from "../../events/archipelago_events";
+import { CombatRequirement, CombatRequirementData, CombatRequirementType } from "./combat_requirements";
 
 //@ts-ignore
-export class CombatUnlockHandler extends SkillItemReceivedEvent{
+export class CombatUnlockHandler extends GameEventEmitter{
     private apIcon : string;
 
     private characterStorage : ModStorage;
@@ -16,6 +17,26 @@ export class CombatUnlockHandler extends SkillItemReceivedEvent{
         this.ctx = ctx;
 
         this.characterStorage = {} as ModStorage;
+
+        let data = {
+            type : "ShopPurchaseMade",
+            purchaseIDs : undefined
+        }
+        
+        //@ts-ignore
+        this.matcher = game.events.constructMatcher(data) as ArchipelagoSkillItemReceivedEventMatcher;
+
+        //@ts-ignore
+        this.matcher.assignHandler((e : CombatAreaUnlockedEvent ) => {
+                switch (e.itemType){
+                    case ItemType.CombatAreaUnlock:
+                        this.unlockCombatArea(e.areaId, CombatAreaPrefix);
+                        break;
+                    default:
+                        console.log(`Unknown item ${e.itemId} for ${e.itemType}`);
+                        break;
+                }
+        })
     }
 
     setCharacterStorage(characterStorage : ModStorage){
