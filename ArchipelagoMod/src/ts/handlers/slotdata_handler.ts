@@ -16,6 +16,10 @@ export interface GamemodeSettings {
   hasRegen: boolean,
 };
 
+export interface ShopSettings {
+  shopCount: number
+}
+
 export interface PlayerStats {
   expGain: number,
   masteryGain: number,
@@ -25,10 +29,13 @@ export interface PlayerStats {
   bankSpaceIncrease: number
 };
 
+
 export class SlotdataHandler{
   apSettings: ApSettings = {} as ApSettings;
   gamemodeSettings : GamemodeSettings = {} as GamemodeSettings;
+  shopSettings : ShopSettings = {} as ShopSettings;
   playerStats : PlayerStats = {} as PlayerStats;
+
 
   modifiers : Map<string, any> = new Map();
 
@@ -46,6 +53,10 @@ export class SlotdataHandler{
       isPermaDeath: false,
       hasRegen: true
     };
+
+    this.shopSettings = {
+      shopCount: 10
+    }
 
     this.playerStats = {
       expGain: 0,
@@ -66,6 +77,8 @@ export class SlotdataHandler{
     this.gamemodeSettings.preservation = slotData.preservation;
     this.gamemodeSettings.isPermaDeath = slotData.is_perma_death;
     this.gamemodeSettings.hasRegen = slotData.has_regen;
+
+    this.shopSettings.shopCount = slotData.shopCount;
 
     this.playerStats.expGain = slotData.exp_gain;
     this.playerStats.masteryGain = slotData.mastery_gain;    

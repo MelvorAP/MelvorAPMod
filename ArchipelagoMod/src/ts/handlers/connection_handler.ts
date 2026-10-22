@@ -7,6 +7,7 @@ import { ItemHandler } from "./item_handler";
 import { NotificationHandler } from "./notification_handler";
 import { SlotdataHandler } from "./slotdata_handler";
 import ModService from "../mod_service";
+import { ShopHandler } from "./shop/shop_handler";
 
 export interface Version {
   major: Number, 
@@ -25,7 +26,8 @@ export interface ConnectionInfo{
   items_handling: ITEMS_HANDLING_FLAGS;
 }
 
-export class ConnectionHandler{
+//@ts-ignore
+export class ConnectionHandler extends GameEventEmitter{
   public isConnected : boolean;
   public modService : ModService;
 
@@ -38,6 +40,8 @@ export class ConnectionHandler{
   private client : Client;
 
   constructor(modService : ModService, itemHandler: ItemHandler, notificationHandler: NotificationHandler, slotdataHandler: SlotdataHandler){
+    super();
+
     this.modService = modService;
     
     this.isConnected = false;

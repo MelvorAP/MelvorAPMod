@@ -28,12 +28,6 @@ export class ArchipelagoItemReceivedEventMatcher extends NonRaidGameEventMatcher
     doesEventMatch(event : SkillItemReceivedEvent) {
         return this.itemType == event.itemType;
     }
-    _assignNonRaidHandler(handler : any) {
-
-    }
-    _unassignNonRaidHandler(handler : any) {
-
-    }
 }
 
 export class ArchipelagoSkillItemReceivedEventMatcher extends ArchipelagoItemReceivedEventMatcher {

@@ -1,9 +1,7 @@
-import { Items, ItemType, ItemTypeMult, Namespace, NamespaceMult, OtherPrefix, SkillMult } from "../data/items";
+import { ItemTypeMult, Namespace, NamespaceMult, SkillMult } from "../data/general";
+import { Items, ItemType, OtherPrefix } from "../data/items";
 import { ApItemReceivedType, ApPetReceivedType, ApSkillItemReceivedType } from "../events/archipelago_event_matchers";
 import { ArchipelagoItemReceivedEvent, CombatAreaUnlockedEvent, PetReceivedEvent, SkillItemReceivedEvent } from "../events/archipelago_events";
-import { CombatUnlockHandler } from "./combat/combat_unlock_handler";
-import { SkillsHandler } from "./skills_handler";
-import { SlotdataHandler } from "./slotdata_handler";
 
 //@ts-ignore
 export class ItemHandler extends GameEventEmitter {
@@ -11,22 +9,14 @@ export class ItemHandler extends GameEventEmitter {
 
     public items : Items;
 
-    private skillHandler : SkillsHandler;
-    private slotdataHandler : SlotdataHandler;
-    private combatUnlockHandler : CombatUnlockHandler;
-
     private characterStorage : ModStorage;
 
     private regularCombatAreas : CombatArea[];
 
-    constructor(items : Items, skillHandler: SkillsHandler, slotdataHandler : SlotdataHandler, combatUnlockHandler : CombatUnlockHandler){
+    constructor(items : Items){
         super();
 
         this.items = items;
-
-        this.skillHandler = skillHandler;
-        this.slotdataHandler = slotdataHandler;
-        this.combatUnlockHandler = combatUnlockHandler;
 
         this.characterStorage = {} as ModStorage; 
 

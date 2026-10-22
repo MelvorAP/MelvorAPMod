@@ -1,3 +1,5 @@
+import { ItemTypeMult, Namespace, NamespaceMult, SkillMult } from "./general";
+
 export enum ItemType {
   SkillUnlock = 1,
   ProgressiveSkills,
@@ -11,14 +13,6 @@ export enum ItemType {
   OtherUnlocks
 }
 
-export enum Namespace {
-	melvorD = 1,
-	//melvorF,
-	//melvorTotH,
-	//melvorAoD
-	//melvorItA
-}
-
 export const ActionPrefix = "AP_Action_";
 export const SkillPrefix = "AP_Skill_";
 export const SkillCapPrefix = "AP_Skill_Cap_"
@@ -27,10 +21,6 @@ export const SlayerAreaPrefix = "AP_Slayer_Area_"
 export const DungeonPrefix = "AP_Dungeon_"
 export const StrongholdPrefix = "AP_Stronghold_"
 export const OtherPrefix = "AP_Unlock_";
-
-export const SkillMult = 1000 * 1000 * 1000;
-export const ItemTypeMult = 1000 * 1000;
-export const NamespaceMult = 1000;
 
 export class Items{
 	itemDict = new Map<number, [string, string]>(); 
@@ -146,7 +136,7 @@ export class Items{
 		values.forEach((name: [string, string], enums : [number, ItemType, Namespace, number]) => {
 			let id = enums[0] * SkillMult + enums[1] * ItemTypeMult + enums[2] * NamespaceMult + enums[3];
 			this.itemDict.set(id, name);
-			console.log(`Item '${name[1]}' (${name[0]}) is at ${id}`)
+			//console.log(`Item '${name[1]}' (${name[0]}) is at ${id}`)
 		})
 		
 		console.log(`Found ${String(this.itemDict.size)} item types.`);

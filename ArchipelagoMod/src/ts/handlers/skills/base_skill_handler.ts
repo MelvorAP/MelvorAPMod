@@ -1,7 +1,8 @@
 import { ProgressiveRequirementData, ProgressiveSkillRequirementType } from "./requirements/progressive_skill_requirement";
-import { ActionPrefix, Items, ItemType, Namespace, SkillCapPrefix, SkillPrefix } from "../../data/items";
+import { ActionPrefix, Items, ItemType, SkillCapPrefix, SkillPrefix } from "../../data/items";
 import { ArchipelagoSkillItemReceivedEventMatcher } from "../../events/archipelago_event_matchers";
 import { SkillItemReceivedEvent } from "../../events/archipelago_events";
+import { Namespace } from "../../data/general";
 
 //@ts-ignore
 export class BaseSkillHandler extends GameEventEmitter {
@@ -54,6 +55,11 @@ export class BaseSkillHandler extends GameEventEmitter {
                         break;
                 }
             }
+        })
+
+        //@ts-ignore
+        game.skills.getObjectByID(this.skillId).on("levelChanged", function (e) {
+            console.log(e.skill, "leveled up from", e.oldLevel, " to ", e.newLevel)
         })
     }
 

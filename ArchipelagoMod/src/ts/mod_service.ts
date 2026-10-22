@@ -11,6 +11,7 @@ import { CombatRequirement, CombatRequirementType } from "./handlers/combat/comb
 import { ShopUnlockRequirement, ShopPurchaseRequirementType, ShopPurchaseRequirement, ShopUnlockRequirementType } from "./handlers/shop/shop_requirement";
 import { ShopHandler } from "./handlers/shop/shop_handler";
 import { ArchipelagoItemReceivedEventMatcher, ArchipelagoSkillItemReceivedEventMatcher } from "./events/archipelago_event_matchers";
+import { Locations } from "./data/locations";
 
 export interface IModServiceData {
   icon_url: string;
@@ -66,6 +67,7 @@ export default class ModService {
   isArchipelagoGameMode : boolean = false;
 
   items: Items;
+  locations : Locations;
 
   connectionHandler: ConnectionHandler;
   notificationHandler: NotificationHandler;
@@ -90,13 +92,14 @@ export default class ModService {
     this.slotdataHandler = new SlotdataHandler();
 
     this.items = new Items();
+    this.locations = new Locations();
 
     this.notificationHandler = new NotificationHandler(this.#data.icon_url, this.#data.icon_url_large);
     this.settingsManager = new SettingsManager();
 
     this.skillHandler = new SkillsHandler(ctx, this.items, this.#data.icon_url);
     this.combatUnlockHandler = new CombatUnlockHandler(ctx, this.#data.icon_url);
-    this.itemHandler = new ItemHandler(this.items, this.skillHandler, this.slotdataHandler, this.combatUnlockHandler);
+    this.itemHandler = new ItemHandler(this.items);
     
     this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
     this.shopHandler = new ShopHandler(ctx, this.connectionHandler, this.#data.icon_url);
@@ -252,6 +255,11 @@ export default class ModService {
       game.combatHandler = service.combatUnlockHandler;
       // @ts-ignore
       game.shopHandler = service.shopHandler;
+
+      //@ts-ignore
+      game.ApItems = service.items;
+      //@ts-ignore
+      game.ApLocations = service.locations;
   
       //game.combat.on("monsterKilled", function (e) {console.log("Monster killed:", e)})
       //game.combat.on("dungeonCompleted", function (e) {console.log("Dungeon completed:", e)})
