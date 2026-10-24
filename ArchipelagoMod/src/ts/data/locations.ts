@@ -40,7 +40,8 @@ export class Locations{
                 }
 
                 //Skills start at level 1
-                for(let j = 2; j <= 120; j++){
+                //99 is max for dlc-free, gets upped to 120 with dlc
+                for(let j = 2; j <= 99; j++){
                     values.set([skillIndex, LocationType.SkillLevelup, skillNamespace, j -2], [skill.id, `${skill.name} Level ${j}`]);
                 }
                 
@@ -93,6 +94,7 @@ export class Locations{
                     }
                     else if (area instanceof Dungeon){
                         locationType = LocationType.DungeonCleared;
+                        dungeon = true;
                     }
                     else if (!(area instanceof CombatArea)){
                         console.warn(`Unknown area type!`);
