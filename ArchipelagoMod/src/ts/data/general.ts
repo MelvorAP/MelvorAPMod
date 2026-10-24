@@ -1,4 +1,4 @@
-export enum Namespace {
+export enum NamespaceEnum {
 	melvorD = 1,
 	//melvorF,
 	//melvorTotH,

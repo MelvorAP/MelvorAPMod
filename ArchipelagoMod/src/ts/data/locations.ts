@@ -1,4 +1,4 @@
-import { ItemTypeMult, MasteryMult, Namespace, NamespaceMult, SkillMult } from "./general";
+import { ItemTypeMult, MasteryMult, NamespaceEnum, NamespaceMult, SkillMult } from "./general";
 
 export enum LocationType {
   SkillLevelup = 1,
@@ -18,7 +18,7 @@ export class Locations{
 	locationDict = new Map<number, [string, string]>(); 
 
     constructor(){
-        let values = new Map<[number, LocationType, Namespace, number], [string, string]>;
+        let values = new Map<[number, LocationType, NamespaceEnum, number], [string, string]>;
 
         for (let namespaceMap of game.skills.namespaceMaps){
             for(let i = 0; i < namespaceMap[1].size; i++){
@@ -27,7 +27,7 @@ export class Locations{
                     continue;
                 }
 
-                const skillNamespace = Namespace[namespaceMap[0] as keyof typeof Namespace];
+                const skillNamespace = NamespaceEnum[namespaceMap[0] as keyof typeof NamespaceEnum];
                 const skillIndex = this.skills.indexOf(skill.id) + 1;
 
                 if(!skillNamespace){
@@ -49,7 +49,7 @@ export class Locations{
                     for(let j = 0; j < skill.actions.size; j++){
                         let action = skill.actions.allObjects[j];
                         if(action instanceof MasteryAction){
-                            const actionNamespace = Namespace[action.namespace as keyof typeof Namespace];
+                            const actionNamespace = NamespaceEnum[action.namespace as keyof typeof NamespaceEnum];
                             if(!actionNamespace){
                                 //console.warn(`${action.namespace} is not supported in the AP world!`);
                                 continue;
@@ -69,7 +69,7 @@ export class Locations{
                         continue;
                     }
 
-                    const namespace = Namespace[area.namespace as keyof typeof Namespace];
+                    const namespace = NamespaceEnum[area.namespace as keyof typeof NamespaceEnum];
 
                     if(!namespace){
                         //console.warn(`${area.namespace} is not supported in the AP world!`);
@@ -117,14 +117,16 @@ export class Locations{
 
             for(let i = 0; i < ShopLocationLimit; i++){
                 let name = `Shop Purchase ${i+1}`
-                values.set([0, LocationType.ShopPurchase, Namespace.melvorD, i], [name, name]);
+                values.set([0, LocationType.ShopPurchase, NamespaceEnum.melvorD, i], [name, name]);
             }
 
-            values.forEach((name: [string, string], enums : [number, LocationType, Namespace, number]) => {
+            values.forEach((name: [string, string], enums : [number, LocationType, NamespaceEnum, number]) => {
                 let id = enums[0] * SkillMult + enums[1] * ItemTypeMult + enums[2] * NamespaceMult + enums[3];
                 this.locationDict.set(id, name);
                 if(enums[1] != LocationType.MasteryLevelUp)
-                    console.log(`Location '${name[1]}' (${name[0]}) is at ${id}`)
+                {
+                    //console.log(`Location '${name[1]}' (${name[0]}) is at ${id}`)
+                }
             })
             
             console.log(`Found ${String(this.locationDict.size)} locations.`);

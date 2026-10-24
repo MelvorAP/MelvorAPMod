@@ -10,7 +10,7 @@ import { CombatUnlockHandler } from "./handlers/combat/combat_unlock_handler";
 import { CombatRequirement, CombatRequirementType } from "./handlers/combat/combat_requirements";
 import { ShopUnlockRequirement, ShopPurchaseRequirementType, ShopPurchaseRequirement, ShopUnlockRequirementType } from "./handlers/shop/shop_requirement";
 import { ShopHandler } from "./handlers/shop/shop_handler";
-import { ArchipelagoItemReceivedEventMatcher, ArchipelagoSkillItemReceivedEventMatcher } from "./events/archipelago_event_matchers";
+import { ApItemReceivedType, ApSkillItemReceivedType, ArchipelagoItemReceivedEventMatcher, ArchipelagoSkillItemReceivedEventMatcher } from "./events/archipelago_event_matchers";
 import { Locations } from "./data/locations";
 
 export interface IModServiceData {
@@ -156,9 +156,9 @@ export default class ModService {
       // @ts-ignore
       ctx.patch(Game, "getRequirementFromData").after(function (_requirement, data) {return service.addApUnlock(data)});
       // @ts-ignore
-      ctx.patch(Farming, "modifyData").after(function (data) {return service.farmingModifyData(data)});
+      ctx.patch(Farming, "modifyData").after(function (_, data) {return service.farmingModifyData(data)});
       //@ts-ignore
-      ctx.patch(GameEventSystem, "constructMatcher").after(function (data) {return service.constructMatcher(data)});
+      ctx.patch(GameEventSystem, "constructMatcher").after(function (_matcher, data) {return service.constructMatcher(data)});
 
       // @ts-ignore
       ctx.patch(SidebarItem, 'click').replace(function(o) {
@@ -201,6 +201,29 @@ export default class ModService {
       });
 
       service.settingsManager.setup(ctx);
+
+      // @ts-ignore
+      game.skillHandler = service.skillHandler;
+      // @ts-ignore
+      game.itemHandler = service.itemHandler;
+      // @ts-ignore
+      game.locationHandler = service.locationHandler;
+      // @ts-ignore
+      game.actionHandler = service.actionHandler;
+      // @ts-ignore
+      game.notificationHandler = service.notificationHandler;
+      // @ts-ignore
+      game.combatHandler = service.combatUnlockHandler;
+      // @ts-ignore
+      game.shopHandler = service.shopHandler;
+
+      //@ts-ignore
+      game.apItems = service.items;
+      //@ts-ignore
+      game.apLocations = service.locations;
+
+      service.shopHandler.initialize();
+      service.skillHandler.initialize();
     })
   
     ctx.onCharacterLoaded(async ctx => {
@@ -242,24 +265,6 @@ export default class ModService {
       if(Boolean(service.settingsManager.apConnectionSection.get("ap-auto-connect"))){
         service.connectionHandler.connectToAP();
       }
-
-      // @ts-ignore
-      game.skillHandler = service.skillHandler;
-      // @ts-ignore
-      game.itemHandler = service.itemHandler;
-      // @ts-ignore
-      game.actionHandler = service.actionHandler;
-      // @ts-ignore
-      game.notificationHandler = service.notificationHandler;
-      // @ts-ignore
-      game.combatHandler = service.combatUnlockHandler;
-      // @ts-ignore
-      game.shopHandler = service.shopHandler;
-
-      //@ts-ignore
-      game.ApItems = service.items;
-      //@ts-ignore
-      game.ApLocations = service.locations;
   
       //game.combat.on("monsterKilled", function (e) {console.log("Monster killed:", e)})
       //game.combat.on("dungeonCompleted", function (e) {console.log("Dungeon completed:", e)})
@@ -300,12 +305,10 @@ export default class ModService {
 
   constructMatcher(data: any) {
     switch(data.type){
-      case 'ArchipelagoItemReceived':
-        //@ts-ignore
-        return new ArchipelagoItemReceivedEventMatcher(data, this.game);
-      case 'ArchipelagoSkillItemReceived':
-        //@ts-ignore
-        return new ArchipelagoSkillItemReceivedEventMatcher(data, this.game);
+      case ApItemReceivedType:
+        return new ArchipelagoItemReceivedEventMatcher(data, game);
+      case ApSkillItemReceivedType:
+        return new ArchipelagoSkillItemReceivedEventMatcher(data, game);
     }
   }
 }

@@ -1,8 +1,10 @@
 import { ProgressiveRequirementData, ProgressiveSkillRequirementType } from "./requirements/progressive_skill_requirement";
 import { ActionPrefix, Items, ItemType, SkillCapPrefix, SkillPrefix } from "../../data/items";
-import { ArchipelagoSkillItemReceivedEventMatcher } from "../../events/archipelago_event_matchers";
+import { ApSkillItemReceivedType, ArchipelagoSkillItemReceivedEventMatcher } from "../../events/archipelago_event_matchers";
 import { SkillItemReceivedEvent } from "../../events/archipelago_events";
-import { Namespace } from "../../data/general";
+import { NamespaceEnum } from "../../data/general";
+import { LocationHandler } from "../location_handler";
+import { LocationType } from "../../data/locations";
 
 //@ts-ignore
 export class BaseSkillHandler extends GameEventEmitter {
@@ -16,7 +18,7 @@ export class BaseSkillHandler extends GameEventEmitter {
 
     protected apIcon : string;
 
-    protected matcher : GameEventMatcher;
+    protected matcher : GameEventMatcher | undefined;
 
     protected actionRequirements = new Map<string, number>();
 
@@ -32,9 +34,18 @@ export class BaseSkillHandler extends GameEventEmitter {
 
         this.setActionRequirements();
 
+        //@ts-ignore
+        game.skills.getObjectByID(this.skillId).on("levelChanged", function (e) {
+            console.log(e.skill, "leveled up from", e.oldLevel, " to ", e.newLevel)
+            //@ts-ignore
+            game.locationHandler.sendLocationBySkillName(e.skill.id, LocationType.SkillLevelup, skillId.namespace, e.newLevel -2)
+        })
+    }
+
+    public initialize(){
         let data = {
-            type : "ShopPurchaseMade",
-            purchaseIDs : undefined
+            type : ApSkillItemReceivedType,
+            skillId : this.skillId
         }
         
         //@ts-ignore
@@ -55,11 +66,6 @@ export class BaseSkillHandler extends GameEventEmitter {
                         break;
                 }
             }
-        })
-
-        //@ts-ignore
-        game.skills.getObjectByID(this.skillId).on("levelChanged", function (e) {
-            console.log(e.skill, "leveled up from", e.oldLevel, " to ", e.newLevel)
         })
     }
 
@@ -169,7 +175,7 @@ export class BaseSkillHandler extends GameEventEmitter {
             for(let j = 0; j < skill.actions.size; j++){
                 let action = skill.actions.allObjects[j];
                 if(action instanceof MasteryAction){
-                    const actionNamespace = Namespace[action.namespace as keyof typeof Namespace];
+                    const actionNamespace = NamespaceEnum[action.namespace as keyof typeof NamespaceEnum];
                     if(!actionNamespace){
                         continue;
                     }

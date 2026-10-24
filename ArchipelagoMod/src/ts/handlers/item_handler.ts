@@ -1,4 +1,4 @@
-import { ItemTypeMult, Namespace, NamespaceMult, SkillMult } from "../data/general";
+import { ItemTypeMult, NamespaceEnum, NamespaceMult, SkillMult } from "../data/general";
 import { Items, ItemType, OtherPrefix } from "../data/items";
 import { ApItemReceivedType, ApPetReceivedType, ApSkillItemReceivedType } from "../events/archipelago_event_matchers";
 import { ArchipelagoItemReceivedEvent, CombatAreaUnlockedEvent, PetReceivedEvent, SkillItemReceivedEvent } from "../events/archipelago_events";
@@ -64,8 +64,8 @@ export class ItemHandler extends GameEventEmitter {
         id -= namespace_id * NamespaceMult;
 
         const itemType = itemtype_id as ItemType;
-        const namespace = namespace_id as Namespace;
-        const namespaceName = Namespace[namespace]
+        const namespace = namespace_id as NamespaceEnum;
+        const namespaceName = NamespaceEnum[namespace]
         const skill = this.items.skills[skill_id - 1];
 
         if(!namespace){
@@ -121,7 +121,7 @@ export class ItemHandler extends GameEventEmitter {
             }
             case ItemType.OtherUnlocks : {
                 switch(namespace){
-                    case Namespace.melvorD :
+                    case NamespaceEnum.melvorD :
                         switch(this.items.demo_ap_unlocks[id]){
                             case "Shop Unlock" :
                                 event = new ArchipelagoItemReceivedEvent(id, itemType);

@@ -12,7 +12,7 @@ export class ShopHandler extends GameEventEmitter{
     private ctx: ModContext;
     private connectionHandler : ConnectionHandler;
 
-    public matcher : ShopPurchaseMadeEventMatcher;
+    public matcher : ShopPurchaseMadeEventMatcher | undefined;
 
     constructor(ctx : ModContext, connectionHandler : ConnectionHandler, apIcon : string){
         super();
@@ -24,8 +24,9 @@ export class ShopHandler extends GameEventEmitter{
 
         // console.log(game.shop.getPurchaseCount(game.shop.purchases.getObjectByID("melvorD:Iron_Axe")));
         // console.log(game.shop.isUpgradePurchased(game.shop.purchases.getObjectByID("melvorD:Iron_Axe")));
+    }
 
-        
+    public initialize(){
         let data = {
             type : "ShopPurchaseMade",
             purchaseIDs : undefined

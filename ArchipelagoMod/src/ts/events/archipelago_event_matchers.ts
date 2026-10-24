@@ -36,10 +36,10 @@ export class ArchipelagoSkillItemReceivedEventMatcher extends ArchipelagoItemRec
 
     constructor(options : any, game : Game) {
         super(options, game);
-        this.type = 'ArchipelagoSkillItemReceived';
+        this.type = ApSkillItemReceivedType;
 
         try {
-            if (options.itemType !== undefined)
+            if (options.skillId !== undefined)
                 this.skillId = options.skillId;
         }
         catch (e) {

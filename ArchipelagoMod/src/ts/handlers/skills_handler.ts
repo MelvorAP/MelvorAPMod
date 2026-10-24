@@ -27,6 +27,13 @@ export class SkillsHandler{
         ];
     }
 
+    public initialize(){
+        this.skillHandlers.forEach((value : BaseSkillHandler) => {
+            value.initialize();
+        });
+    }
+
+
     public setCharacterStorage(characterStorage : ModStorage){
         this.characterStorage = characterStorage;
 
