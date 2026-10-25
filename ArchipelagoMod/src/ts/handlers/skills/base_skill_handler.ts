@@ -6,8 +6,7 @@ import { NamespaceEnum } from "../../data/general";
 import { LocationHandler } from "../location_handler";
 import { LocationType } from "../../data/locations";
 
-//@ts-ignore
-export class BaseSkillHandler extends GameEventEmitter {
+export class BaseSkillHandler {
     public skillId : string; 
 
     protected itemType = "recipe";
@@ -23,8 +22,6 @@ export class BaseSkillHandler extends GameEventEmitter {
     protected actionRequirements = new Map<string, number>();
 
     constructor(ctx: ModContext, items : Items, apIcon : string, skillId : string){
-        super();
-
         this.items = items;
         this.characterStorage = {} as ModStorage;
         this.ctx = ctx;
@@ -56,6 +53,7 @@ export class BaseSkillHandler extends GameEventEmitter {
             if(e.skillId == this.skillId){
                 switch (e.itemType){
                     case ItemType.ProgressiveSkills:
+                        this.unlockSkill();
                         this.increaseProgressiveSkillCount();
                         break;
                     case ItemType.SkillLevelCaps:
@@ -118,6 +116,15 @@ export class BaseSkillHandler extends GameEventEmitter {
             this.refreshUI();
         }
     }
+
+    unlockSkill(){
+        let skill = game.skills.getObjectByID(this.skillId);
+
+        if(skill){
+            skill.setUnlock(true);
+        }
+    }
+    
 
     public increaseProgressiveSkillCount() : boolean{
         let saveName = SkillPrefix + this.skillId;
@@ -182,7 +189,7 @@ export class BaseSkillHandler extends GameEventEmitter {
                     
                     countNeeded += 1;
                     this.actionRequirements.set(action.id, countNeeded);
-                    console.warn(`${action.id} is unlocked at ${countNeeded}`);
+                    //console.warn(`${action.id} is unlocked at ${countNeeded}`);
                 }
             }
         }

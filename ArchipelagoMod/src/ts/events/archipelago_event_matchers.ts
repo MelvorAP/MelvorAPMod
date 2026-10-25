@@ -4,7 +4,7 @@ import { SkillItemReceivedEvent } from "./archipelago_events";
 export const ApItemReceivedType = "ApItemReceived";
 export const ApSkillItemReceivedType = "ApSkillItemReceived";
 export const ApPetReceivedType = "ApPetReceived";
-export const ApCOmbatAreaUnlockType = "ApCOmbatAreaUnlock";
+export const ApCombatAreaUnlockType = "ApCombatAreaUnlock";
 
 //@ts-ignore
 export class ArchipelagoItemReceivedEventMatcher extends NonRaidGameEventMatcher {
@@ -28,6 +28,16 @@ export class ArchipelagoItemReceivedEventMatcher extends NonRaidGameEventMatcher
     doesEventMatch(event : SkillItemReceivedEvent) {
         return this.itemType == event.itemType;
     }
+
+    _assignNonRaidHandler(handler : any) {
+        //@ts-ignore
+        this.game.itemHandler.on(this.type, handler);
+    }
+
+    _unassignNonRaidHandler(handler : any) {
+        //@ts-ignore
+        this.game.itemHandler.off(this.type, handler);
+    }
 }
 
 export class ArchipelagoSkillItemReceivedEventMatcher extends ArchipelagoItemReceivedEventMatcher {
@@ -49,13 +59,5 @@ export class ArchipelagoSkillItemReceivedEventMatcher extends ArchipelagoItemRec
     }
     doesEventMatch(event : SkillItemReceivedEvent) {
         return this.skillId == event.skillId;
-    }
-    _assignNonRaidHandler(handler : any) {
-        //@ts-ignore
-        this.game.skillHandler.getSkillHandler(this.skillId).on(this.type, handler);
-    }
-    _unassignNonRaidHandler(handler : any) {
-        //@ts-ignore
-        this.game.skillHandler.getSkillHandler(this.skillId).off(this.type, handler);
     }
 }

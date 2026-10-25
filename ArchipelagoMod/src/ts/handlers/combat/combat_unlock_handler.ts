@@ -1,3 +1,4 @@
+import { ApRequirementType } from "../../ap_classes/ap_requirement";
 import { CombatAreaPrefix, DungeonPrefix, ItemType, SkillPrefix, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
 import { ArchipelagoSkillItemReceivedEventMatcher } from "../../events/archipelago_event_matchers";
 import { CombatAreaUnlockedEvent } from "../../events/archipelago_events";
@@ -102,7 +103,7 @@ export class CombatUnlockHandler extends GameEventEmitter{
     unlockCombatArea(areaId : string, savePrefix : string){
         this.characterStorage.setItem(savePrefix + areaId, true);
         //@ts-ignore
-        this._events.emit('apItemsChangedEvent', new ArchipelagoItemsChangedEvent("Attack"));
+        this._events.emit(ApRequirementType, new ArchipelagoItemsChangedEvent("Attack"));
         //@ts-ignore
         game.combat.renderQueue.areaRequirements = true
     }

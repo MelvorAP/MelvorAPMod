@@ -1,3 +1,5 @@
+export const ApRequirementType = "ApItemReceived";
+
 // @ts-ignore
 export class APRequirement extends GameRequirement {
     type: string;
@@ -34,13 +36,13 @@ export class APRequirement extends GameRequirement {
     // @ts-ignore
     public _assignHandler(handler) {
         // @ts-ignore
-        game.completion.on('apItemsChangedEvent', handler);
+        game.completion.on(ApRequirementType, handler);
     }
 
     // @ts-ignore
     public _unassignHandler(handler) {
         // @ts-ignore
-        game.completion.off('apItemsChangedEvent', handler);
+        game.completion.off(ApRequirementType, handler);
     }
 
     public getNodes(imageClass : string) : (Node)[] {
