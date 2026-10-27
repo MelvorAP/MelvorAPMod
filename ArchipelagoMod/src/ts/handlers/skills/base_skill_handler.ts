@@ -2,7 +2,7 @@ import { ProgressiveRequirementData, ProgressiveSkillRequirementType } from "./r
 import { ActionPrefix, Items, ItemType, SkillCapPrefix, SkillPrefix } from "../../data/items";
 import { ApSkillItemReceivedType, ArchipelagoSkillItemReceivedEventMatcher } from "../../events/archipelago_event_matchers";
 import { SkillItemReceivedEvent } from "../../events/archipelago_events";
-import { NamespaceEnum } from "../../data/general";
+import { MasteryMult, NamespaceEnum } from "../../data/general";
 import { LocationHandler } from "../location_handler";
 import { LocationType } from "../../data/locations";
 
@@ -31,12 +31,32 @@ export class BaseSkillHandler {
 
         this.setActionRequirements();
 
-        //@ts-ignore
-        game.skills.getObjectByID(this.skillId).on("levelChanged", function (e) {
-            console.log(e.skill, "leveled up from", e.oldLevel, " to ", e.newLevel)
+        let skill = game.skills.getObjectByID(this.skillId);
+
+        //They for loop so all levels inbetween get sent, when multiple levels go up at once
+        if(skill instanceof SkillWithMastery)
+        {
             //@ts-ignore
-            game.locationHandler.sendLocationBySkillName(e.skill.id, LocationType.SkillLevelup, skillId.namespace, e.newLevel -2)
-        })
+            skill.on("levelChanged", function (e) {
+                //@ts-ignore
+                console.log(`${skill.name} leveled up from ${e.oldLevel} to ${e.newLevel}`);
+                for(let i = e.oldLevel +1; i <= e.newLevel; i++){
+                    //@ts-ignore
+                    game.locationHandler.sendLocation(skill.id, LocationType.SkillLevelup, skill.namespace, i -2);
+                }
+            })
+
+            //@ts-ignore
+            skill.on("masteryLevelChanged", function (e) {
+                console.log(`${e.action.name} leveled up from ${e.oldLevel} to ${e.newLevel}`);
+                let actionIndex = skill.actions.allObjects.indexOf(e.action);
+
+                for(let i = e.oldLevel +1; i <= e.newLevel; i++){
+                    //@ts-ignore
+                    game.locationHandler.sendLocation(skill.id, LocationType.MasteryLevelUp, e.action.namespace, actionIndex * MasteryMult + e.newLevel -2);
+                }
+            })
+        }
     }
 
     public initialize(){

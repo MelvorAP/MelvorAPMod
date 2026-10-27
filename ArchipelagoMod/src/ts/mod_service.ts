@@ -12,6 +12,7 @@ import { ShopUnlockRequirement, ShopPurchaseRequirementType, ShopPurchaseRequire
 import { ShopHandler } from "./handlers/shop/shop_handler";
 import { ApItemReceivedType, ApSkillItemReceivedType, ArchipelagoItemReceivedEventMatcher, ArchipelagoSkillItemReceivedEventMatcher } from "./events/archipelago_event_matchers";
 import { Locations } from "./data/locations";
+import { LocationHandler } from "./handlers/location_handler";
 
 export interface IModServiceData {
   icon_url: string;
@@ -74,6 +75,7 @@ export default class ModService {
 
   slotdataHandler: SlotdataHandler;
   itemHandler: ItemHandler;
+  locationHandler: LocationHandler;
   shopHandler : ShopHandler;
   skillHandler: SkillsHandler;
   combatUnlockHandler: CombatUnlockHandler;
@@ -103,6 +105,8 @@ export default class ModService {
     
     this.connectionHandler = new ConnectionHandler(this, this.itemHandler, this.notificationHandler, this.slotdataHandler);
     this.shopHandler = new ShopHandler(ctx, this.connectionHandler, this.#data.icon_url);
+    
+    this.locationHandler = new LocationHandler(this.locations, this.connectionHandler);
   }
 
   setSideBar(categoryName : string, itemName : string){
