@@ -1,6 +1,6 @@
 import { ItemTypeMult, NamespaceEnum, NamespaceMult, SkillMult } from "../data/general";
 import { Items, ItemType, OtherPrefix } from "../data/items";
-import { ApItemReceivedType, ApPetReceivedType, ApSkillItemReceivedType } from "../events/archipelago_event_matchers";
+import { ApCombatAreaUnlockType, ApItemReceivedType, ApPetReceivedType, ApSkillItemReceivedType } from "../events/archipelago_event_matchers";
 import { ArchipelagoItemReceivedEvent, CombatAreaUnlockedEvent, PetReceivedEvent, SkillItemReceivedEvent } from "../events/archipelago_events";
 
 //@ts-ignore
@@ -98,25 +98,25 @@ export class ItemHandler extends GameEventEmitter {
             }
             case ItemType.CombatAreaUnlock : {
                 event = new CombatAreaUnlockedEvent(id, itemType, this.regularCombatAreas[id].id);
-                eventType = ApSkillItemReceivedType;
+                eventType = ApCombatAreaUnlockType;
                 break;
             }
             case ItemType.SlayerAreaUnlock : {
                 //@ts-ignore
                 event = new CombatAreaUnlockedEvent(id, itemType, game.combatAreas.slayer[id].id);
-                eventType = ApSkillItemReceivedType;
+                eventType = ApCombatAreaUnlockType;
                 break;
             }
             case ItemType.DungeonUnlock : {
                 // @ts-ignore
                 event = new CombatAreaUnlockedEvent(id, itemType, game.combatAreas.dungeons[id].id);
-                eventType = ApSkillItemReceivedType;
+                eventType = ApCombatAreaUnlockType;
                 break;
             }
             case ItemType.StrongholdUnlock : {
                 // @ts-ignore
                 event = new CombatAreaUnlockedEvent(id, itemType, game.combatAreas.strongholds[id].id);
-                eventType = ApSkillItemReceivedType;
+                eventType = ApCombatAreaUnlockType;
                 break;
             }
             case ItemType.OtherUnlocks : {

@@ -10,7 +10,7 @@ import { CombatUnlockHandler } from "./handlers/combat/combat_unlock_handler";
 import { CombatRequirement, CombatRequirementType } from "./handlers/combat/combat_requirements";
 import { ShopUnlockRequirement, ShopPurchaseRequirementType, ShopPurchaseRequirement, ShopUnlockRequirementType } from "./handlers/shop/shop_requirement";
 import { ShopHandler } from "./handlers/shop/shop_handler";
-import { ApItemReceivedType, ApSkillItemReceivedType, ArchipelagoItemReceivedEventMatcher, ArchipelagoSkillItemReceivedEventMatcher } from "./events/archipelago_event_matchers";
+import { ApCombatAreaUnlockType, ApItemReceivedType, ApSkillItemReceivedType, ArchipelagoItemReceivedEventMatcher, ArchipelagoSkillItemReceivedEventMatcher } from "./events/archipelago_event_matchers";
 import { Locations } from "./data/locations";
 import { LocationHandler } from "./handlers/location_handler";
 
@@ -228,6 +228,7 @@ export default class ModService {
 
       service.shopHandler.initialize();
       service.skillHandler.initialize();
+      service.combatUnlockHandler.initialize();
     })
   
     ctx.onCharacterLoaded(async ctx => {
@@ -269,11 +270,6 @@ export default class ModService {
       if(Boolean(service.settingsManager.apConnectionSection.get("ap-auto-connect"))){
         service.connectionHandler.connectToAP();
       }
-  
-      //game.combat.on("monsterKilled", function (e) {console.log("Monster killed:", e)})
-      //game.combat.on("dungeonCompleted", function (e) {console.log("Dungeon completed:", e)})
-      //game.combat.on("strongholdCompleted", function (e) {console.log("Dungeon completed:", e)})
-      //game.combat.on("abyssDepthCompleted", function (e) {console.log("Abyss completed:", e)})
   
       //game.astrology.on("levelChanged", function (e) {console.log(e.skill, "leveled up from", e.oldLevel, " to ", e.newLevel)})
       //game.astrology.on("masteryLevelChanged", function (e) {console.log(e.action, "leveled up from", e.oldLevel, " to ", e.newLevel)})

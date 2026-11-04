@@ -1,5 +1,5 @@
 import { ItemType } from "../data/items";
-import { SkillItemReceivedEvent } from "./archipelago_events";
+import { ArchipelagoItemReceivedEvent, CombatAreaUnlockedEvent, SkillItemReceivedEvent } from "./archipelago_events";
 
 export const ApItemReceivedType = "ApItemReceived";
 export const ApSkillItemReceivedType = "ApSkillItemReceived";
@@ -9,15 +9,15 @@ export const ApCombatAreaUnlockType = "ApCombatAreaUnlock";
 //@ts-ignore
 export class ArchipelagoItemReceivedEventMatcher extends NonRaidGameEventMatcher {
     type: string;
-    itemType? : ItemType;
+    itemTypes = [] as ItemType[];
 
-    constructor(options : any, game : Game) {
+    constructor(options : any, game : Game, type : string = ApItemReceivedType) {
         super(game);
-        this.type = ApItemReceivedType;
+        this.type = options.callType ?? type;
 
         try {
-            if (options.itemType !== undefined)
-                this.itemType = options.itemType;
+            if (options.itemTypes !== undefined)
+                this.itemTypes.push(...options.itemTypes);
         }
         catch (e) {
             //@ts-ignore
@@ -25,8 +25,8 @@ export class ArchipelagoItemReceivedEventMatcher extends NonRaidGameEventMatcher
         }
     }
 
-    doesEventMatch(event : SkillItemReceivedEvent) {
-        return this.itemType == event.itemType;
+    doesEventMatch(event : ArchipelagoItemReceivedEvent) {
+        return this.itemTypes.includes(event.itemType);
     }
 
     _assignNonRaidHandler(handler : any) {
@@ -41,12 +41,10 @@ export class ArchipelagoItemReceivedEventMatcher extends NonRaidGameEventMatcher
 }
 
 export class ArchipelagoSkillItemReceivedEventMatcher extends ArchipelagoItemReceivedEventMatcher {
-    type: string;
     skillId? : string;
 
     constructor(options : any, game : Game) {
-        super(options, game);
-        this.type = ApSkillItemReceivedType;
+        super(options, game, ApSkillItemReceivedType);
 
         try {
             if (options.skillId !== undefined)

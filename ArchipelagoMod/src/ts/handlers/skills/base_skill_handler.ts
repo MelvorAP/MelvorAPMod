@@ -34,18 +34,18 @@ export class BaseSkillHandler {
         let skill = game.skills.getObjectByID(this.skillId);
 
         //They for loop so all levels inbetween get sent, when multiple levels go up at once
+        //@ts-ignore
+        skill.on("levelChanged", function (e) {
+            //@ts-ignore
+            console.log(`${skill.name} leveled up from ${e.oldLevel} to ${e.newLevel}`);
+            for(let i = e.oldLevel +1; i <= e.newLevel; i++){
+                //@ts-ignore
+                game.locationHandler.sendLocation(skill.id, LocationType.SkillLevelup, skill.namespace, i -2);
+            }
+        })
+
         if(skill instanceof SkillWithMastery)
         {
-            //@ts-ignore
-            skill.on("levelChanged", function (e) {
-                //@ts-ignore
-                console.log(`${skill.name} leveled up from ${e.oldLevel} to ${e.newLevel}`);
-                for(let i = e.oldLevel +1; i <= e.newLevel; i++){
-                    //@ts-ignore
-                    game.locationHandler.sendLocation(skill.id, LocationType.SkillLevelup, skill.namespace, i -2);
-                }
-            })
-
             //@ts-ignore
             skill.on("masteryLevelChanged", function (e) {
                 console.log(`${e.action.name} leveled up from ${e.oldLevel} to ${e.newLevel}`);
@@ -78,6 +78,10 @@ export class BaseSkillHandler {
                         break;
                     case ItemType.SkillLevelCaps:
                         this.increaseCap();
+                        break;
+                    case ItemType.SkillUnlock:
+                        this.unlockSkill();
+                        this.characterStorage.setItem(SkillPrefix + this.skillId, true);
                         break;
                     default:
                         console.log(`Unknown item type ${e.itemId} for ${this.skillId}`);
@@ -137,7 +141,7 @@ export class BaseSkillHandler {
         }
     }
 
-    unlockSkill(){
+    public unlockSkill(){
         let skill = game.skills.getObjectByID(this.skillId);
 
         if(skill){
@@ -159,7 +163,7 @@ export class BaseSkillHandler {
         return true;
     }
 
-    increaseCap(){
+    public increaseCap(){
         let skill = game.skills.getObjectByID(this.skillId);
 
         let cap = (this.characterStorage.getItem(SkillCapPrefix + this.skillId) ?? 1) + 1;
@@ -179,7 +183,7 @@ export class BaseSkillHandler {
         }
     }
 
-    increaseCapToMax(){
+    public increaseCapToMax(){
         let skill = game.skills.getObjectByID(this.skillId);
 
         // @ts-ignore

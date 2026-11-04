@@ -1,6 +1,6 @@
 import { ApRequirementType } from "../../ap_classes/ap_requirement";
 import { CombatAreaPrefix, DungeonPrefix, ItemType, SkillPrefix, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
-import { ArchipelagoSkillItemReceivedEventMatcher } from "../../events/archipelago_event_matchers";
+import { ApCombatAreaUnlockType, ApItemReceivedType, ArchipelagoSkillItemReceivedEventMatcher } from "../../events/archipelago_event_matchers";
 import { CombatAreaUnlockedEvent } from "../../events/archipelago_events";
 import { CombatRequirement, CombatRequirementData, CombatRequirementType } from "./combat_requirements";
 
@@ -11,6 +11,7 @@ export class CombatUnlockHandler extends GameEventEmitter{
     private characterStorage : ModStorage;
 
     private ctx: ModContext;
+    private matcher: ArchipelagoSkillItemReceivedEventMatcher | undefined;
 
     constructor(ctx : ModContext, apIcon : string){
         super();
@@ -19,13 +20,35 @@ export class CombatUnlockHandler extends GameEventEmitter{
 
         this.characterStorage = {} as ModStorage;
 
+        // //@ts-ignore
+        // game.combat.on("monsterKilled", function (e) {
+        //     //@ts-ignore
+        //     console.log(`${skill.name} leveled up from ${e.oldLevel} to ${e.newLevel}`);
+        //     for(let i = e.oldLevel +1; i <= e.newLevel; i++){
+        //         //@ts-ignore
+        //         game.locationHandler.sendLocation(skill.id, LocationType.SkillLevelup, skill.namespace, i -2);
+        //     }
+        // })
+
+        //@ts-ignore
+        game.combat.on("monsterKilled", function (e) {console.log("Monster killed:", e.monster.id)})
+        //@ts-ignore
+        game.combat.on("dungeonCompleted", function (e) {console.log("Dungeon completed:", e)})
+        //@ts-ignore
+        game.combat.on("strongholdCompleted", function (e) {console.log("Dungeon completed:", e)})
+        //@ts-ignore
+        game.combat.on("abyssDepthCompleted", function (e) {console.log("Abyss completed:", e)})
+    }
+
+    public initialize(){
         let data = {
-            type : "ShopPurchaseMade",
-            purchaseIDs : undefined
+            type : ApItemReceivedType,
+            callType : ApCombatAreaUnlockType,
+            itemTypes : [ItemType.CombatAreaUnlock, ItemType.DungeonUnlock, ItemType.SlayerAreaUnlock, ItemType.StrongholdUnlock]
         }
         
         //@ts-ignore
-        this.matcher = game.events.constructMatcher(data) as ArchipelagoSkillItemReceivedEventMatcher;
+        this.matcher = game.events.constructMatcher(data) as ArchipelagoItemReceivedEventMatcher;
 
         //@ts-ignore
         this.matcher.assignHandler((e : CombatAreaUnlockedEvent ) => {
@@ -102,8 +125,6 @@ export class CombatUnlockHandler extends GameEventEmitter{
 
     unlockCombatArea(areaId : string, savePrefix : string){
         this.characterStorage.setItem(savePrefix + areaId, true);
-        //@ts-ignore
-        this._events.emit(ApRequirementType, new ArchipelagoItemsChangedEvent("Attack"));
         //@ts-ignore
         game.combat.renderQueue.areaRequirements = true
     }

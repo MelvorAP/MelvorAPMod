@@ -25,6 +25,10 @@ export class SkillsHandler{
             new FishingHandler(ctx, items, apIcon),
             new FarmingHandler(ctx, items, apIcon)
         ];
+
+        items.skill_unlocks.forEach(skillId => {
+            this.skillHandlers.push(new BaseSkillHandler(ctx, items, apIcon, skillId))
+        });
     }
 
     public initialize(){
