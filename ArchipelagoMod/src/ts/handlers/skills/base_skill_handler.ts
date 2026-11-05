@@ -35,19 +35,18 @@ export class BaseSkillHandler {
 
         //They for loop so all levels inbetween get sent, when multiple levels go up at once
         //@ts-ignore
-        skill.on("levelChanged", function (e) {
-            //@ts-ignore
-            console.log(`${skill.name} leveled up from ${e.oldLevel} to ${e.newLevel}`);
+        skill.on("levelChanged", function (e : {oldLevel : number, newLevel : number}) {
+            console.log(`${skill!.name} leveled up from ${e.oldLevel} to ${e.newLevel}`);
             for(let i = e.oldLevel +1; i <= e.newLevel; i++){
                 //@ts-ignore
-                game.locationHandler.sendLocation(skill.id, LocationType.SkillLevelup, skill.namespace, i -2);
+                game.locationHandler.sendLocation(skill!.id, LocationType.SkillLevelup, skill!.namespace, i -2);
             }
         })
 
         if(skill instanceof SkillWithMastery)
         {
             //@ts-ignore
-            skill.on("masteryLevelChanged", function (e) {
+            skill.on("masteryLevelChanged", function (e : {action : Action, oldLevel : number, newLevel : number}) {
                 console.log(`${e.action.name} leveled up from ${e.oldLevel} to ${e.newLevel}`);
                 let actionIndex = skill.actions.allObjects.indexOf(e.action);
 

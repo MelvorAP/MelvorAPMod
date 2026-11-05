@@ -154,7 +154,7 @@ export class Locations{
         "melvorD:Farming"
   ]
 
-  skills = [
+  public skills = [
     ...this.skills_without_mastery,
     ...this.skills_with_mastery
   ]

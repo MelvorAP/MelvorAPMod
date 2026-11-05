@@ -1,7 +1,8 @@
-import { ApRequirementType } from "../../ap_classes/ap_requirement";
 import { CombatAreaPrefix, DungeonPrefix, ItemType, SkillPrefix, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
+import { LocationType } from "../../data/locations";
 import { ApCombatAreaUnlockType, ApItemReceivedType, ArchipelagoSkillItemReceivedEventMatcher } from "../../events/archipelago_event_matchers";
 import { CombatAreaUnlockedEvent } from "../../events/archipelago_events";
+import { BaseCombatAreaHandler, CombatAreaHandler, DungeonHandler, StrongHoldHandler } from "./combat_area_handler";
 import { CombatRequirement, CombatRequirementData, CombatRequirementType } from "./combat_requirements";
 
 //@ts-ignore
@@ -9,6 +10,8 @@ export class CombatUnlockHandler extends GameEventEmitter{
     private apIcon : string;
 
     private characterStorage : ModStorage;
+
+    private areaHandlers : Array<BaseCombatAreaHandler>;
 
     private ctx: ModContext;
     private matcher: ArchipelagoSkillItemReceivedEventMatcher | undefined;
@@ -20,27 +23,45 @@ export class CombatUnlockHandler extends GameEventEmitter{
 
         this.characterStorage = {} as ModStorage;
 
-        // //@ts-ignore
-        // game.combat.on("monsterKilled", function (e) {
-        //     //@ts-ignore
-        //     console.log(`${skill.name} leveled up from ${e.oldLevel} to ${e.newLevel}`);
-        //     for(let i = e.oldLevel +1; i <= e.newLevel; i++){
-        //         //@ts-ignore
-        //         game.locationHandler.sendLocation(skill.id, LocationType.SkillLevelup, skill.namespace, i -2);
-        //     }
-        // })
+        this.areaHandlers = [];
+        
 
-        //@ts-ignore
-        game.combat.on("monsterKilled", function (e) {console.log("Monster killed:", e.monster.id)})
-        //@ts-ignore
-        game.combat.on("dungeonCompleted", function (e) {console.log("Dungeon completed:", e)})
-        //@ts-ignore
-        game.combat.on("strongholdCompleted", function (e) {console.log("Dungeon completed:", e)})
-        //@ts-ignore
-        game.combat.on("abyssDepthCompleted", function (e) {console.log("Abyss completed:", e)})
+        for(let i = 0; i < game.combatAreas.size; i++){
+            let area = game.combatAreas.allObjects[i];
+
+            let handler : BaseCombatAreaHandler;
+
+            if(area.id == "melvorD:UnknownArea"){
+                continue;
+            }
+            // @ts-ignore
+            else if (area instanceof Stronghold){
+                handler = new StrongHoldHandler(area.id, i);
+            }
+            else if (area instanceof SlayerArea){
+                handler = new CombatAreaHandler(area.id, LocationType.SlayerAreaCleared, game.slayer.id, i);
+            }
+            else if (area instanceof Dungeon){
+                handler = new DungeonHandler(area.id, i);
+            }
+            else if (!(area instanceof CombatArea)){
+                console.warn(`Unknown area type!`);
+                continue;
+            }
+            else{
+                handler = new CombatAreaHandler(area.id, LocationType.CombatAreaCleared, game.attack.id, i);
+            }
+
+            this.areaHandlers.push(handler!);
+        }
     }
 
     public initialize(){
+        this,this.areaHandlers.forEach(handler => {
+            handler.Initialize();
+        });
+
+
         let data = {
             type : ApItemReceivedType,
             callType : ApCombatAreaUnlockType,
