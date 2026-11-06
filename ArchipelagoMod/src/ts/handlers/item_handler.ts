@@ -103,19 +103,19 @@ export class ItemHandler extends GameEventEmitter {
             }
             case ItemType.SlayerAreaUnlock : {
                 //@ts-ignore
-                event = new CombatAreaUnlockedEvent(id, itemType, game.combatAreas.slayer[id].id);
+                event = new CombatAreaUnlockedEvent(id, itemType, game.combatAreas.allObjects[id].id);
                 eventType = ApCombatAreaUnlockType;
                 break;
             }
             case ItemType.DungeonUnlock : {
                 // @ts-ignore
-                event = new CombatAreaUnlockedEvent(id, itemType, game.combatAreas.dungeons[id].id);
+                event = new CombatAreaUnlockedEvent(id, itemType, game.combatAreas.allObjects[id].id);
                 eventType = ApCombatAreaUnlockType;
                 break;
             }
             case ItemType.StrongholdUnlock : {
-                // @ts-ignore
-                event = new CombatAreaUnlockedEvent(id, itemType, game.combatAreas.strongholds[id].id);
+
+                event = new CombatAreaUnlockedEvent(id, itemType, game.combatAreas.allObjects[id].id);
                 eventType = ApCombatAreaUnlockType;
                 break;
             }

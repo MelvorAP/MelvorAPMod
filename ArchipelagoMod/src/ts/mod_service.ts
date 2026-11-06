@@ -10,7 +10,7 @@ import { CombatUnlockHandler } from "./handlers/combat/combat_unlock_handler";
 import { CombatRequirement, CombatRequirementType } from "./handlers/combat/combat_requirements";
 import { ShopUnlockRequirement, ShopPurchaseRequirementType, ShopPurchaseRequirement, ShopUnlockRequirementType } from "./handlers/shop/shop_requirement";
 import { ShopHandler } from "./handlers/shop/shop_handler";
-import { ApCombatAreaUnlockType, ApItemReceivedType, ApSkillItemReceivedType, ArchipelagoItemReceivedEventMatcher, ArchipelagoSkillItemReceivedEventMatcher } from "./events/archipelago_event_matchers";
+import { ApCombatAreaUnlockType, ApItemReceivedType, ApSkillItemReceivedType, ArchipelagoCombatItemReceivedEventMatcher, ArchipelagoItemReceivedEventMatcher, ArchipelagoSkillItemReceivedEventMatcher } from "./events/archipelago_event_matchers";
 import { Locations } from "./data/locations";
 import { LocationHandler } from "./handlers/location_handler";
 
@@ -309,6 +309,8 @@ export default class ModService {
         return new ArchipelagoItemReceivedEventMatcher(data, game);
       case ApSkillItemReceivedType:
         return new ArchipelagoSkillItemReceivedEventMatcher(data, game);
+      case ApCombatAreaUnlockType:
+        return new ArchipelagoCombatItemReceivedEventMatcher(data, game);
     }
   }
 }

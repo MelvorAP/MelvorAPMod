@@ -9,7 +9,7 @@ export const ApCombatAreaUnlockType = "ApCombatAreaUnlock";
 //@ts-ignore
 export class ArchipelagoItemReceivedEventMatcher extends NonRaidGameEventMatcher {
     type: string;
-    itemTypes = [] as ItemType[];
+    itemType : ItemType | undefined;
 
     constructor(options : any, game : Game, type : string = ApItemReceivedType) {
         super(game);
@@ -17,7 +17,7 @@ export class ArchipelagoItemReceivedEventMatcher extends NonRaidGameEventMatcher
 
         try {
             if (options.itemTypes !== undefined)
-                this.itemTypes.push(...options.itemTypes);
+                this.itemType = options.itemType;
         }
         catch (e) {
             //@ts-ignore
@@ -26,7 +26,7 @@ export class ArchipelagoItemReceivedEventMatcher extends NonRaidGameEventMatcher
     }
 
     doesEventMatch(event : ArchipelagoItemReceivedEvent) {
-        return this.itemTypes.includes(event.itemType);
+        return this.itemType == event.itemType;
     }
 
     _assignNonRaidHandler(handler : any) {
@@ -57,5 +57,25 @@ export class ArchipelagoSkillItemReceivedEventMatcher extends ArchipelagoItemRec
     }
     doesEventMatch(event : SkillItemReceivedEvent) {
         return this.skillId == event.skillId;
+    }
+}
+
+export class ArchipelagoCombatItemReceivedEventMatcher extends ArchipelagoItemReceivedEventMatcher {
+    areaId? : string;
+
+    constructor(options : any, game : Game) {
+        super(options, game, ApCombatAreaUnlockType);
+
+        try {
+            if (options.areaId !== undefined)
+                this.areaId = options.areaId;
+        }
+        catch (e) {
+            //@ts-ignore
+            throw new DataConstructionError(ArchipelagoSkillItemReceivedEventMatcher.name, e);
+        }
+    }
+    doesEventMatch(event : CombatAreaUnlockedEvent) {
+        return this.areaId == event.areaId;
     }
 }

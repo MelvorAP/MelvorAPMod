@@ -1,39 +1,43 @@
 import { MasteryMult } from "../../data/general";
-import { ItemType, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
+import { DungeonPrefix, ItemType, SlayerAreaPrefix, StrongholdPrefix } from "../../data/items";
 import { LocationType } from "../../data/locations";
-import { ApCombatAreaUnlockType, ApItemReceivedType, ArchipelagoItemReceivedEventMatcher } from "../../events/archipelago_event_matchers";
+import { ApCombatAreaUnlockType, ApItemReceivedType, ArchipelagoCombatItemReceivedEventMatcher } from "../../events/archipelago_event_matchers";
+import { CombatAreaUnlockedEvent } from "../../events/archipelago_events";
 
 export class BaseCombatAreaHandler {
+        public type  = ApCombatAreaUnlockType;
         public areaId : string; 
 
         public areaIndex : number;
 
         private combatAreaPrefix : string;
-        private itemTypes;
-        private characterStorage : ModStorage;
+        private itemType : ItemType;
+        private characterStorage = {} as ModStorage;
 
-        constructor(areaId : string, areaIndex : number, combatAreaPrefix : string, characterStorage : ModStorage){
+        private matcher : ArchipelagoCombatItemReceivedEventMatcher | undefined;
+
+        constructor(areaId : string, areaIndex : number, itemType : ItemType, combatAreaPrefix : string){
             this.areaId = areaId;
             this.areaIndex = areaIndex;
             this.combatAreaPrefix = combatAreaPrefix;
-            this.characterStorage = characterStorage;
+            this.itemType = itemType;
         }
 
-        public Initialize(){
+        public initialize(){
             let data = {
-                type : ApItemReceivedType,
-                callType : ApCombatAreaUnlockType,
-                itemTypes : this.itemTypes
+                type : ApCombatAreaUnlockType,
+                areaId : this.areaId,
+                itemType : this.itemType
             }
             
             //@ts-ignore
-            this.matcher = game.events.constructMatcher(data) as ArchipelagoItemReceivedEventMatcher;
+            this.matcher = game.events.constructMatcher(data) as ArchipelagoCombatItemReceivedEventMatcher;
     
             //@ts-ignore
             this.matcher.assignHandler((e : CombatAreaUnlockedEvent ) => {
                     switch (e.itemType){
-                        case ItemType.CombatAreaUnlock:
-                            this.unlockCombatArea(e.areaId, this.combatAreaPrefix);
+                        case this.itemType:
+                            this.unlockCombatArea();
                             break;
                         default:
                             console.log(`Unknown item ${e.itemId} for ${e.itemType}`);
@@ -42,10 +46,14 @@ export class BaseCombatAreaHandler {
             })
         }
 
-        unlockCombatArea(areaId : string, savePrefix : string){
-            this.characterStorage.setItem(savePrefix + areaId, true);
+        unlockCombatArea(){
+            this.characterStorage.setItem(this.combatAreaPrefix + this.areaId, true);
             //@ts-ignore
             game.combat.renderQueue.areaRequirements = true
+        }
+
+        setCharacterStorage(characterStorage: ModStorage) {
+            this.characterStorage = characterStorage;
         }
     }
 
@@ -54,15 +62,15 @@ export class BaseCombatAreaHandler {
         locationType : LocationType;
         skillId : string;
 
-        constructor(areaId : string, locationType : LocationType, skillId : string, areaIndex : number, combatAreaPrefix : string, characterStorage : ModStorage){
-            super(areaId, areaIndex, combatAreaPrefix, characterStorage);
+        constructor(areaId : string, locationType : LocationType, skillId : string, areaIndex : number, combatAreaPrefix : string){
+            super(areaId, areaIndex, ItemType.CombatAreaUnlock ,combatAreaPrefix);
 
             this.locationType = locationType;
             this.skillId = skillId;
         }
 
-        public Initialize(): void {
-            super.Initialize();
+        public initialize(): void {
+            super.initialize();
 
             let areaIndex = this.areaIndex;
             let locationType = this.locationType;
@@ -70,9 +78,15 @@ export class BaseCombatAreaHandler {
 
             //@ts-ignore
             game.combat.on("monsterKilled", function (e : {monster : Monster}) {
-                console.log("Monster killed:", e.monster.id)
+                let area = game.combatAreas.allObjects[areaIndex];
+                
+                if(area.monsters.indexOf(e.monster) == -1){
+                    return;
+                }             
 
-                let monsterIndex = game.combatAreas.allObjects[areaIndex].monsters.indexOf(e.monster);
+                let monsterIndex = area.monsters.indexOf(e.monster);
+
+                console.log("Monster killed:", e.monster.id)
                 //@ts-ignore
                 game.locationHandler.sendLocation(skillId, locationType, e.monster.namespace, areaIndex * MasteryMult + monsterIndex);
 
@@ -82,12 +96,12 @@ export class BaseCombatAreaHandler {
     }
 
 export class DungeonHandler extends BaseCombatAreaHandler {
-        constructor(areaId : string, areaIndex : number, characterStorage : ModStorage){
-            super(areaId, areaIndex, SlayerAreaPrefix, characterStorage);
+        constructor(areaId : string, areaIndex : number){
+            super(areaId, areaIndex, ItemType.DungeonUnlock, DungeonPrefix);
         }
 
-        public Initialize(): void {
-            super.Initialize();
+        public initialize(): void {
+            super.initialize();
 
             let areaIndex = this.areaIndex;
 
@@ -102,12 +116,12 @@ export class DungeonHandler extends BaseCombatAreaHandler {
     }
 
 export class StrongHoldHandler extends BaseCombatAreaHandler {
-        constructor(areaId : string, areaIndex : number, characterStorage : ModStorage){
-            super(areaId, areaIndex, StrongholdPrefix, characterStorage);
+        constructor(areaId : string, areaIndex : number){
+            super(areaId, areaIndex, ItemType.StrongholdUnlock, StrongholdPrefix);
         }
 
-        public Initialize(): void {
-            super.Initialize();
+        public initialize(): void {
+            super.initialize();
 
             let areaIndex = this.areaIndex;
 

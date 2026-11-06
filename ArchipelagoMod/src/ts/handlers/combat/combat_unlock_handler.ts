@@ -39,7 +39,7 @@ export class CombatUnlockHandler extends GameEventEmitter{
                 handler = new StrongHoldHandler(area.id, i);
             }
             else if (area instanceof SlayerArea){
-                handler = new CombatAreaHandler(area.id, LocationType.SlayerAreaCleared, game.slayer.id, i);
+                handler = new CombatAreaHandler(area.id, LocationType.SlayerAreaCleared, game.slayer.id, i, SlayerAreaPrefix);
             }
             else if (area instanceof Dungeon){
                 handler = new DungeonHandler(area.id, i);
@@ -49,7 +49,7 @@ export class CombatUnlockHandler extends GameEventEmitter{
                 continue;
             }
             else{
-                handler = new CombatAreaHandler(area.id, LocationType.CombatAreaCleared, game.attack.id, i);
+                handler = new CombatAreaHandler(area.id, LocationType.CombatAreaCleared, game.attack.id, i, CombatAreaPrefix);
             }
 
             this.areaHandlers.push(handler!);
@@ -58,34 +58,16 @@ export class CombatUnlockHandler extends GameEventEmitter{
 
     public initialize(){
         this,this.areaHandlers.forEach(handler => {
-            handler.Initialize();
+            handler.initialize();
         });
-
-
-        let data = {
-            type : ApItemReceivedType,
-            callType : ApCombatAreaUnlockType,
-            itemTypes : [ItemType.CombatAreaUnlock, ItemType.DungeonUnlock, ItemType.SlayerAreaUnlock, ItemType.StrongholdUnlock]
-        }
-        
-        //@ts-ignore
-        this.matcher = game.events.constructMatcher(data) as ArchipelagoItemReceivedEventMatcher;
-
-        //@ts-ignore
-        this.matcher.assignHandler((e : CombatAreaUnlockedEvent ) => {
-                switch (e.itemType){
-                    case ItemType.CombatAreaUnlock:
-                        this.unlockCombatArea(e.areaId, CombatAreaPrefix);
-                        break;
-                    default:
-                        console.log(`Unknown item ${e.itemId} for ${e.itemType}`);
-                        break;
-                }
-        })
     }
 
     setCharacterStorage(characterStorage : ModStorage){
         this.characterStorage = characterStorage;
+
+        this,this.areaHandlers.forEach(handler => {
+            handler.setCharacterStorage(characterStorage);
+        });
     }
 
     lockCombatAreas(){
@@ -142,12 +124,6 @@ export class CombatUnlockHandler extends GameEventEmitter{
                 console.warn(`Unknown area type!`);
             }
         })
-    }
-
-    unlockCombatArea(areaId : string, savePrefix : string){
-        this.characterStorage.setItem(savePrefix + areaId, true);
-        //@ts-ignore
-        game.combat.renderQueue.areaRequirements = true
     }
 
     isAreaUnlocked(savePrefix : string, itemId : string){
